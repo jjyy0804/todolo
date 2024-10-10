@@ -1,20 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/logos/todolo_logo_noslog.png';
+import useUserStore from '../../store/useUserstore';
 
 const NavigationBar = () => {
   const navigate = useNavigate();
   const location = useLocation(); // 현재 경로를 가져옴
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리
+  const isAuthenticated = useUserStore((state) => state.isAuthenticated); // 로그인 상태 관리
+  const logout = useUserStore((state) => state.logout);
   /**로고 이미지 클릭 시 홈 화면으로 이동 */
   const handleLogoClick = () => {
     navigate('/');
   };
   const handleLoginButtonClick = () => {
-    if (isLoggedIn) {
+    if (isAuthenticated) {
       // 로그아웃 로직
-      setIsLoggedIn(false);
-      console.log('로그아웃 되었습니다.');
+      logout();
+      alert('로그아웃 되었습니다.');
+      navigate('/');
     } else {
       // 로그인 페이지로 이동
       navigate('/login');
@@ -38,7 +41,7 @@ const NavigationBar = () => {
         onClick={handleLogoClick}
       />
       <div className="flex items-center gap-4">
-        {isLoggedIn && (
+        {isAuthenticated && (
           <>
             <button
               className={`text-sm hover:text-primary ${
@@ -46,8 +49,7 @@ const NavigationBar = () => {
                   ? 'text-primary font-bold'
                   : 'text-darkgray'
               }`}
-              onClick={handleMyPageClick}
-            >
+              onClick={handleMyPageClick}>
               My Page
             </button>
             <button
@@ -56,17 +58,15 @@ const NavigationBar = () => {
                   ? 'text-primary font-bold'
                   : 'text-darkgray'
               }`}
-              onClick={handleCalendarClick}
-            >
+              onClick={handleCalendarClick}>
               Calendar
             </button>
           </>
         )}
         <button
           className="text-sm text-darkgray hover:text-primary"
-          onClick={handleLoginButtonClick}
-        >
-          {isLoggedIn ? 'Logout' : 'Login'}
+          onClick={handleLoginButtonClick}>
+          {isAuthenticated ? 'Logout' : 'Login'}
         </button>
       </div>
     </div>

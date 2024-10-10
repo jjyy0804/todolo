@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import useUserStore from '../store/useUserstore';
 
 interface UseRegisterProps {
   name: string;
@@ -15,6 +16,7 @@ interface UseRegisterProps {
 const useRegister = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
+  const setUser = useUserStore((state) => state.setUser);
 
   const handleRegisterClick = async ({
     name,
@@ -60,6 +62,15 @@ const useRegister = () => {
 
       if (response.status === 200) {
         alert('회원가입이 완료되었습니다!');
+        const userData = {
+          name: response.data.name,
+          email: response.data.email,
+          team: response.data.team,
+          avatar: response.data.avatar,
+        };
+
+        // Zustand 스토어에 사용자 정보 설정
+        setUser(userData);
         setErrorMessage(''); // 성공 시 오류 메시지 초기화
         navigate('/main');
       }
