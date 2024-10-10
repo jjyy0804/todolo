@@ -72,7 +72,7 @@ const useRegister = () => {
         // Zustand 스토어에 사용자 정보 설정
         setUser(userData);
         setErrorMessage(''); // 성공 시 오류 메시지 초기화
-        navigate('/main');
+        navigate('/login');
       }
     } catch (error) {
       console.error('회원가입 오류:', error);
