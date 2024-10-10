@@ -29,7 +29,9 @@ export default function Board() {
 
       {/* 사용자 검색 창 => 나중에 수정필요 */}
       <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-24">
-        <div className="relative w-[343px]"> {/* 인풋 박스를 감싸는 relative 컨테이너 */}
+        <div className="relative w-[343px]">
+          {' '}
+          {/* 인풋 박스를 감싸는 relative 컨테이너 */}
           <input
             type="text"
             placeholder="프로젝트 및 사용자 이름 검색"
