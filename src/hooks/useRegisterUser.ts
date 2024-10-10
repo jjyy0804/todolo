@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import useUserStore from '../store/useUserstore';
 
-interface UseRegisterProps {
+interface UseRegisterUserProps {
   name: string;
   email: string;
   password: string;
@@ -13,7 +13,7 @@ interface UseRegisterProps {
   basicProfileImage: string;
 }
 
-const useRegister = () => {
+const useRegisterUser = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
   const setUser = useUserStore((state) => state.setUser);
@@ -26,7 +26,7 @@ const useRegister = () => {
     team,
     profileImage,
     basicProfileImage,
-  }: UseRegisterProps) => {
+  }: UseRegisterUserProps) => {
     // 유효성 검사
     if (!name || !email || !password || !passwordConfirm || !team) {
       setErrorMessage('모든 필드를 입력해 주세요.');
@@ -83,4 +83,4 @@ const useRegister = () => {
   return { errorMessage, handleRegisterClick };
 };
 
-export default useRegister;
+export default useRegisterUser;

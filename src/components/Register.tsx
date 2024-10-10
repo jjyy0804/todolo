@@ -3,7 +3,7 @@ import NavigationBar from './common/NavigationBar';
 import basicProfileImage from '../assets/images/basic_user_profile.png';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import useRegister from '../hooks/useRegister';
+import useRegisterUser from '../hooks/useRegisterUser';
 
 export default function Register() {
   const [profileImage, setProfileImage] = useState(basicProfileImage);
@@ -13,7 +13,7 @@ export default function Register() {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [team, setTeam] = useState('');
 
-  const { errorMessage, handleRegisterClick } = useRegister();
+  const { errorMessage, handleRegisterClick } = useRegisterUser();
 
   const navigate = useNavigate();
 
