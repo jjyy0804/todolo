@@ -46,7 +46,8 @@ const NavigationBar = () => {
                   ? 'text-primary font-bold'
                   : 'text-darkgray'
               }`}
-              onClick={handleMyPageClick}>
+              onClick={handleMyPageClick}
+            >
               My Page
             </button>
             <button
@@ -55,14 +56,16 @@ const NavigationBar = () => {
                   ? 'text-primary font-bold'
                   : 'text-darkgray'
               }`}
-              onClick={handleCalendarClick}>
+              onClick={handleCalendarClick}
+            >
               Calendar
             </button>
           </>
         )}
         <button
           className="text-sm text-darkgray hover:text-primary"
-          onClick={handleLoginButtonClick}>
+          onClick={handleLoginButtonClick}
+        >
           {isLoggedIn ? 'Logout' : 'Login'}
         </button>
       </div>
