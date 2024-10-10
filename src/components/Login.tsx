@@ -64,9 +64,8 @@ export default function Login() {
           }}
           onBlur={() => setEmailFocused(false)}
           required
-          className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${
-            emailFocused ? 'text-black' : 'text-[#757575]'
-          }`}
+          className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${emailFocused ? 'text-black' : 'text-[#757575]'
+            }`}
         />
         {/* 비밀번호 인풋 박스 */}
         <input
@@ -80,15 +79,15 @@ export default function Login() {
           }}
           onBlur={() => setPasswordFocused(false)}
           required
-          className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${
-            passwordFocused ? 'text-black' : 'text-[#757575]'
-          }`}
+          className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${passwordFocused ? 'text-black' : 'text-[#757575]'
+            }`}
         />
         {/* 로그인 버튼 */}
         <button
           type="submit"
           className="p-[18px-20px] w-[464px] h-[56px] bg-[#599BFF] border rounded-[10px] text-white font-bold"
-          disabled={loading}>
+          disabled={loading}
+        >
           {loading ? '로그인 중...' : '로그인'}
         </button>
 
