@@ -13,7 +13,7 @@ export default function Register() {
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [team, setTeam] = useState('');
 
-  const { errorMessage, handleRegisterClick } = useRegisterUser();
+  const { errorMessage, register } = useRegisterUser();
 
   const navigate = useNavigate();
 
@@ -44,7 +44,7 @@ export default function Register() {
   const handleRegisterButtonClick = async (e: React.FormEvent) => {
     e.preventDefault();
     //useRegister() 커스텀 훅에서 서버로 전송
-    handleRegisterClick({
+    await register({
       name,
       email,
       password,

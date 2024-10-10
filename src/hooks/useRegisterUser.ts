@@ -16,9 +16,8 @@ interface UseRegisterUserProps {
 const useRegisterUser = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
-  const setUser = useUserStore((state) => state.setUser);
 
-  const handleRegisterClick = async ({
+  const register = async ({
     name,
     email,
     password,
@@ -62,15 +61,6 @@ const useRegisterUser = () => {
 
       if (response.status === 200) {
         alert('회원가입이 완료되었습니다!');
-        const userData = {
-          name: response.data.name,
-          email: response.data.email,
-          team: response.data.team,
-          avatar: response.data.avatar,
-        };
-
-        // Zustand 스토어에 사용자 정보 설정
-        setUser(userData);
         setErrorMessage(''); // 성공 시 오류 메시지 초기화
         navigate('/login');
       }
@@ -80,7 +70,7 @@ const useRegisterUser = () => {
     }
   };
 
-  return { errorMessage, handleRegisterClick };
+  return { errorMessage, register };
 };
 
 export default useRegisterUser;
