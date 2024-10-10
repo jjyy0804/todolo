@@ -6,7 +6,10 @@ const NavigationBar = () => {
   const navigate = useNavigate();
   const location = useLocation(); // 현재 경로를 가져옴
   const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태 관리
-
+  /**로고 이미지 클릭 시 홈 화면으로 이동 */
+  const handleLogoClick = () => {
+    navigate('/');
+  };
   const handleLoginButtonClick = () => {
     if (isLoggedIn) {
       // 로그아웃 로직
@@ -28,7 +31,12 @@ const NavigationBar = () => {
 
   return (
     <div className="fixed top-0 left-0 flex justify-between items-center w-full h-10 px-8 border-b border-gray-200 bg-white shadow-sm z-50 ">
-      <img src={logo} alt="Logo" className="w-24 h-6" />
+      <img
+        src={logo}
+        alt="Logo"
+        className="w-24 h-6 cursor-pointer"
+        onClick={handleLogoClick}
+      />
       <div className="flex items-center gap-4">
         {isLoggedIn && (
           <>
@@ -38,8 +46,7 @@ const NavigationBar = () => {
                   ? 'text-primary font-bold'
                   : 'text-darkgray'
               }`}
-              onClick={handleMyPageClick}
-            >
+              onClick={handleMyPageClick}>
               My Page
             </button>
             <button
@@ -48,16 +55,14 @@ const NavigationBar = () => {
                   ? 'text-primary font-bold'
                   : 'text-darkgray'
               }`}
-              onClick={handleCalendarClick}
-            >
+              onClick={handleCalendarClick}>
               Calendar
             </button>
           </>
         )}
         <button
           className="text-sm text-darkgray hover:text-primary"
-          onClick={handleLoginButtonClick}
-        >
+          onClick={handleLoginButtonClick}>
           {isLoggedIn ? 'Logout' : 'Login'}
         </button>
       </div>
