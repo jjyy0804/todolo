@@ -18,7 +18,8 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    'prettier/prettier': 'error',
+    'react/jsx-closing-bracket-location': [1, 'tag-aligned'],
+    'prettier/prettier': ['error', { jsxBracketSameLine: true }],
   },
   settings: {
     react: {
