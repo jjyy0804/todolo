@@ -8,9 +8,15 @@ import glassImg from '../assets/icons/magnifyingglass.png';
 import ScheduleModal from './common/modal/ScheduleModal';
 
 export default function Board() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   // 프로젝트 및 사용자 필터링 하는 로직 추가 (API도 받아오기)
-
+  const handleAddClick = () => {
+    setIsModalOpen(true);
+  };
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
   return (
     <div>
       <NavigationBar />
@@ -63,7 +69,9 @@ export default function Board() {
                   <h3 className="text-[17px] font-regular mb-2">Todo</h3>
                 </div>
                 <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg p-4 flex flex-col items-center space-y-4">
-                  <button className="w-[302px] h-[51px] mt-auto bg-[#599BFF] text-white font-bold px-4 py-2 rounded-[56px] hover:bg-blue-600">
+                  <button
+                    className="w-[302px] h-[51px] mt-auto bg-[#599BFF] text-white font-bold px-4 py-2 rounded-[56px] hover:bg-blue-600"
+                    onClick={handleAddClick}>
                     + ADD
                   </button>
                 </div>
@@ -96,7 +104,7 @@ export default function Board() {
           </div>
         </div>
       </div>
-      <ScheduleModal />
+      <ScheduleModal isOpen={isModalOpen} onClose={handleModalClose} />
     </div>
   );
 }

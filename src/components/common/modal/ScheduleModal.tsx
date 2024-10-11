@@ -1,25 +1,68 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import magnifyingglass from '../../../assets/icons/magnifyingglass.png';
+import useScheduleStore from '../../../store/useScheduleStore';
 
-// interface ModalProps {
-//   isOpen: boolean;
-//   onClose: () => void;
-// }
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
 
-const ScheduleModal = () => {
+const ScheduleModal = ({ isOpen, onClose }: ModalProps) => {
   const [scheduleName, setScheduleName] = useState('');
   const [projectName, setProjectName] = useState('');
   const [scheduleContent, setScheduleContent] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [scheduleType, setScheduleType] = useState('할 일');
+  const [status, setStatus] = useState<'할 일' | '진행 중' | '완료'>('할 일');
   const [priority, setPriority] = useState<'높음' | '중간' | '낮음'>('중간');
-  const [teamMembers] = useState<string[]>(['주영']);
-
+  const [teamMembers, setTeamMembers] = useState<string[]>(['주영']);
+  //일정 상태관리에서 가져오기
+  const { addSchedule } = useScheduleStore();
+  /**일정 추가하기
+   * 서버로 새로운 일정 등록 요청 후 input 초기화 , 모달 창 닫음
+   */
+  const handleAddClick = async () => {
+    const newSchedule = {
+      id: Date.now(), // 임시로 현재 시간을 ID로 사용
+      scheduleName,
+      projectName,
+      scheduleContent,
+      startDate,
+      endDate,
+      status,
+      priority,
+      teamMembers: teamMembers.map((name, index) => ({ id: index, name })),
+    };
+    try {
+      addSchedule(newSchedule);
+      await axios.post('/api/schedules', newSchedule);
+      alert('일정이 성공적으로 추가되었습니다.');
+    } catch (error) {
+      console.error('일정 추가 중 오류 발생:', error);
+      alert('일정 추가에 실패했습니다. 다시 시도해주세요.');
+      console.log(newSchedule);
+    } finally {
+      onClose;
+    }
+    // 폼 초기화
+    setScheduleName('');
+    setProjectName('');
+    setScheduleContent('');
+    setStartDate('');
+    setEndDate('');
+    setStatus('할 일');
+    setPriority('중간');
+    setTeamMembers([]);
+    onClose();
+  };
+  if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-[9999]">
       <div className="relative bg-white w-[600px] rounded-[10px] shadow-lg p-8">
-        <button className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl">
+        <button
+          className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl"
+          onClick={onClose}>
           &times;
         </button>
 
@@ -75,8 +118,10 @@ const ScheduleModal = () => {
               일정 상태
             </label>
             <select
-              value={scheduleType}
-              onChange={(e) => setScheduleType(e.target.value)}
+              value={status}
+              onChange={(e) =>
+                setStatus(e.target.value as '할 일' | '진행 중' | '완료')
+              }
               className="p-2 border border-gray-300 rounded-[10px] focus:outline-none">
               <option value="할 일">할 일</option>
               <option value="진행 중">진행 중</option>
@@ -181,7 +226,9 @@ const ScheduleModal = () => {
           <button className="border border-[#ac2949] text-[#ac2949] rounded-[10px] px-4 py-2 hover:bg-[#ffe3e8] border-transparent transition-colors ease-linear">
             삭제
           </button>
-          <button className="bg-primary text-white rounded-[10px] px-4 py-2 hover:bg-[#257ADA] transition-colors ease-linear">
+          <button
+            className="bg-primary text-white rounded-[10px] px-4 py-2 hover:bg-[#257ADA] transition-colors ease-linear"
+            onClick={handleAddClick}>
             확인
           </button>
         </div>
