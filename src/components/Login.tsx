@@ -18,12 +18,8 @@ export default function Login() {
   };
 
   return (
-    <div className="w-[1440px] h-[1024px] flex items-center justify-center relative">
-      <img
-        src={logo}
-        alt="todolo"
-        className="mb-4 w-[461px] h-[135px] absolute top-[230px]"
-      />
+    <div className="flex flex-col h-screen items-center justify-center relative">
+      <img src={logo} alt="todolo" className="mb-4 w-[461px] h-[135px]" />
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         {/* 이메일 인풋 박스 */}
         <input
