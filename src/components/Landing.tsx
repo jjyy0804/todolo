@@ -5,7 +5,6 @@ import rightSectionImg from '../assets/ladingPage_r_img.jpg';
 
 export default function Landing() {
   const navigate = useNavigate();
-
   return (
     <div className="flex h-screen">
       {/* Left Section */}
