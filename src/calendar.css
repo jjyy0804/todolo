@@ -1,0 +1,110 @@
+/* Calendar CSS Overay styles */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+:root {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  --fc-border-color: none;
+
+  --fc-button-text-color: #fff;
+  --fc-button-bg-color: #ffffff00;
+  --fc-button-border-color: #ffffff00;
+  --fc-button-hover-bg-color: #ffffff00;
+  --fc-button-hover-border-color: #ffffff00;
+  --fc-button-active-bg-color: #ffffff00;
+  --fc-button-active-border-color: #ffffff00;
+}
+.fc {
+  height: 100vh;
+  padding: 20px;
+  padding-top: 100px;
+  background-color: #dfedf9;
+  border-radius: 10px;
+}
+.fc .fc-toolbar {
+  justify-content: center;
+}
+.fc .fc-button {
+  appearance: none;
+}
+
+.fc .fc-button:focus,
+.fc .fc-button-primary:focus {
+  box-shadow: none;
+}
+.fc-view-harness {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 0.1),
+    0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+.fc-toolbar-chunk:nth-child(2) {
+  display: hide;
+}
+.fc-toolbar-chunk:nth-child(3) {
+  display: flex;
+  flex-direction: row-reverse;
+}
+.fc .fc-button {
+  border-radius: 10px;
+}
+/* today button hide */
+.fc .fc-button-primary:disabled {
+  display: none;
+}
+
+.fc .fc-button-primary {
+  background-color: inherit;
+  border: none;
+  color: inherit;
+}
+
+/* change from left arrow to up arrow */
+.fc-icon-chevron-left::before {
+  content: '\25B2';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}
+
+/* change from right arrow to down arrow button */
+.fc-icon-chevron-right::before {
+  content: '\25BC';
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+  border: none;
+}
+
+.fc .fc-daygrid-day-top {
+  flex-direction: row;
+}
+
+.fc-dayGridMonth-view table th,
+.fc-dayGridMonth-view table td {
+  border: 1px solid #ddd;
+}
+.fc-dayGridMonth-view table {
+  border: none; /* Removes outer table border */
+}
+.fc-dayGridMonth-view th:last-child,
+.fc-dayGridMonth-view td:last-child {
+  border-right: none; /* Remove the right border from the last column */
+}
+.fc-dayGridMonth-view tr:last-child th,
+.fc-dayGridMonth-view tr:last-child td {
+  border-bottom: 1px solid #ddd; /* Bottom border for the last row */
+}
+.fc-dayGridMonth-view tr:last-child td {
+  border-bottom: none;
+}
+
+.fc-header-toolbar,
+.fc-toolbar {
+  background-color: #dfedf9;
+}
