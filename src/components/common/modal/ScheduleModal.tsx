@@ -1,14 +1,16 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import magnifyingglass from '../../../assets/icons/magnifyingglass.png';
 import useScheduleStore from '../../../store/useScheduleStore';
 
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
+  schedule: any | null;
+  isEdit: boolean; // 수정 모드 여부
 }
 
-const ScheduleModal = ({ isOpen, onClose }: ModalProps) => {
+const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
   const [scheduleName, setScheduleName] = useState('');
   const [projectName, setProjectName] = useState('');
   const [scheduleContent, setScheduleContent] = useState('');
@@ -18,7 +20,20 @@ const ScheduleModal = ({ isOpen, onClose }: ModalProps) => {
   const [priority, setPriority] = useState<'높음' | '중간' | '낮음'>('중간');
   const [teamMembers, setTeamMembers] = useState<string[]>(['주영']);
   //일정 상태관리에서 가져오기
-  const { addSchedule } = useScheduleStore();
+  const { addSchedule, updateSchedule } = useScheduleStore();
+  // 모달이 열릴 때 선택된 일정 데이터로 초기화
+  useEffect(() => {
+    if (schedule) {
+      setScheduleName(schedule.scheduleName || '');
+      setProjectName(schedule.projectName || '');
+      setScheduleContent(schedule.scheduleContent || '');
+      setStartDate(schedule.startDate || '');
+      setEndDate(schedule.endDate || '');
+      setStatus(schedule.status || '할 일');
+      setPriority(schedule.priority || '중간');
+      setTeamMembers(schedule.teamMembers || []);
+    }
+  }, [schedule]);
   /**일정 추가하기
    * 서버로 새로운 일정 등록 요청 후 input 초기화 , 모달 창 닫음
    */
@@ -35,15 +50,23 @@ const ScheduleModal = ({ isOpen, onClose }: ModalProps) => {
       teamMembers: teamMembers.map((name, index) => ({ id: index, name })),
     };
     try {
-      addSchedule(newSchedule);
-      await axios.post('/api/schedules', newSchedule);
-      alert('일정이 성공적으로 추가되었습니다.');
+      if (isEdit) {
+        //수정 로직
+        updateSchedule(schedule.id, newSchedule);
+        await axios.put(`/api/schedules/${schedule.id}`, newSchedule);
+        alert('일정이 성공적으로 수정되었습니다.');
+      } else {
+        // 등록 로직
+        addSchedule(newSchedule);
+        await axios.post('/api/schedules', newSchedule);
+        alert('일정이 성공적으로 추가되었습니다.');
+      }
     } catch (error) {
       console.error('일정 추가 중 오류 발생:', error);
       alert('일정 추가에 실패했습니다. 다시 시도해주세요.');
       console.log(newSchedule);
     } finally {
-      onClose;
+      onClose();
     }
     // 폼 초기화
     setScheduleName('');
@@ -229,7 +252,7 @@ const ScheduleModal = ({ isOpen, onClose }: ModalProps) => {
           <button
             className="bg-primary text-white rounded-[10px] px-4 py-2 hover:bg-[#257ADA] transition-colors ease-linear"
             onClick={handleAddClick}>
-            확인
+            {isEdit ? '수정' : '등록'}
           </button>
         </div>
       </div>

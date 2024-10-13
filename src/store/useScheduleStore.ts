@@ -21,6 +21,7 @@ interface ScheduleState {
   schedules: Schedule[];
   addSchedule: (newSchedule: Schedule) => void;
   removeSchedule: (id: number) => void;
+  updateSchedule: (id: number, updatedSchedule: Schedule) => void;
 }
 /** Zustand 스토어 생성 */
 const useScheduleStore = create<ScheduleState>((set) => ({
@@ -32,6 +33,17 @@ const useScheduleStore = create<ScheduleState>((set) => ({
   removeSchedule: (id) =>
     set((state) => ({
       schedules: state.schedules.filter((schedule) => schedule.id !== id),
+    })),
+  updateSchedule: (id, updatedSchedule) =>
+    set((state) => ({
+      schedules: state.schedules.map((schedule) =>
+        schedule.id === id
+          ? {
+              ...schedule,
+              ...updatedSchedule,
+            }
+          : schedule,
+      ),
     })),
 }));
 

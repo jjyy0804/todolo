@@ -1,21 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { FiTrash2, FiEdit3 } from 'react-icons/fi';
 import NavigationBar from './common/NavigationBar';
 import todoImg from '../assets/icons/todo.png';
 import inProgressImg from '../assets/icons/inProgress.png';
 import completedImg from '../assets/icons/completed.png';
-import basicProfileImage from '../assets/images/basic_user_profile.png'; //나중에 수정
 import glassImg from '../assets/icons/magnifyingglass.png';
 import ScheduleModal from './common/modal/ScheduleModal';
+import useUserStore from '../store/useUserstore';
+import useScheduleStore from '../store/useScheduleStore';
+import { secureHeapUsed } from 'crypto';
 
 export default function Board() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedSchedule, setSelectedSchedule] = useState<any | null>(null); // 수정할 일정
+  const [isEdit, setIsEdit] = useState(false); // 수정 모드 여부
+
+  const { user } = useUserStore();
+  const { schedules } = useScheduleStore();
+  useEffect(() => {
+    console.log(schedules);
+  }, [schedules]);
   // 프로젝트 및 사용자 필터링 하는 로직 추가 (API도 받아오기)
-  const handleAddClick = () => {
+  const handleOpenModal = (schedule: any | null) => {
+    setSelectedSchedule(schedule);
+    setIsEdit(!!schedule); // 일정이 있으면 수정 모드로 전환
     setIsModalOpen(true);
   };
   const handleModalClose = () => {
     setIsModalOpen(false);
+    setSelectedSchedule(null); // 모달 닫을 때 데이터 초기화
+    setIsEdit(false); // 수정 모드 초기화
   };
   return (
     <div>
@@ -24,12 +39,14 @@ export default function Board() {
         {/* 사용자 정보 (프로필사진, 이름, 소속팀) */}
         <div className="flex items-start space-x-2 mt-12 ml-2 mb-4">
           <img
-            src={basicProfileImage}
+            src={user?.avatar}
             alt="Profile_Img"
             className="w-[40px] h-[40px] rounded-full"
           />
           <div>
-            <h4 className="text-[17px] font-regular mt-2">이주영 (2팀)</h4>
+            <h4 className="text-[17px] font-regular mt-2">
+              {user?.name} ({user?.team})
+            </h4>
           </div>
         </div>
 
@@ -58,7 +75,7 @@ export default function Board() {
           <div className="w-[1259px] h-[846px] bg-[#F5F9FF] shadow-lg rounded-lg p-4 mb-14">
             {/* 텍스트와 보드를 세로로 정렬 */}
             <div className="flex justify-between space-x-4">
-              {/* 첫 번째 보드 */}
+              {/* todo 보드 */}
               <div className="flex flex-col items-start">
                 <div className="flex items-center">
                   <img
@@ -68,15 +85,50 @@ export default function Board() {
                   />
                   <h3 className="text-[17px] font-regular mb-2">Todo</h3>
                 </div>
-                <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg p-4 flex flex-col items-center space-y-4">
-                  <button
-                    className="w-[302px] h-[51px] mt-auto bg-[#599BFF] text-white font-bold px-4 py-2 rounded-[56px] hover:bg-blue-600"
-                    onClick={handleAddClick}>
-                    + ADD
-                  </button>
+                {/*상태 = "할 일" 인 일정 카드 */}
+                <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg overflow-y-auto flex flex-col justify-between">
+                  <div className="p-4 flex flex-col space-y-4">
+                    {schedules.length > 0 ? (
+                      schedules.map((schedule) => (
+                        <div
+                          key={schedule.id}
+                          className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray">
+                          <div>
+                            <h4 className="font-bol">
+                              {schedule.scheduleName}
+                            </h4>
+                            <p className="text-sm">{schedule.projectName}</p>
+                            <p className="text-sm">
+                              우선순위 {schedule.priority}
+                            </p>
+                          </div>
+                          <div className="flex space-x-2">
+                            <button className="text-gray-400 hover:text-red-500">
+                              <FiTrash2 size={20} />
+                            </button>
+                            <button className="text-gray-400 hover:text-blue-500">
+                              <FiEdit3
+                                size={20}
+                                onClick={() => handleOpenModal(schedule)}
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>현재 진핼 할 일정이 없습니다.</p>
+                    )}
+                  </div>
+                  <div className="flex justify-center">
+                    <button
+                      className="w-[302px] h-[51px] bg-primary text-white font-bold px-4 py-2 rounded-[56px] hover:bg-[#257ADA] transition-colors ease-linear mb-3"
+                      onClick={() => handleOpenModal(null)}>
+                      + ADD
+                    </button>
+                  </div>
                 </div>
               </div>
-              {/* 두 번째 보드 */}
+              {/* In Progress 보드 */}
               <div className="flex flex-col items-start">
                 <div className="flex items-center">
                   <img
@@ -86,9 +138,43 @@ export default function Board() {
                   />
                   <h3 className="text-[17px] font-regular mb-2">In Progress</h3>
                 </div>
-                <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg p-4 flex flex-col space-y-4"></div>
+                {/*상태 = "진행 중"인 일정 카드 */}
+                <div className="overflow-y-auto w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg">
+                  <div className="p-4 flex flex-col space-y-4">
+                    {schedules.length > 0 ? (
+                      schedules.map((schedule) => (
+                        <div
+                          key={schedule.id}
+                          className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray">
+                          <div>
+                            <h4 className="font-bol">
+                              {schedule.scheduleName}
+                            </h4>
+                            <p className="text-sm">{schedule.projectName}</p>
+                            <p className="text-sm">
+                              우선순위 {schedule.priority}
+                            </p>
+                          </div>
+                          <div className="flex space-x-2">
+                            <button className="text-gray-400 hover:text-red-500">
+                              <FiTrash2 size={20} />
+                            </button>
+                            <button className="text-gray-400 hover:text-blue-500">
+                              <FiEdit3
+                                size={20}
+                                onClick={() => handleOpenModal(schedule)}
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>현재 진행 중인 일정이 없습니다.</p>
+                    )}
+                  </div>
+                </div>
               </div>
-              {/* 세 번째 보드 */}
+              {/* completed 보드 */}
               <div className="flex flex-col items-start">
                 <div className="flex items-center">
                   <img
@@ -98,13 +184,52 @@ export default function Board() {
                   />
                   <h3 className="text-[17px] font-regular mb-2">Completed</h3>
                 </div>
-                <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg p-4 flex flex-col space-y-4"></div>
+                {/*상태 = "진행 중"인 일정 카드 */}
+                <div className="overflow-y-auto w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg">
+                  <div className="p-4 flex flex-col space-y-4">
+                    {schedules.length > 0 ? (
+                      schedules.map((schedule) => (
+                        <div
+                          key={schedule.id}
+                          className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray">
+                          <div>
+                            <h4 className="font-bol">
+                              {schedule.scheduleName}
+                            </h4>
+                            <p className="text-sm">{schedule.projectName}</p>
+                            <p className="text-sm">
+                              우선순위 {schedule.priority}
+                            </p>
+                          </div>
+                          <div className="flex space-x-2">
+                            <button className="text-gray-400 hover:text-red-500">
+                              <FiTrash2 size={20} />
+                            </button>
+                            <button className="text-gray-400 hover:text-blue-500">
+                              <FiEdit3
+                                size={20}
+                                onClick={() => handleOpenModal(schedule)}
+                              />
+                            </button>
+                          </div>
+                        </div>
+                      ))
+                    ) : (
+                      <p>현재 완료된 일정이 없습니다.</p>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <ScheduleModal isOpen={isModalOpen} onClose={handleModalClose} />
+      <ScheduleModal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        schedule={selectedSchedule}
+        isEdit={isEdit}
+      />
     </div>
   );
 }
