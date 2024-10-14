@@ -57,17 +57,12 @@ export default function Login() {
         <button
           type="submit"
           className="p-[18px-20px] w-[464px] h-[56px] bg-[#599BFF] border rounded-[10px] text-white font-bold"
-          disabled={loading}
         >
-          {loading ? '로그인 중...' : '로그인'}
+          로그인
         </button>
 
         {/* 오류 메시지 표시 */}
-        {errorMessage && (
-          <p className="text-red-500 mt-2">
-            이메일 혹은 비밀번호가 틀렸습니다.
-          </p>
-        )}
+        {loading && <p className="text-red-500 mt-2">{errorMessage}</p>}
 
         {/* 로그인 밑에 회원가입, 아이디, 비밀번호 찾기 */}
         <div className="w-[267px] h-[20px] mt-4 text-[#757575] text-center">

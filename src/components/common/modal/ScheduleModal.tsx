@@ -249,13 +249,13 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
           />
         </div>
         {/* 팀원 목록 이미지 표시 아직 작업 x */}
-        <div className="flex space-x-2">
+        {/* <div className="flex space-x-2">
           {teamMembers.map((member, index) => (
             <div key={index} className="bg-green-200 rounded-full p-2">
               {member}
             </div>
           ))}
-        </div>
+        </div> */}
 
         {/* 하단 버튼 */}
         <div className="flex justify-end space-x-4">

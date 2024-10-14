@@ -18,6 +18,26 @@ const useLogin = () => {
   const login = async (email: string, password: string) => {
     setErrorMessage('');
     setLoading(true);
+    // 유효성 검사
+    if (!email || !password) {
+      setErrorMessage('모든 필드를 입력해 주세요.');
+      return;
+    }
+
+    // 이메일 형식 확인 (간단한 정규식)
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setErrorMessage('유효한 이메일 주소를 입력해 주세요.');
+      return;
+    }
+
+    // 비밀번호 형식 검사: 특수문자 포함 여부 및 10자 이내 제한
+    const passwordRegex =
+      /^(?=.*[!@#$%^&*()_\-+=])[a-zA-Z0-9!@#$%^&*()_\-+=]{1,10}$/;
+    if (!passwordRegex.test(password)) {
+      setErrorMessage('비밀번호는 특수문자를 포함하고 10자 이내여야 합니다.');
+      return;
+    }
     try {
       const response = await axios.post('http://localhost:3000/users/login', {
         email,
