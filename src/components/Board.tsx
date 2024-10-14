@@ -45,32 +45,48 @@ export default function Board() {
   /** 드래그가 끝났을 때 호출되며, 항목이 드롭된 위치에 맞게 schedules 배열을 업데이트 */
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
-
-    if (!destination) {
-      return;
-    }
-
-    const sourceIndex = source.index;
-    const destinationIndex = destination.index;
-
+  
+    // 드롭되지 않은 경우 종료
+    if (!destination) return;
+  
+    // 같은 보드 내 이동 처리
     if (source.droppableId === destination.droppableId) {
-      // 같은 보드 내에서 이동
-      const newSchedules = Array.from(schedules);
-      const [movedSchedule] = newSchedules.splice(sourceIndex, 1);
-      newSchedules.splice(destinationIndex, 0, movedSchedule);
-      setSchedules(newSchedules);
-    } else {
-      // 다른 보드로 이동
-      const newSchedules = Array.from(schedules);
-      const movedSchedule = newSchedules.find(
-        (schedule) => schedule.id === schedules[sourceIndex].id
+      const items = Array.from(
+        schedules.filter((schedule) => schedule.status === source.droppableId)
       );
-      if (movedSchedule) {
-        movedSchedule.status = destination.droppableId as '할 일' | '진행 중' | '완료'; // 상태를 업데이트 (할 일, 진행 중, 완료)
-        newSchedules.splice(sourceIndex, 1);
-        newSchedules.splice(destinationIndex, 0, movedSchedule);
-        setSchedules(newSchedules);
-      }
+  
+      const [reorderedItem] = items.splice(source.index, 1);
+      items.splice(destination.index, 0, reorderedItem);
+  
+      const updatedSchedules = schedules.map((schedule) =>
+        items.find((item) => item.id === schedule.id) || schedule
+      );
+  
+      setSchedules(updatedSchedules);
+    } else {
+      // 다른 보드로 이동 처리
+      const sourceItems = schedules.filter(
+        (schedule) => schedule.status === source.droppableId
+      );
+      const destinationItems = schedules.filter(
+        (schedule) => schedule.status === destination.droppableId
+      );
+  
+      const [movedItem] = sourceItems.splice(source.index, 1);
+      movedItem.status = destination.droppableId as '할 일' | '진행 중' | '완료';
+      destinationItems.splice(destination.index, 0, movedItem);
+  
+      const updatedSchedules = [
+        ...sourceItems,
+        ...destinationItems,
+        ...schedules.filter(
+          (schedule) =>
+            schedule.status !== source.droppableId &&
+            schedule.status !== destination.droppableId
+        ),
+      ];
+  
+      setSchedules(updatedSchedules);
     }
   };
 
