@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import logo from '../assets/logos/todolo_logo_main.png';
+import useLogin from '../hooks/useLogin';
 
 export default function Login() {
   // 인풋값 입력시, 색상 변경하기
@@ -8,49 +9,17 @@ export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  //에러 & 로딩 처리
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  // 훅에서 로딩 및 에러 상태, 로그인 함수 가져오기
+  const { login, loading, errorMessage } = useLogin();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
-
-    try {
-      const response = await fetch('http://localhost:3000/users/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-      const data = await response.json();
-
-      if (!response.ok) {
-        // 서버에서 반환된 오류 메시지 사용
-        throw new Error(data.message || '로그인 실패!');
-      }
-
-      // 로그인 성공
-      localStorage.setItem('accessToken', data.accessToken);
-      window.location.href = ''; // 리다이렉션할 페이지 => 메인페이지(보드?)
-    } catch (err: any) {
-      // 서버로부터 받은 오류 메시지를 화면에 표시
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
+    await login(email, password);
   };
 
   return (
-    <div className="w-[1440px] h-[1024px] flex items-center justify-center relative">
-      <img
-        src={logo}
-        alt="todolo"
-        className="mb-4 w-[461px] h-[135px] absolute top-[230px]"
-      />
+    <div className="flex flex-col h-screen items-center justify-center relative">
+      <img src={logo} alt="todolo" className="mb-4 w-[461px] h-[135px]" />
       <form onSubmit={handleSubmit} className="flex flex-col items-center">
         {/* 이메일 인풋 박스 */}
         <input
@@ -93,7 +62,7 @@ export default function Login() {
         </button>
 
         {/* 오류 메시지 표시 */}
-        {error && (
+        {errorMessage && (
           <p className="text-red-500 mt-2">
             이메일 혹은 비밀번호가 틀렸습니다.
           </p>
@@ -101,7 +70,7 @@ export default function Login() {
 
         {/* 로그인 밑에 회원가입, 아이디, 비밀번호 찾기 */}
         <div className="w-[267px] h-[20px] mt-4 text-[#757575] text-center">
-          <a href="#">회원가입</a> / <a href="#">아이디</a> /{' '}
+          <a href="/register">회원가입</a> / <a href="#">아이디</a> /{' '}
           <a href="#">비밀번호찾기</a>
         </div>
       </form>
