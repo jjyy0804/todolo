@@ -34,9 +34,18 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       setTeamMembers(schedule.teamMembers || []);
     }
   }, [schedule]);
-  /**일정 추가하기
-   * 서버로 새로운 일정 등록 요청 후 input 초기화 , 모달 창 닫음
-   */
+  /**상태값 초기화 */
+  const clearForm = () => {
+    setScheduleName('');
+    setProjectName('');
+    setScheduleContent('');
+    setStartDate('');
+    setEndDate('');
+    setPriority('중간');
+    setStatus('할 일');
+    setTeamMembers([]);
+  };
+  /**일정 추가 요청 보내기*/
   const handleAddClick = async () => {
     const newSchedule = {
       id: Date.now(), // 임시로 현재 시간을 ID로 사용
@@ -67,17 +76,13 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       console.log(newSchedule);
     } finally {
       onClose();
+      clearForm();
     }
-    // 폼 초기화
-    setScheduleName('');
-    setProjectName('');
-    setScheduleContent('');
-    setStartDate('');
-    setEndDate('');
-    setStatus('할 일');
-    setPriority('중간');
-    setTeamMembers([]);
+  };
+  /**모달창(수정모드) 닫기 시 입력 필드 초기화 */
+  const handleModalClose = () => {
     onClose();
+    clearForm();
   };
   if (!isOpen) return null;
   return (
@@ -85,8 +90,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       <div className="relative bg-white w-[600px] rounded-[10px] shadow-lg p-8">
         <button
           className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl"
-          onClick={onClose}
-        >
+          onClick={handleModalClose}>
           &times;
         </button>
 
