@@ -7,6 +7,7 @@ import Login from '../components/Login';
 import Register from '../components/Register';
 import MyPage from '../components/MyPage';
 import Calendar from '../components/Calendar';
+import ResetPassword from '../components/ResetPassword';
 import ErrorPage from '../components/ErrorPage';
 
 const routes = [
@@ -37,6 +38,10 @@ const routes = [
       {
         path: 'calendar',
         element: <Calendar />,
+      },
+      {
+        path: 'reset-pw',
+        element: <ResetPassword />,
       },
     ],
   },
