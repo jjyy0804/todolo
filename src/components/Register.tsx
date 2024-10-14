@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import NavigationBar from './common/NavigationBar';
 import basicProfileImage from '../assets/images/basic_user_profile.png';
 import { FaCheckCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import useRegisterUser from '../hooks/useRegisterUser';
 
 export default function Register() {
   const [profileImage, setProfileImage] = useState(basicProfileImage);
@@ -12,7 +12,8 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [team, setTeam] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
+
+  const { errorMessage, register } = useRegisterUser();
 
   const navigate = useNavigate();
 
@@ -42,49 +43,16 @@ export default function Register() {
   /**회원가입하기 버튼 클릭 시 */
   const handleRegisterButtonClick = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    // 유효성 검사
-    if (!name || !email || !password || !passwordConfirm || !team) {
-      setErrorMessage('모든 필드를 입력해 주세요.');
-      return;
-    }
-
-    // 이메일 형식 확인 (간단한 정규식)
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      setErrorMessage('유효한 이메일 주소를 입력해 주세요.');
-      return;
-    }
-
-    // 비밀번호 확인
-    if (password !== passwordConfirm) {
-      setErrorMessage('비밀번호가 일치하지 않습니다.');
-      return;
-    }
-
-    try {
-      // 서버 전송 폼 데이터
-      const formData = {
-        name,
-        email,
-        password,
-        team,
-        avatar: profileImage === basicProfileImage ? '' : profileImage, // 기본 이미지일 경우 빈 문자열로 설정
-      };
-      const response = await axios.post(
-        'http://localhost:3000/users/register',
-        formData,
-      );
-
-      if (response.status === 200) {
-        alert('회원가입이 완료되었습니다!');
-        setErrorMessage(''); // 성공 시 오류 메시지 초기화
-        navigate('/main');
-      }
-    } catch (error) {
-      console.error('회원가입 오류:', error);
-      setErrorMessage('회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
-    }
+    //useRegister() 커스텀 훅에서 서버로 전송
+    await register({
+      name,
+      email,
+      password,
+      passwordConfirm,
+      team,
+      profileImage,
+      basicProfileImage,
+    });
   };
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">

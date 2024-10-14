@@ -58,7 +58,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
         <h2
           className="text-darkgray flex items-end justify-end text-[13px] font-regular mb-4 cursor-pointer"
-          onClick={onClose}  // X 버튼을 클릭하면 onClose 호출
+          onClick={onClose} // X 버튼을 클릭하면 onClose 호출
         >
           X
         </h2>
@@ -87,7 +87,9 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           style={{ display: 'none' }}
         />
 
-        <p className="flex items-center justify-center mt-2 text-sm text-gray-600">elicetrack99@gmail.com</p>
+        <p className="flex items-center justify-center mt-2 text-sm text-gray-600">
+          elicetrack99@gmail.com
+        </p>
 
         <form className="space-y-4">
           {/* 이름 */}
@@ -125,7 +127,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPassword(e.target.value)
               }
-              disabled={!isEditable}  // isEditable이 false면 입력 불가
+              disabled={!isEditable} // isEditable이 false면 입력 불가
             />
           </div>
 
@@ -141,7 +143,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               placeholder="다시 한번 입력해주세요."
               value={passwordConfirm}
               onChange={handleConfirmPasswordChange}
-              disabled={!isEditable}  // isEditable이 false면 입력 불가
+              disabled={!isEditable} // isEditable이 false면 입력 불가
             />
             {password && passwordConfirm && password === passwordConfirm && (
               <FaCheckCircle className="absolute right-3 top-9 text-green-500" />
@@ -154,7 +156,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                 <button
                   type="button"
                   className="py-2 px-4 border-[1px] border-primary rounded-lg shadow-sm font-bold text-sm text-primary hover:bg-gray-50"
-                  onClick={handleCancelClick}  // 취소 버튼 클릭 시 handleCancelClick 호출
+                  onClick={handleCancelClick} // 취소 버튼 클릭 시 handleCancelClick 호출
                 >
                   취소
                 </button>
@@ -170,7 +172,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               <button
                 type="button"
                 className="py-2 px-4 bg-primary text-white rounded-lg shadow-sm font-bold text-sm hover:bg-secondary"
-                onClick={handleEditClick}  // "내 정보 변경" 버튼 클릭 시 handleEditClick 호출
+                onClick={handleEditClick} // "내 정보 변경" 버튼 클릭 시 handleEditClick 호출
               >
                 내 정보 변경
               </button>
