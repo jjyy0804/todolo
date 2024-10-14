@@ -8,7 +8,6 @@ import glassImg from '../assets/icons/magnifyingglass.png';
 import ScheduleModal from './common/modal/ScheduleModal';
 import useUserStore from '../store/useUserstore';
 import useScheduleStore from '../store/useScheduleStore';
-import { secureHeapUsed } from 'crypto';
 
 export default function Board() {
   const [isModalOpen, setIsModalOpen] = useState(false);
