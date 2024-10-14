@@ -13,13 +13,13 @@ export default function Landing() {
         <div className="w-1/3 flex justify-around">
           <button
             onClick={() => navigate('/login')}
-            className="bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition"
+            className="bg-primary border-primary text-white py-3 px-6 rounded-lg hover:bg-hoverprimary transition"
           >
             Login
           </button>
           <button
             onClick={() => navigate('/register')}
-            className="border border-blue-500 text-blue-500 py-3 px-6 rounded-lg hover:bg-blue-500 hover:text-white transition"
+            className="border border-primary text-primary py-3 px-6 rounded-lg hover:bg-hoversecondary hover:text-primary hover:border-white transition"
           >
             Sign Up
           </button>
