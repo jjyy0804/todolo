@@ -11,13 +11,13 @@ import useScheduleStore from '../store/useScheduleStore';
 import UserInfoModal from './common/UserInfoModal';
 
 export default function Board() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSchedule, setSelectedSchedule] = useState<any | null>(null); // 수정할 일정
   const [isEdit, setIsEdit] = useState(false); // 수정 모드 여부
 
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
-  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false); // schedule 모달
+
   const openUserInfoModal = () => setIsUserInfoModalOpen(true);
   const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
 
