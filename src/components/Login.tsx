@@ -57,7 +57,8 @@ export default function Login() {
         <button
           type="submit"
           className="p-[18px-20px] w-[464px] h-[56px] bg-[#599BFF] border rounded-[10px] text-white font-bold"
-          disabled={loading}>
+          disabled={loading}
+        >
           {loading ? '로그인 중...' : '로그인'}
         </button>
 

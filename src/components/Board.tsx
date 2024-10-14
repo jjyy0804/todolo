@@ -91,7 +91,8 @@ export default function Board() {
                       schedules.map((schedule) => (
                         <div
                           key={schedule.id}
-                          className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray">
+                          className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                        >
                           <div>
                             <h4 className="font-bol">
                               {schedule.scheduleName}
@@ -121,7 +122,8 @@ export default function Board() {
                   <div className="flex justify-center">
                     <button
                       className="w-[302px] h-[51px] bg-primary text-white font-bold px-4 py-2 rounded-[56px] hover:bg-[#257ADA] transition-colors ease-linear mb-3"
-                      onClick={() => handleOpenModal(null)}>
+                      onClick={() => handleOpenModal(null)}
+                    >
                       + ADD
                     </button>
                   </div>
@@ -144,7 +146,8 @@ export default function Board() {
                       schedules.map((schedule) => (
                         <div
                           key={schedule.id}
-                          className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray">
+                          className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                        >
                           <div>
                             <h4 className="font-bol">
                               {schedule.scheduleName}
@@ -190,7 +193,8 @@ export default function Board() {
                       schedules.map((schedule) => (
                         <div
                           key={schedule.id}
-                          className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray">
+                          className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                        >
                           <div>
                             <h4 className="font-bol">
                               {schedule.scheduleName}

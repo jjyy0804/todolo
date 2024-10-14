@@ -65,7 +65,8 @@ export default function Register() {
         <div className="flex flex-col items-center mb-6">
           <div
             className="w-24 h-24 rounded-full border flex items-center justify-center relative cursor-pointer"
-            onClick={handleImageClick}>
+            onClick={handleImageClick}
+          >
             <img
               src={profileImage}
               alt="basic_profile_image"
@@ -155,7 +156,8 @@ export default function Register() {
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setTeam(e.target.value)
               }
-              className="mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none text-darkgray">
+              className="mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none text-darkgray"
+            >
               <option value="" disabled>
                 소속 팀을 선택하세요
               </option>
@@ -172,13 +174,15 @@ export default function Register() {
             <button
               type="button"
               className="py-2 px-4 border-2 border-primary rounded-lg shadow-sm text-sm text-primary hover:bg-gray-50"
-              onClick={handleCancleButtonClick}>
+              onClick={handleCancleButtonClick}
+            >
               취소
             </button>
             <button
               type="submit"
               className="py-2 px-4 bg-primary text-white rounded-lg shadow-sm text-sm hover:bg-secondary"
-              onClick={handleRegisterButtonClick}>
+              onClick={handleRegisterButtonClick}
+            >
               가입하기
             </button>
           </div>

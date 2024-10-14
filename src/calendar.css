@@ -14,6 +14,8 @@
   --fc-button-hover-border-color: #ffffff00;
   --fc-button-active-bg-color: #ffffff00;
   --fc-button-active-border-color: #ffffff00;
+
+  --fc-event-text-color: #4b4b4b;
 }
 .fc {
   height: 100vh;
