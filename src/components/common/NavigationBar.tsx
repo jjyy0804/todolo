@@ -25,10 +25,6 @@ const NavigationBar = () => {
     }
   };
 
-  const handleMyPageClick = () => {
-    navigate('/myPage');
-  };
-
   const handleCalendarClick = () => {
     navigate('/calendar');
   };

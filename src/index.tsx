@@ -10,6 +10,6 @@ const root = ReactDOM.createRoot(
 root.render(
   //드래그앤 드랍 기능 구현 시 에러 남
   // <React.StrictMode>
-    <RouterProvider router={router} />
+  <RouterProvider router={router} />,
   // </React.StrictMode>,
 );

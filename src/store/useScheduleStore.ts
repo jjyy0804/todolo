@@ -1,21 +1,7 @@
 import { create } from 'zustand';
-/**팀원 정보 인터페이스 */
-interface TeamMember {
-  id: number;
-  name: string;
-}
+//사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
+import { TeamMember, Schedule } from '../types/scheduleTypes';
 
-interface Schedule {
-  id: number;
-  scheduleName: string;
-  projectName: string;
-  scheduleContent: string;
-  status: '할 일' | '진행 중' | '완료';
-  priority: '높음' | '중간' | '낮음';
-  teamMembers: TeamMember[];
-  startDate: string;
-  endDate: string;
-}
 /** Zustand 스토어 인터페이스 정의 */
 interface ScheduleState {
   schedules: Schedule[];
