@@ -30,7 +30,7 @@ export default function ResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`/users/reset-password/:{token}`, {
+      const response = await axios.post(`/users/reset-password/:${token}`, {
         password: password,
       });
       console.log(response.data.message);
@@ -42,14 +42,16 @@ export default function ResetPassword() {
     } catch (error) {
       console.error('Error requesting reset password :', error);
       setMessage('비밀번호 재설정 요청에 실패했습니다. 다시 시도해주세요.');
+
+      setTimeout(() => {
+        navigate('/login');
+      }, 2000);
     }
   };
 
-  console.log({ token });
-
   return token ? (
     <div className="flex flex-col items-center justify-center h-screen">
-      <p>{message}</p>
+      <p className="block text-sm font-medium text-softgray mb-10">{message}</p>
       <div className="mb-10">
         <label className="text-sm font-medium text-softgray">비밀번호</label>
         <input
