@@ -16,6 +16,7 @@ interface Comment {
 }
 
 interface Task {
+month: string;
   title: string;
   date: string;
   projectName: string;
@@ -84,6 +85,9 @@ function CalendarModal({
     }
   };
 
+  // {월(month) 가져오기}
+  const month = new Date(task.date).toLocaleDateString('en-US', { month: 'short' });
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
       <div className="bg-white w-[600px] max-h-[90vh] p-6 rounded-lg shadow-lg relative overflow-y-auto">
@@ -104,8 +108,8 @@ function CalendarModal({
               alt="Calendar Icon"
               className="w-[84px] h-[85px] mr-1 mb-2"
             />
-            <span className="absolute top-9 left-5 text-[25px] font-bold text-primary">
-              Oct.
+            <span className="absolute top-8 left-6 text-[30px] font-bold text-primary">
+            31
             </span>
           </div>
 
