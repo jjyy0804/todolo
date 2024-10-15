@@ -13,8 +13,6 @@ import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './common/UserInfoModal';
 import CalendarModal from '../components/common/modal/CalendarModal';
 
-
-
 interface Schedule {
   id: number;
   scheduleName: string;
@@ -41,21 +39,30 @@ interface Comment {
 }
 
 export default function Board() {
-  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);  // 등록, 수정 모달 상태
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); // 등록, 수정 모달 상태
   const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null); // 수정할 일정
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
+    null,
+  ); // 수정할 일정
   const [isEdit, setIsEdit] = useState(false); // 수정 모드 여부
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // 삭제 모달 상태
-  const [scheduleToDelete, setScheduleToDelete] = useState<Schedule | null>(null); // 삭제할 일정
+  const [scheduleToDelete, setScheduleToDelete] = useState<Schedule | null>(
+    null,
+  ); // 삭제할 일정
 
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
-
 
   const openUserInfoModal = () => setIsUserInfoModalOpen(true);
   const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
 
   const { user } = useUserStore();
-  const { schedules, addSchedule, removeSchedule, updateSchedule, setSchedules} = useScheduleStore();
+  const {
+    schedules,
+    addSchedule,
+    removeSchedule,
+    updateSchedule,
+    setSchedules,
+  } = useScheduleStore();
 
   useEffect(() => {
     console.log(schedules);
@@ -64,47 +71,50 @@ export default function Board() {
   /** 드래그가 끝났을 때 호출되며, 항목이 드롭된 위치에 맞게 schedules 배열을 업데이트 */
   const onDragEnd = (result: any) => {
     const { source, destination } = result;
-  
+
     // 드롭되지 않은 경우 종료
     if (!destination) return;
-  
+
     // 같은 보드 내 이동 처리
     if (source.droppableId === destination.droppableId) {
       const items = Array.from(
-        schedules.filter((schedule) => schedule.status === source.droppableId)
+        schedules.filter((schedule) => schedule.status === source.droppableId),
       );
-  
+
       const [reorderedItem] = items.splice(source.index, 1);
       items.splice(destination.index, 0, reorderedItem);
-  
-      const updatedSchedules = schedules.map((schedule) =>
-        items.find((item) => item.id === schedule.id) || schedule
+
+      const updatedSchedules = schedules.map(
+        (schedule) => items.find((item) => item.id === schedule.id) || schedule,
       );
-  
+
       setSchedules(updatedSchedules);
     } else {
       // 다른 보드로 이동 처리
       const sourceItems = schedules.filter(
-        (schedule) => schedule.status === source.droppableId
+        (schedule) => schedule.status === source.droppableId,
       );
       const destinationItems = schedules.filter(
-        (schedule) => schedule.status === destination.droppableId
+        (schedule) => schedule.status === destination.droppableId,
       );
-  
+
       const [movedItem] = sourceItems.splice(source.index, 1);
-      movedItem.status = destination.droppableId as '할 일' | '진행 중' | '완료';
+      movedItem.status = destination.droppableId as
+        | '할 일'
+        | '진행 중'
+        | '완료';
       destinationItems.splice(destination.index, 0, movedItem);
-  
+
       const updatedSchedules = [
         ...sourceItems,
         ...destinationItems,
         ...schedules.filter(
           (schedule) =>
             schedule.status !== source.droppableId &&
-            schedule.status !== destination.droppableId
+            schedule.status !== destination.droppableId,
         ),
       ];
-  
+
       setSchedules(updatedSchedules);
     }
   };
@@ -282,17 +292,21 @@ export default function Board() {
                                     <div className="flex space-x-2">
                                       <button
                                         className="text-gray-400 hover:text-red-500"
-                                        onClick={() => openDeleteModal(schedule)}
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          openDeleteModal(schedule);
+                                        }}
                                       >
                                         <FiTrash2 size={20} />
                                       </button>
-                                      <button className="text-gray-400 hover:text-blue-500">
-                                        <FiEdit3
-                                          size={20}
-                                          onClick={() =>
-                                            handleOpenModal(schedule)
-                                          }
-                                        />
+                                      <button
+                                        className="text-gray-400 hover:text-blue-500"
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          handleOpenModal(schedule);
+                                        }}
+                                      >
+                                        <FiEdit3 size={20} />
                                       </button>
                                     </div>
                                   </div>
@@ -363,7 +377,9 @@ export default function Board() {
                                     <div className="flex space-x-2">
                                       <button
                                         className="text-gray-400 hover:text-red-500"
-                                        onClick={() => openDeleteModal(schedule)}
+                                        onClick={() =>
+                                          openDeleteModal(schedule)
+                                        }
                                       >
                                         <FiTrash2 size={20} />
                                       </button>
@@ -436,7 +452,9 @@ export default function Board() {
                                     <div className="flex space-x-2">
                                       <button
                                         className="text-gray-400 hover:text-red-500"
-                                        onClick={() => openDeleteModal(schedule)}
+                                        onClick={() =>
+                                          openDeleteModal(schedule)
+                                        }
                                       >
                                         <FiTrash2 size={20} />
                                       </button>
@@ -466,9 +484,9 @@ export default function Board() {
       </div>
       {/* 삭제 확인 모달 */}
       <DeleteConfirmModal
-      isOpen={isDeleteModalOpen}
-      onClose={() => setIsDeleteModalOpen(false)}
-      onConfirm={handleConfirmDelete}
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleConfirmDelete}
       />
       <ScheduleModal
         isOpen={isScheduleModalOpen}
