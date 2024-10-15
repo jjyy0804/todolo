@@ -11,6 +11,7 @@ import useScheduleStore from '../store/useScheduleStore';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './common/UserInfoModal';
+import useDeleteTask from '../hooks/task/useDeleteTask';
 
 interface Schedule {
   id: number;
@@ -27,28 +28,36 @@ interface Schedule {
 interface TeamMember {
   id: number;
   name: string;
+  avatar?: string;
 }
 
 export default function Board() {
-  const [isModalOpen, setIsModalOpen] = useState(false);  // 등록, 수정 모달 상태
-  const [searchTerm, setSearchTerm] = useState('');
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); // 등록, 수정 모달 상태
+  const [searchTerm, setSearchTerm] = useState(''); // 검색어 (프로젝트명, 사용자명)
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null); // 수정할 일정
   const [isEdit, setIsEdit] = useState(false); // 수정 모드 여부
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // 삭제 모달 상태
   const [scheduleToDelete, setScheduleToDelete] = useState<Schedule | null>(null); // 삭제할 일정
-
-  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
-
-
-  const openUserInfoModal = () => setIsUserInfoModalOpen(true);
-  const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
-
+  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);  // 유저 정보 모달 상태
+  
   const { user } = useUserStore();
   const { schedules, addSchedule, removeSchedule, updateSchedule, setSchedules} = useScheduleStore();
 
+  const [filteredSchedules, setFilteredSchedules] = useState<Schedule[]>(schedules); //사용자 및 프로젝트 검색
+
+  const openUserInfoModal = () => setIsUserInfoModalOpen(true);
+  const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
+  const { deleteTask, loading } = useDeleteTask(); //일정 삭제 커스텀 훅
+  /**검색어에 따라 일정목록을 재렌더링함 */
   useEffect(() => {
-    console.log(schedules);
-  }, [schedules]);
+    setFilteredSchedules(
+      schedules.filter((schedule) =>
+        schedule.projectName.includes(searchTerm) ||
+        schedule.teamMembers.some((member) => member.name.includes(searchTerm))
+      )
+    );
+  }, [schedules, searchTerm]);
+  console.log(filteredSchedules);
 
   /** 드래그가 끝났을 때 호출되며, 항목이 드롭된 위치에 맞게 schedules 배열을 업데이트 */
   const onDragEnd = (result: any) => {
@@ -97,30 +106,32 @@ export default function Board() {
       setSchedules(updatedSchedules);
     }
   };
-
-  // 프로젝트 및 사용자 필터링 하는 로직 추가 (API도 받아오기)
+  /**일정을 클릭했을 경우 수정모드, 
+  * add 버튼을 클릭했을 경우 등록 모드
+  */
   const handleOpenModal = (schedule: Schedule | null) => {
     setSelectedSchedule(schedule);
     setIsEdit(!!schedule); // 일정이 있으면 수정 모드로 전환
-    setIsModalOpen(true);
+    setIsScheduleModalOpen(true);
   };
-
+  /**일정 수정,등록 모달 닫기*/
   const handleModalClose = () => {
-    setIsModalOpen(false);
+    setIsScheduleModalOpen(false);
     setSelectedSchedule(null); // 모달 닫을 때 데이터 초기화
     setIsEdit(false); // 수정 모드 초기화
   };
 
-  // 삭제 모달 열기
+  /**삭제 모달 열기  */ 
   const openDeleteModal = (schedule: Schedule) => {
     setScheduleToDelete(schedule);
     setIsDeleteModalOpen(true);
   };
 
-  // 삭제 모달 확인 시 실행
+  /**삭제 모달 확인 시 실행*/
   const handleConfirmDelete = () => {
     if (scheduleToDelete) {
-      removeSchedule(scheduleToDelete.id);
+      removeSchedule(scheduleToDelete.id)
+      deleteTask(scheduleToDelete.id);
     }
     setIsDeleteModalOpen(false);
     setScheduleToDelete(null);
@@ -147,7 +158,7 @@ export default function Board() {
         </div>
 
         {/* 사용자 검색 창 => 나중에 수정필요 */}
-        <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-24">
+        <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-36">
           <div className="relative w-[343px]">
             {' '}
             {/* 인풋 박스를 감싸는 relative 컨테이너 */}
@@ -191,7 +202,7 @@ export default function Board() {
                       {/*상태 = "할 일" 인 일정 카드 */}
                       <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg overflow-y-auto flex flex-col justify-between">
                         <div className="p-4 flex flex-col space-y-4">
-                          {schedules
+                          {filteredSchedules
                             .filter((schedule) => schedule.status === '할 일')
                             .map((schedule, index) => (
                               <Draggable
@@ -272,7 +283,7 @@ export default function Board() {
                       {/*상태 = "진행 중"인 일정 카드 */}
                       <div className="overflow-y-auto w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg">
                         <div className="p-4 flex flex-col space-y-4">
-                          {schedules
+                          {filteredSchedules
                             .filter((schedule) => schedule.status === '진행 중')
                             .map((schedule, index) => (
                               <Draggable
@@ -345,7 +356,7 @@ export default function Board() {
                       {/*상태 = "완료"인 일정 카드 */}
                       <div className="overflow-y-auto w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg">
                         <div className="p-4 flex flex-col space-y-4">
-                          {schedules
+                          {filteredSchedules
                             .filter((schedule) => schedule.status === '완료')
                             .map((schedule, index) => (
                               <Draggable
@@ -402,19 +413,20 @@ export default function Board() {
           </div>
         </DragDropContext>
       </div>
-      {/* 삭제 확인 모달 */}
+      {/*삭제 확인 모달 */}
       <DeleteConfirmModal
       isOpen={isDeleteModalOpen}
       onClose={() => setIsDeleteModalOpen(false)}
       onConfirm={handleConfirmDelete}
       />
+      {/*일정 수정, 추가 모달*/}
       <ScheduleModal
-        isOpen={isModalOpen}
+        isOpen={isScheduleModalOpen}
         onClose={handleModalClose}
         schedule={selectedSchedule}
         isEdit={isEdit}
       />
-      {/* UserInfoModal */}
+      {/*유저 정보 모달*/}
       <UserInfoModal
         isOpen={isUserInfoModalOpen}
         onClose={closeUserInfoModal}

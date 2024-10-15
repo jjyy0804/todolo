@@ -259,9 +259,6 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
 
         {/* 하단 버튼 */}
         <div className="flex justify-end space-x-4">
-          <button className="border border-[#ac2949] text-[#ac2949] rounded-[10px] px-4 py-2 hover:bg-[#ffe3e8] border-transparent transition-colors ease-linear">
-            삭제
-          </button>
           <button
             className="bg-primary text-white rounded-[10px] px-4 py-2 hover:bg-[#257ADA] transition-colors ease-linear"
             onClick={handleAddClick}

@@ -16,6 +16,7 @@ const NavigationBar = () => {
     if (isAuthenticated) {
       // 로그아웃 로직
       logout();
+      localStorage.removeItem('accessToken');
       alert('로그아웃 되었습니다.');
       navigate('/');
     } else {
@@ -43,16 +44,6 @@ const NavigationBar = () => {
       <div className="flex items-center gap-4">
         {isAuthenticated && (
           <>
-            <button
-              className={`text-sm hover:text-primary ${
-                location.pathname === '/myPage'
-                  ? 'text-primary font-bold'
-                  : 'text-darkgray'
-              }`}
-              onClick={handleMyPageClick}
-            >
-              My Page
-            </button>
             <button
               className={`text-sm hover:text-primary ${
                 location.pathname === '/calendar'

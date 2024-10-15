@@ -7,6 +7,7 @@ interface UserInfomationProps {
   email: string;
   password: string;
   team: string;
+  team_id : string;
 }
 
 const useLogin = () => {
@@ -33,7 +34,8 @@ const useLogin = () => {
           name: data.data.name,
           email: data.data.email,
           avatar: data.data.avatar,
-          team: data.data.team,
+          team: data.data.team.team,
+          team_id: data.data.team._id,
         });
         navigate('/main');
       }

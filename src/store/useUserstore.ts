@@ -6,6 +6,7 @@ interface User {
   email: string;
   avatar?: string;
   team?: string;
+  team_id?: string;
 }
 
 /** Zustand 스토어 인터페이스 정의 */
