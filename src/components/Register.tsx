@@ -11,7 +11,6 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
-  const [team, setTeam] = useState('');
 
   const { errorMessage, register } = useRegisterUser();
 
@@ -49,7 +48,6 @@ export default function Register() {
       email,
       password,
       passwordConfirm,
-      team,
       profileImage,
       basicProfileImage,
     });
@@ -145,27 +143,6 @@ export default function Register() {
             {password && passwordConfirm && password === passwordConfirm && (
               <FaCheckCircle className="absolute right-3 top-9 text-green-500" />
             )}
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-softgray">
-              소속 팀
-            </label>
-            <select
-              value={team}
-              onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                setTeam(e.target.value)
-              }
-              className="mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none text-darkgray"
-            >
-              <option value="" disabled>
-                소속 팀을 선택하세요
-              </option>
-              <option value="1팀">1팀</option>
-              <option value="2팀">2팀</option>
-              <option value="3팀">3팀</option>
-              <option value="4팀">4팀</option>
-            </select>
           </div>
           {errorMessage && (
             <p className="text-red-500 text-sm mt-2">{errorMessage}</p>

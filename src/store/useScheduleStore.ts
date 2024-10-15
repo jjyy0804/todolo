@@ -19,6 +19,7 @@ interface Schedule {
 /** Zustand 스토어 인터페이스 정의 */
 interface ScheduleState {
   schedules: Schedule[];
+  setSchedules: (newSchedules: Schedule[]) => void;
   addSchedule: (newSchedule: Schedule) => void;
   removeSchedule: (id: number) => void;
   updateSchedule: (id: number, updatedSchedule: Schedule) => void;
@@ -26,6 +27,7 @@ interface ScheduleState {
 /** Zustand 스토어 생성 */
 const useScheduleStore = create<ScheduleState>((set) => ({
   schedules: [],
+  setSchedules: (newSchedules) => set({ schedules: newSchedules }),
   addSchedule: (newSchedule) =>
     set((state) => ({
       schedules: [...state.schedules, newSchedule],
