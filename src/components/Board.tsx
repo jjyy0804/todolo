@@ -11,6 +11,9 @@ import useScheduleStore from '../store/useScheduleStore';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './common/UserInfoModal';
+import CalendarModal from '../components/common/modal/CalendarModal';
+
+
 
 interface Schedule {
   id: number;
@@ -29,8 +32,16 @@ interface TeamMember {
   name: string;
 }
 
+// 댓글 인터페이스 정의
+interface Comment {
+  id: number;
+  user: string;
+  date: string;
+  content: string;
+}
+
 export default function Board() {
-  const [isModalOpen, setIsModalOpen] = useState(false);  // 등록, 수정 모달 상태
+  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);  // 등록, 수정 모달 상태
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null); // 수정할 일정
   const [isEdit, setIsEdit] = useState(false); // 수정 모드 여부
@@ -102,11 +113,11 @@ export default function Board() {
   const handleOpenModal = (schedule: Schedule | null) => {
     setSelectedSchedule(schedule);
     setIsEdit(!!schedule); // 일정이 있으면 수정 모드로 전환
-    setIsModalOpen(true);
+    setIsScheduleModalOpen(true);
   };
 
   const handleModalClose = () => {
-    setIsModalOpen(false);
+    setIsScheduleModalOpen(false);
     setSelectedSchedule(null); // 모달 닫을 때 데이터 초기화
     setIsEdit(false); // 수정 모드 초기화
   };
@@ -126,6 +137,56 @@ export default function Board() {
     setScheduleToDelete(null);
   };
 
+  const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [task, setTask] = useState({
+    title: 'title: 일정(업무)의 이름',
+    date: '10/5~10/10',
+    projectName: '프로젝트명',
+    teamMembers: [
+      { name: '유저1', avatar: 'path/to/avatar1' },
+      { name: '유저2', avatar: 'path/to/avatar2' },
+    ],
+    details: '이 프로젝트는 어떻게 진행될 예정이고 내용은 이러이러 합니다...',
+    comments: [
+      {
+        id: Date.now(),
+        user: '주영님',
+        date: '2024. 10. 07.',
+        content: '내일까지 프로필 끝내면 될까요??',
+      },
+    ],
+  });
+
+  //-------------------CalendarModal---------------------
+  // CalendarModal 오픈 & 클로즈
+  const openModal = () => setIsCalendarModalOpen(true);
+  const closeModal = () => setIsCalendarModalOpen(false);
+
+  // 댓글 등록 핸들러
+  const handleCommentSubmit = (newComment: Comment) => {
+    setTask((prevTask) => ({
+      ...prevTask,
+      comments: [...prevTask.comments, newComment],
+    }));
+  };
+
+  // 댓글 수정 핸들러
+  const handleCommentEdit = (id: number, updatedContent: string) => {
+    setTask((prevTask) => ({
+      ...prevTask,
+      comments: prevTask.comments.map((comment) =>
+        comment.id === id ? { ...comment, content: updatedContent } : comment,
+      ),
+    }));
+  };
+
+  // 댓글 삭제 핸들러
+  const handleCommentDelete = (id: number) => {
+    setTask((prevTask) => ({
+      ...prevTask,
+      comments: prevTask.comments.filter((comment) => comment.id !== id),
+    }));
+  };
 
   return (
     <div>
@@ -205,6 +266,7 @@ export default function Board() {
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                                    onClick={openModal}
                                   >
                                     <div>
                                       <h4 className="font-bol">
@@ -409,7 +471,7 @@ export default function Board() {
       onConfirm={handleConfirmDelete}
       />
       <ScheduleModal
-        isOpen={isModalOpen}
+        isOpen={isScheduleModalOpen}
         onClose={handleModalClose}
         schedule={selectedSchedule}
         isEdit={isEdit}
@@ -418,6 +480,15 @@ export default function Board() {
       <UserInfoModal
         isOpen={isUserInfoModalOpen}
         onClose={closeUserInfoModal}
+      />
+      {/* 캘린더 상세 모달 */}
+      <CalendarModal
+        isOpen={isCalendarModalOpen}
+        onClose={closeModal}
+        task={task}
+        onCommentSubmit={handleCommentSubmit}
+        onCommentEdit={handleCommentEdit} // 추가된 핸들러
+        onCommentDelete={handleCommentDelete} // 추가된 핸들러
       />
     </div>
   );
