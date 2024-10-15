@@ -40,7 +40,7 @@ const routes = [
         element: <Calendar />,
       },
       {
-        path: 'reset-pw',
+        path: 'reset-pw/:token?',
         element: <ResetPassword />,
       },
     ],
