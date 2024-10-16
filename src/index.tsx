@@ -8,7 +8,8 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
 root.render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>,
+  //드래그앤 드랍 기능 구현 시 에러 남
+  // <React.StrictMode>
+  <RouterProvider router={router} />,
+  // </React.StrictMode>,
 );
