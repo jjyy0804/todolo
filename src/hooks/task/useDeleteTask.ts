@@ -13,22 +13,21 @@ const useDeleteTask = () => {
       const token = localStorage.getItem('accessToken'); // JWT 토큰 가져오기
       if (!token) throw new Error('인증이 필요합니다. 로그인 해주세요.');
 
-      await axios.delete(`/tasks/${taskId}`, {
+      await axios.delete(`http://localhost:3000/tasks/${taskId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      alert('일정이 성공적으로 삭제되었습니다.');
+      return true; // 삭제가 성공하면 true 반환
     } catch (error: any) {
       console.error('삭제 요청 중 오류 발생:', error);
       setError(error.message || '일정 삭제에 실패했습니다.');
-      alert(error.message || '일정 삭제에 실패했습니다. 다시 시도해주세요.');
+      return false; // 삭제 실패 시 false 반환
     } finally {
-      setLoading(false); // 로딩 종료
+      setLoading(false);
     }
   };
-
   return { deleteTask, loading, error };
 };
 

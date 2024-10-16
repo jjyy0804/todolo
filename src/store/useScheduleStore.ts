@@ -49,7 +49,7 @@ const useScheduleStore = create<ScheduleState>((set) => ({
           },
         }
       );
-
+      console.log(response.data);
       // 데이터 변환
       const transformDataToSchedules = (data: any[]): Schedule[] => {
         const transformedSchedules: Schedule[] = [];
@@ -59,7 +59,7 @@ const useScheduleStore = create<ScheduleState>((set) => ({
             const task = project.tasks;
 
             const schedule: Schedule = {
-              id: task._id,
+              id: task._id, 
               title: task.title,
               content: task.content,
               projectTitle: project.title,

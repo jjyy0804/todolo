@@ -15,9 +15,7 @@ import UserInfoModal from './common/UserInfoModal';
 import useDeleteTask from '../hooks/task/useDeleteTask';
 import BasicImage from '../assets/images/basic_user_profile.png'; //프로필 기본이미지
 //사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
-import { TeamMember, Schedule } from '../types/scheduleTypes';
-import { useNavigate } from 'react-router-dom';
-import {ROUTE_LINK } from '../routes/routes';
+import { Schedule } from '../types/scheduleTypes';
 
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
@@ -44,7 +42,6 @@ export default function Board() {
       alert('로그인이 필요합니다.');
       return;
     }
-
     // 새로운 사용자가 로그인했을 때, 팀이 없으면 일정 초기화
     if (!isAuthenticated || !user?.team_id) {
       useScheduleStore.getState().clearSchedules(); // 상태 초기화
@@ -146,15 +143,29 @@ export default function Board() {
   };
 
   /**삭제 모달 확인 시 실행*/
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (scheduleToDelete) {
-      removeSchedule(scheduleToDelete.id);
-      deleteTask(scheduleToDelete.id);
+      try {
+        console.log(`삭제할 일정 ID: ${scheduleToDelete.id}`);
+        
+        // 서버에서 삭제 요청
+        const isDeleted = await deleteTask(scheduleToDelete.id); //서버에서 일정 삭제
+        
+        // 삭제 성공 여부에 따른 처리
+        if (isDeleted) {
+          removeSchedule(scheduleToDelete.id);   // 서버에서 삭제 성공 시 스토어에서 일정 삭제
+          alert('일정이 성공적으로 삭제되었습니다.');
+        } else {
+          alert('일정 삭제에 실패했습니다. 다시 시도해주세요.');
+        }
+      } catch (error: any) {
+        console.error('일정 삭제 중 오류 발생:', error);
+        alert('일정 삭제에 실패했습니다. 다시 시도해주세요.');
+      }
     }
     setIsDeleteModalOpen(false);
     setScheduleToDelete(null);
   };
-
   // avatar가 절대 경로가 아닌 경우 처리
   const avatarUrl = user?.avatar
     ? `http://localhost:3000/uploads/${user.avatar.split('\\').pop()}`
