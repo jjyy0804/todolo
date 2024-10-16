@@ -87,7 +87,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       if (isEdit) {
         //수정 로직
         const response = await axios.put(
-          `http://localhost:3000/tasks/${schedule.id}`,
+          `${process.env.REACT_APP_API_BASE_URL}/tasks/${schedule.id}`,
           newScheduleforServer,
           {
             headers: {
