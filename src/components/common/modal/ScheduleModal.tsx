@@ -4,7 +4,7 @@ import magnifyingglass from '../../../assets/icons/magnifyingglass.png';
 import useScheduleStore from '../../../store/useScheduleStore';
 import useUserStore from '../../../store/useUserstore';
 import TeamMemberSelector from '../TeamMemberSelector';
-//사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
+// 사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id, title, content, projectTitle, status, priority, taskMember, startDate, endDate, team_id )
 import { TeamMember, Schedule } from '../../../types/scheduleTypes';
 
 interface ModalProps {
@@ -13,6 +13,7 @@ interface ModalProps {
   schedule: any | null;
   isEdit: boolean; // 수정 모드 여부
 }
+
 const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
   const [scheduleName, setScheduleName] = useState('');
   const [projectName, setProjectName] = useState('');
@@ -21,12 +22,14 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
   const [endDate, setEndDate] = useState('');
   const [status, setStatus] = useState<'할 일' | '진행 중' | '완료'>('할 일');
   const [priority, setPriority] = useState<'높음' | '중간' | '낮음'>('중간');
-  const [taskMembers, setTaskMembers] = useState<TeamMember[]>([]);
-  //유저 상태관리에서 가져오기
+  const [selectedMembers, setSelectedMembers] = useState<TeamMember[]>([]); // 선택된 팀원 배열
+
+  // 유저 상태관리에서 가져오기
   const user = useUserStore((state) => state.user); // 사용자 정보 가져오기
   const teamId = user?.team_id; // team_id 가져오기
-  //일정 상태관리에서 가져오기
+  // 일정 상태관리에서 가져오기
   const { addSchedule, updateSchedule } = useScheduleStore();
+
   // 모달이 열릴 때 선택된 일정 데이터로 초기화
   useEffect(() => {
     if (schedule) {
@@ -37,10 +40,11 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       setEndDate(schedule.endDate || '');
       setStatus(schedule.status || '할 일');
       setPriority(schedule.priority || '중간');
-      setTaskMembers(schedule.taskMember || []);
+      setSelectedMembers(schedule.taskMember || []); // 수정 모드일 때 선택된 팀원 로드
     }
   }, [schedule]);
-  /**상태값 초기화 */
+
+  /** 상태값 초기화 */
   const clearForm = () => {
     setScheduleName('');
     setProjectName('');
@@ -49,11 +53,12 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
     setEndDate('');
     setPriority('중간');
     setStatus('할 일');
-    setTaskMembers([]);
+    setSelectedMembers([]);
   };
-  /**일정 추가 요청 보내기*/
+
+  /** 일정 추가 요청 보내기 */
   const handleAddClick = async () => {
-    //서버로 보내는 일정 데이터
+    // 서버로 보내는 일정 데이터
     const newScheduleforServer = {
       title: scheduleName,
       content: scheduleContent,
@@ -63,9 +68,10 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       endDate,
       status,
       priority,
-      taskMember: taskMembers.map((member) => member.id),
+      taskMember: selectedMembers.map((member) => member.id),
     };
-    //일정 스토어에 저장하는 데이터
+
+    // 일정 스토어에 저장하는 데이터
     const newScheduleForStore: Schedule = {
       id: Date.now(),
       title: scheduleName,
@@ -73,7 +79,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       projectTitle: projectName,
       status,
       priority,
-      taskMember: taskMembers,
+      taskMember: selectedMembers,
       startDate,
       endDate,
       team_id: teamId,
@@ -84,8 +90,9 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       if (!token) {
         throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
       }
+
       if (isEdit) {
-        //수정 로직
+        // 수정 로직
         const response = await axios.put(
           `${process.env.REACT_APP_API_BASE_URL}/tasks/${schedule.id}`,
           newScheduleforServer,
@@ -98,6 +105,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
         );
         alert('일정이 성공적으로 수정되었습니다.');
         console.log('응답 데이터:', response.data);
+
         // 상태 업데이트
         updateSchedule(schedule.id, newScheduleForStore);
       } else {
@@ -127,16 +135,29 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       clearForm();
     }
   };
-  /**모달창(수정모드) 닫기 시 입력 필드 초기화 */
+
+  /** 모달창(수정모드) 닫기 시 입력 필드 초기화 */
   const handleModalClose = () => {
     onClose();
     clearForm();
   };
-  /*팀원 추가 핸들러*/
-  const handleAddMember = (member: any) => {
-    setTaskMembers((prev) => [...prev, member]);
+
+  // 팀원 추가 핸들러
+  const handleAddMember = (member: TeamMember) => {
+    if (!selectedMembers.some((m) => m.id === member.id)) {
+      setSelectedMembers((prevMembers) => [...prevMembers, member]); // 중복되지 않으면 추가
+    }
   };
+
+  // 팀원 제거 핸들러
+  const handleRemoveMember = (memberId: number) => {
+    setSelectedMembers((prevMembers) =>
+      prevMembers.filter((member) => member.id !== memberId),
+    );
+  };
+
   if (!isOpen) return null;
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-[9999]">
       <div className="relative bg-white w-[600px] rounded-[10px] shadow-lg p-8">
@@ -160,6 +181,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
             onChange={(e) => setScheduleName(e.target.value)}
           />
         </div>
+
         {/* 프로젝트 명 */}
         <div className="flex mb-6 items-center justify-end gap-2">
           <select
@@ -211,6 +233,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
               <option value="완료">완료</option>
             </select>
           </div>
+
           {/* 우선순위 선택 */}
           <div className="flex items-center justify-center space-x-3 mb-6">
             <label className="flex items-center text-darkgray font-medium mb-2">
@@ -224,9 +247,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
                 className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#7F56D9]`}
               >
                 {priority === '높음' && (
-                  <span className="text-[#7F56D9] text-lg font-semibold">
-                    ✔
-                  </span>
+                  <span className="text-[#7F56D9] text-lg font-semibold">✔</span>
                 )}
               </div>
               <span className="text-darkgray">높음</span>
@@ -240,9 +261,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
                 className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#FFC14A]`}
               >
                 {priority === '중간' && (
-                  <span className="text-[#FFC14A] text-lg font-semibold">
-                    ✔
-                  </span>
+                  <span className="text-[#FFC14A] text-lg font-semibold">✔</span>
                 )}
               </div>
               <span className="text-darkgray">중간</span>
@@ -256,15 +275,14 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
                 className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#938f99]`}
               >
                 {priority === '낮음' && (
-                  <span className="text-[#938f99] text-lg font-semibold">
-                    ✔
-                  </span>
+                  <span className="text-[#938f99] text-lg font-semibold">✔</span>
                 )}
               </div>
               <span className="text-darkgray">낮음</span>
             </label>
           </div>
         </div>
+
         {/* 일정 날짜 */}
         <div className="flex items-center mb-6">
           <label className="w-[80px] text-[16px] font-medium text-darkgray">
@@ -288,8 +306,34 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
         {/* 팀원 추가 */}
         <TeamMemberSelector onAddMember={handleAddMember} />
 
+        {/* 선택된 팀원 목록 */}
+        <div className="selected-members mt-4">
+          <h4>선택된 팀원 목록:</h4>
+          <ul className="border rounded p-2">
+            {selectedMembers.length === 0 ? (
+              <li className="text-gray-500">선택된 팀원이 없습니다.</li>
+            ) : (
+              selectedMembers.map((member) => (
+                <li
+                  key={member.id}
+                  className="p-1 flex items-center cursor-pointer hover:bg-gray-200"
+                  onClick={() => handleRemoveMember(member.id)} // 클릭 시 팀원 제거
+                >
+                  <img
+                    src={member.avatar}
+                    alt={`${member.name}의 아바타`}
+                    className="w-6 h-6 rounded-full mr-2 object-cover"
+                  />
+                  {member.name}
+                  <span className="ml-auto text-red-500">제거</span> {/* 제거 표시 */}
+                </li>
+              ))
+            )}
+          </ul>
+        </div>
+
         {/* 하단 버튼 */}
-        <div className="flex justify-end space-x-4">
+        <div className="flex justify-end">
           <button
             className="bg-primary text-white rounded-[10px] px-4 py-2 hover:bg-[#257ADA] transition-colors ease-linear"
             onClick={handleAddClick}

@@ -14,7 +14,8 @@ const useDeleteTask = () => {
       if (!token) throw new Error('인증이 필요합니다. 로그인 해주세요.');
 
       await axios.delete(`${process.env.REACT_APP_API_BASE_URL}/tasks/${taskId}`, {
-        headers: {
+        headers: 
+        {
           Authorization: `Bearer ${token}`,
         },
       });
