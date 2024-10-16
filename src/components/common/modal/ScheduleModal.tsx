@@ -103,7 +103,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       } else {
         // 등록 로직
         const response = await axios.post(
-          'http://localhost:3000/tasks',
+          `${process.env.REACT_APP_API_BASE_URL}/tasks`,
           newScheduleforServer,
           {
             headers: {

@@ -14,11 +14,11 @@ const useLogin = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
   const login = async (email: string, password: string) => {
-    const { setUser, setLoading } = useUserStore.getState();
+    const { user,setUser, setLoading } = useUserStore.getState();
     setErrorMessage('');
     try {
       setLoading(true);
-      const response = await axios.post('http://localhost:3000/users/login', {
+      const response = await axios.post(`${process.env.REACT_APP_API_BASE_URL}/users/login`, {
         email,
         password,
       });

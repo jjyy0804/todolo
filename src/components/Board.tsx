@@ -92,7 +92,7 @@ export default function Board() {
 
       // 서버에 상태 업데이트 요청
       await axios.put(
-        `http://localhost:3000/tasks/${movedItem.id}`,
+        `${process.env.REACT_APP_API_BASE_URL}/tasks/${movedItem.id}`,
         { ...movedItem, status: newStatus },
         {
           headers: {

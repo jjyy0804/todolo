@@ -12,11 +12,11 @@ const TeamMemberSelector = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMembers, setSelectedMembers] = useState<TeamMember[]>([]);
 
-  // 팀원 목록 불러오기
+  // 팀원 목록 불러오기 (팀 배열만 잘라서 쓰기)
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await axios.get('http://localhost:3000/teams/members'); // 서버에서 팀원 목록 불러오기
+        const response = await axios.get(`${process.env.REACT_APP_API_BASE_URL}/teams/members`); // 서버에서 팀원 목록 불러오기
         setMembers(response.data);
       } catch (error) {
         console.error('팀원 목록을 불러오는 중 오류가 발생했습니다.', error);

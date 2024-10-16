@@ -67,7 +67,7 @@ const useRegisterUser = () => {
       }
 
       const response = await axios.post(
-        'http://localhost:3000/users/register',
+        `${process.env.REACT_APP_API_BASE_URL}/users/register`,
         formData,
         {
           headers: {
