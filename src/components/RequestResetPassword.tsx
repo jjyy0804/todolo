@@ -11,9 +11,12 @@ export default function RequestResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await axios.post('/users/request-password-reset', {
-        email: email,
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_BASE_URL}/users/request-password-reset`,
+        {
+          email: email,
+        },
+      );
       console.log(response.data.message);
       setMessage('비밀번호 재설정 링크가 이메일로 발송되었습니다.');
     } catch (error) {
