@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
 import Loading from './Loading';
+import { ROUTE_LINK } from '../routes/routes';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -20,7 +21,7 @@ export default function ResetPassword() {
     }
 
     setTimeout(() => {
-      navigate('/request-reset-pw');
+      navigate(ROUTE_LINK.REQ_RESET_PASSWORD.link);
     }, 2000);
   }, [token]);
 
@@ -31,7 +32,7 @@ export default function ResetPassword() {
   };
 
   const handleCancleButtonClick = () => {
-    navigate('/');
+    navigate(ROUTE_LINK.REQ_RESET_PASSWORD.link);
   };
 
   const handleChangeButtonClick = async (e: React.FormEvent) => {
@@ -46,14 +47,14 @@ export default function ResetPassword() {
       setMessage('비밀번호 재설정되었습니다.');
       // 재설정 후 로그인 페이지로 이동
       setTimeout(() => {
-        navigate('/login');
+        navigate(ROUTE_LINK.LOGIN.link);
       }, 2000);
     } catch (error) {
       console.error('Error requesting reset password :', error);
       setMessage('비밀번호 재설정 요청에 실패했습니다. 다시 시도해주세요.');
       // 실패 후 메인 페이지로 이동
       setTimeout(() => {
-        navigate('/');
+        navigate(ROUTE_LINK.LANDING.link);
       }, 2000);
     }
   };
