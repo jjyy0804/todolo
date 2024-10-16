@@ -2,19 +2,27 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FaCheckCircle } from 'react-icons/fa';
 import axios from 'axios';
-import RequestResetPassword from './RequestResetPassword';
+import Loading from './Loading';
 
 export default function ResetPassword() {
-  const { token } = useParams();
-
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
-
+  const { token } = useParams();
   const [message, setMessage] = useState('');
-  // const [errorMessage, setErrorMessage] = useState<string>('');
 
-  useEffect(() => {}, [token]);
+  // const response = await axios.put('/users/reset-pw');
+  useEffect(() => {
+    if (!token) {
+      alert(
+        '토큰이 없습니다.\n입력하신 이메일을 확인해 주세요.\n비밀번호 재설정 요청 페이지로 이동합니다.',
+      ); // 두번뜨는 이유,,,?
+    }
+
+    setTimeout(() => {
+      navigate('/request-reset-pw');
+    }, 2000);
+  }, [token]);
 
   const handleConfirmPasswordChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -30,21 +38,22 @@ export default function ResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`/users/reset-password/:${token}`, {
-        password: password,
+      const response = await axios.put(`/users/reset-pw/`, {
+        token: token,
+        newpassword: password,
       });
       console.log(response.data.message);
       setMessage('비밀번호 재설정되었습니다.');
-      // 재설정 후 로그인페이지로 페이지 변경
+      // 재설정 후 로그인 페이지로 이동
       setTimeout(() => {
         navigate('/login');
       }, 2000);
     } catch (error) {
       console.error('Error requesting reset password :', error);
       setMessage('비밀번호 재설정 요청에 실패했습니다. 다시 시도해주세요.');
-
+      // 실패 후 메인 페이지로 이동
       setTimeout(() => {
-        navigate('/login');
+        navigate('/');
       }, 2000);
     }
   };
@@ -99,6 +108,6 @@ export default function ResetPassword() {
       </div>
     </div>
   ) : (
-    <RequestResetPassword />
+    <Loading />
   );
 }
