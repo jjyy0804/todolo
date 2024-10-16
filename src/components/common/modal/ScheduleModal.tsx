@@ -2,6 +2,10 @@ import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import magnifyingglass from '../../../assets/icons/magnifyingglass.png';
 import useScheduleStore from '../../../store/useScheduleStore';
+import useUserStore from '../../../store/useUserstore';
+import TeamMemberSelector from '../TeamMemberSelector';
+//사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
+import { TeamMember, Schedule } from '../../../types/scheduleTypes';
 
 interface ModalProps {
   isOpen: boolean;
@@ -9,7 +13,6 @@ interface ModalProps {
   schedule: any | null;
   isEdit: boolean; // 수정 모드 여부
 }
-
 const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
   const [scheduleName, setScheduleName] = useState('');
   const [projectName, setProjectName] = useState('');
@@ -18,20 +21,23 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
   const [endDate, setEndDate] = useState('');
   const [status, setStatus] = useState<'할 일' | '진행 중' | '완료'>('할 일');
   const [priority, setPriority] = useState<'높음' | '중간' | '낮음'>('중간');
-  const [teamMembers, setTeamMembers] = useState<string[]>(['주영']);
+  const [taskMembers, setTaskMembers] = useState<TeamMember[]>([]);
+  //유저 상태관리에서 가져오기
+  const user = useUserStore((state) => state.user); // 사용자 정보 가져오기
+  const teamId = user?.team_id; // team_id 가져오기
   //일정 상태관리에서 가져오기
   const { addSchedule, updateSchedule } = useScheduleStore();
   // 모달이 열릴 때 선택된 일정 데이터로 초기화
   useEffect(() => {
     if (schedule) {
-      setScheduleName(schedule.scheduleName || '');
-      setProjectName(schedule.projectName || '');
-      setScheduleContent(schedule.scheduleContent || '');
+      setScheduleName(schedule.title || '');
+      setProjectName(schedule.projectTitle || '');
+      setScheduleContent(schedule.content || '');
       setStartDate(schedule.startDate || '');
       setEndDate(schedule.endDate || '');
       setStatus(schedule.status || '할 일');
       setPriority(schedule.priority || '중간');
-      setTeamMembers(schedule.teamMembers || []);
+      setTaskMembers(schedule.taskMember || []);
     }
   }, [schedule]);
   /**상태값 초기화 */
@@ -43,37 +49,79 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
     setEndDate('');
     setPriority('중간');
     setStatus('할 일');
-    setTeamMembers([]);
+    setTaskMembers([]);
   };
   /**일정 추가 요청 보내기*/
   const handleAddClick = async () => {
-    const newSchedule = {
-      id: Date.now(), // 임시로 현재 시간을 ID로 사용
-      scheduleName,
-      projectName,
-      scheduleContent,
+    //서버로 보내는 일정 데이터
+    const newScheduleforServer = {
+      title: scheduleName,
+      content: scheduleContent,
+      projectTitle: projectName,
+      team_id: teamId, // team_id는 로그인 시 받아와 store에 저장해 둔 값
       startDate,
       endDate,
       status,
       priority,
-      teamMembers: teamMembers.map((name, index) => ({ id: index, name })),
+      taskMember: taskMembers.map((member) => member.id),
     };
+    //일정 스토어에 저장하는 데이터
+    const newScheduleForStore: Schedule = {
+      id: Date.now(),
+      title: scheduleName,
+      content: scheduleContent,
+      projectTitle: projectName,
+      status,
+      priority,
+      taskMember: taskMembers,
+      startDate,
+      endDate,
+      team_id: teamId,
+    };
+
     try {
+      const token = localStorage.getItem('accessToken');
+      if (!token) {
+        throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
+      }
       if (isEdit) {
         //수정 로직
-        updateSchedule(schedule.id, newSchedule);
-        await axios.put(`/api/schedules/${schedule.id}`, newSchedule);
+        const response = await axios.put(
+          `http://localhost:3000/tasks/${schedule.id}`,
+          newScheduleforServer,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Bearer 토큰 헤더 추가
+              'Content-Type': 'application/json',
+            },
+          },
+        );
         alert('일정이 성공적으로 수정되었습니다.');
+        console.log('응답 데이터:', response.data);
+        // 상태 업데이트
+        updateSchedule(schedule.id, newScheduleForStore);
       } else {
         // 등록 로직
-        addSchedule(newSchedule);
-        await axios.post('/api/schedules', newSchedule);
+        const response = await axios.post(
+          'http://localhost:3000/tasks',
+          newScheduleforServer,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Bearer 토큰 헤더 추가
+              'Content-Type': 'application/json',
+            },
+          },
+        );
         alert('일정이 성공적으로 추가되었습니다.');
+        console.log('응답 데이터:', response.data);
+
+        // 상태 업데이트
+        addSchedule(newScheduleForStore);
       }
     } catch (error) {
-      console.error('일정 추가 중 오류 발생:', error);
-      alert('일정 추가에 실패했습니다. 다시 시도해주세요.');
-      console.log(newSchedule);
+      console.error('일정 추가/수정 중 오류 발생:', error);
+      alert('일정 추가/수정에 실패했습니다. 다시 시도해주세요.');
+      console.log(newScheduleforServer);
     } finally {
       onClose();
       clearForm();
@@ -84,13 +132,18 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
     onClose();
     clearForm();
   };
+  /*팀원 추가 핸들러*/
+  const handleAddMember = (member: any) => {
+    setTaskMembers((prev) => [...prev, member]);
+  };
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-30 flex items-center justify-center z-[9999]">
       <div className="relative bg-white w-[600px] rounded-[10px] shadow-lg p-8">
         <button
           className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl"
-          onClick={handleModalClose}>
+          onClick={handleModalClose}
+        >
           &times;
         </button>
 
@@ -233,35 +286,10 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
         </div>
 
         {/* 팀원 추가 */}
-        <div className="relative mb-6 flex items-center gap-4">
-          <label className="w-[80px] text-[16px] font-medium text-darkgray mb-1">
-            팀원
-          </label>
-          <input
-            type="text"
-            placeholder="팀원을 추가하세요."
-            className="w-[530px] border border-gray-300 rounded-[10px] p-2 focus:outline-none"
-          />
-          <img
-            src={magnifyingglass}
-            alt="Search Icon"
-            className="absolute left-10 top-1/2 transform -translate-y-1/2 w-5 h-5"
-          />
-        </div>
-        {/* 팀원 목록 이미지 표시 아직 작업 x */}
-        <div className="flex space-x-2">
-          {teamMembers.map((member, index) => (
-            <div key={index} className="bg-green-200 rounded-full p-2">
-              {member}
-            </div>
-          ))}
-        </div>
+        <TeamMemberSelector onAddMember={handleAddMember} />
 
         {/* 하단 버튼 */}
         <div className="flex justify-end space-x-4">
-          <button className="border border-[#ac2949] text-[#ac2949] rounded-[10px] px-4 py-2 hover:bg-[#ffe3e8] border-transparent transition-colors ease-linear">
-            삭제
-          </button>
           <button
             className="bg-primary text-white rounded-[10px] px-4 py-2 hover:bg-[#257ADA] transition-colors ease-linear"
             onClick={handleAddClick}
