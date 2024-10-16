@@ -14,28 +14,11 @@ import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './common/UserInfoModal';
 import useDeleteTask from '../hooks/task/useDeleteTask';
 import BasicImage from '../assets/images/basic_user_profile.png'; //프로필 기본이미지
-
-/*업무 */
-interface Schedule {
-  id: number;
-  title: string;
-  content: string;
-  projectTitle: string;
-  status: '할 일' | '진행 중' | '완료';
-  priority: '높음' | '중간' | '낮음';
-  taskMember: TeamMember[];
-  startDate: string;
-  endDate: string;
-  team_id?: string;
-}
-
-interface TeamMember {
-  id: number;
-  name: string;
-  avatar?: string;
-}
+//사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
+import { TeamMember, Schedule } from '../types/scheduleTypes';
 
 export default function Board() {
+  const [projects, setProjects] = useState([]); // 서버로부터 받은 프로젝트 목록
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
   const [searchTerm, setSearchTerm] = useState(''); // 검색어 (프로젝트명, 사용자명)
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
@@ -45,32 +28,69 @@ export default function Board() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); //삭제 모달 상태
   const [scheduleToDelete, setScheduleToDelete] = useState<Schedule | null>(
     null,
-  ); // 제할 일정
+  ); //삭제할 일정
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false); //유저 정보 모달 상태
   const { user } = useUserStore();
-  const {
-    schedules,
-    addSchedule,
-    removeSchedule,
-    updateSchedule,
-    setSchedules,
-  } = useScheduleStore();
+  const { schedules, removeSchedule, updateSchedule, setSchedules } =
+    useScheduleStore();
 
   const [filteredSchedules, setFilteredSchedules] =
     useState<Schedule[]>(schedules); //사용자 및 프로젝트 검색
   const openUserInfoModal = () => setIsUserInfoModalOpen(true);
   const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
-  const { deleteTask, loading } = useDeleteTask(); //일정 삭제 커스텀 훅
+  const { deleteTask } = useDeleteTask(); //일정 삭제 커스텀 훅
+  /**
+   * 서버로부터 받은 데이터를 Schedule 배열로 변환하는 함수
+   */
+  const transformDataToSchedules = (data: any[]): Schedule[] => {
+    const transformedSchedules: Schedule[] = [];
 
-  // 서버에서 일정 데이터를 가져와 스토어에 저장
+    data.forEach((team) => {
+      team.projects.forEach((project: any) => {
+        const task = project.tasks;
+
+        const schedule: Schedule = {
+          id: task._id,
+          title: task.title,
+          content: task.content,
+          projectTitle: project.title,
+          status: task.status as '할 일' | '진행 중' | '완료',
+          priority: task.priority as '높음' | '중간' | '낮음',
+          taskMember: task.task_member_details.map((member: any) => ({
+            id: member._id,
+            name: member.name,
+            avatar: member.avatar,
+          })) as TeamMember[],
+          startDate: task.created_AT,
+          endDate: task.updated_AT,
+          team_id: team._id,
+        };
+
+        transformedSchedules.push(schedule);
+      });
+    });
+
+    return transformedSchedules;
+  };
+
   useEffect(() => {
+    const token = localStorage.getItem('accessToken'); // 토큰 가져오기
+    if (!token) throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
+
     const fetchSchedules = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:3000/teams/${user?.team_id}`,
+          `http://localhost:3000/teams/${user?.team_id}`, // 팀 ID에 따른 일정 가져오기
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Bearer 토큰 추가
+            },
+          },
         );
         console.log('서버로부터 받은 데이터:', response.data);
-        setSchedules(response.data); // 서버에서 받은 데이터를 스토어에 저장
+        // 서버에서 받은 데이터를 Schedule 인터페이스에 맞게 변환
+        const transformedSchedules = transformDataToSchedules(response.data);
+        setSchedules(transformedSchedules); // 서버에서 받은 데이터를 스토어에 저장
       } catch (error) {
         console.error('일정 데이터 가져오기 실패:', error);
       }
@@ -78,29 +98,18 @@ export default function Board() {
 
     fetchSchedules(); // 컴포넌트가 마운트될 때 데이터 가져오기
   }, [setSchedules]);
-  /**검색어에 따라 일정목록을 재렌더링함 */
-  useEffect(() => {
-    console.log(user);
-    setFilteredSchedules(
-      schedules.filter(
-        (schedule) =>
-          schedule.projectTitle.includes(searchTerm) ||
-          schedule.taskMember.some((member) =>
-            member.name.includes(searchTerm),
-          ),
-      ),
-    );
-  }, [schedules, searchTerm]);
+
   useEffect(() => {
     if (!schedules) return; // schedules가 아직 로드되지 않았을 때 반환
-
     const filtered = schedules.filter((schedule) => {
       const projectMatch = schedule.projectTitle
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase());
+
       const memberMatch = schedule.taskMember?.some((member) =>
-        member.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        member.name?.toLowerCase().includes(searchTerm.toLowerCase()),
       );
+
       return projectMatch || memberMatch;
     });
 
@@ -114,12 +123,11 @@ export default function Board() {
     // 드롭되지 않은 경우 종료
     if (!destination) return;
 
-    // 이동된 일정 찾기
-    const movedItem = schedules.find(
-      (schedule) =>
-        schedule.status === source.droppableId &&
-        schedules.indexOf(schedule) === source.index,
+    // 이동된 일정 찾기 (source에서 해당 index의 일정 찾기)
+    const sourceTasks = filteredSchedules.filter(
+      (schedule) => schedule.status === source.droppableId,
     );
+    const movedItem = sourceTasks[source.index];
 
     if (!movedItem) return;
 
@@ -131,7 +139,7 @@ export default function Board() {
       if (!token) throw new Error('인증 토큰이 없습니다.');
 
       // 서버에 상태 업데이트 요청
-      const response = await axios.put(
+      await axios.put(
         `http://localhost:3000/tasks/${movedItem.id}`,
         { ...movedItem, status: newStatus },
         {
@@ -142,11 +150,20 @@ export default function Board() {
         },
       );
 
-      console.log('서버 응답:', response.data);
+      // 상태가 성공적으로 변경된 경우 스토어와 UI 업데이트
+      updateSchedule(movedItem.id, { ...movedItem, status: newStatus });
+
       alert('상태가 성공적으로 업데이트되었습니다.');
 
-      // 스토어 상태 업데이트
-      updateSchedule(movedItem.id, { ...movedItem, status: newStatus });
+      // UI에 반영 (드래그된 일정의 상태 변경)
+      const updatedSchedules = schedules.map((schedule) =>
+        schedule.id === movedItem.id
+          ? { ...schedule, status: newStatus }
+          : schedule,
+      );
+
+      setFilteredSchedules(updatedSchedules);
+      setSchedules(updatedSchedules);
     } catch (error) {
       console.error('상태 업데이트 중 오류:', error);
       alert('상태 업데이트에 실패했습니다. 다시 시도해주세요.');
@@ -203,7 +220,7 @@ export default function Board() {
           />
           <div>
             <h4 className="text-[17px] font-regular mt-2">
-              {user?.name} ({user?.team})
+              {user?.name} ({user?.team || '아직 팀이 없습니다.'})
             </h4>
           </div>
         </div>
@@ -250,10 +267,10 @@ export default function Board() {
                         />
                         <h3 className="text-[17px] font-regular mb-2">Todo</h3>
                       </div>
-                      {/*상태 = "할 일" 인 일정 카드 */}
-                      <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg overflow-y-auto flex flex-col justify-between">
+                      {/* 상태 = "할 일" 인 일정 카드 */}
+                      <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg overflow-y-auto flex flex-col">
                         <div className="p-4 flex flex-col space-y-4">
-                          {filteredSchedules
+                          {schedules
                             .filter((schedule) => schedule.status === '할 일')
                             .map((schedule, index) => (
                               <Draggable
@@ -303,9 +320,10 @@ export default function Board() {
                             ))}
                           {provided.placeholder}
                         </div>
-                        <div className="flex justify-center">
+                        {/* + ADD 버튼을 하단에 고정 */}
+                        <div className="sticky bottom-0 flex justify-center bg-[#DFEDF9] p-4">
                           <button
-                            className="w-[302px] h-[51px] bg-primary text-white font-bold px-4 py-2 rounded-[56px] hover:bg-[#257ADA] transition-colors ease-linear mb-3"
+                            className="w-[302px] h-[51px] bg-primary text-white font-bold px-4 py-2 rounded-[56px] hover:bg-[#257ADA] transition-colors ease-linear"
                             onClick={() => handleOpenModal(null)}
                           >
                             + ADD
