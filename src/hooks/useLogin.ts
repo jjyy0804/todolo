@@ -7,18 +7,17 @@ interface UserInfomationProps {
   email: string;
   password: string;
   team: string;
+  team_id: string;
 }
 
 const useLogin = () => {
-  const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
-  const setUser = useUserStore((state) => state.setUser); //유저 정보 저장
-
   const login = async (email: string, password: string) => {
+    const { setUser, setLoading } = useUserStore.getState();
     setErrorMessage('');
-    setLoading(true);
     try {
+      setLoading(true);
       const response = await axios.post('http://localhost:3000/users/login', {
         email,
         password,
@@ -33,18 +32,34 @@ const useLogin = () => {
           name: data.data.name,
           email: data.data.email,
           avatar: data.data.avatar,
-          team: data.data.team,
+          team: data.data.team?.team || '', // team이 없으면 빈 문자열 사용
+          team_id: data.data.team?._id || '', // team_id가 없으면 빈 문자열 사용
         });
+        console.log(data.data);
+        alert('로그인 성공');
         navigate('/main');
       }
     } catch (err: any) {
+      if (err.response) {
+        // 서버로부터 응답이 있는 경우 (로그인 실패)
+        if (err.response.status === 401) {
+          setErrorMessage('이메일 또는 비밀번호가 틀립니다.');
+        } else {
+          setErrorMessage(
+            `오류: ${err.response.data.message || '문제가 발생했습니다.'}`,
+          );
+        }
+      } else {
+        // 네트워크 오류 또는 서버로부터 응답이 없는 경우
+        setErrorMessage('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
+      }
+
       console.error('로그인 오류:', err);
-      setErrorMessage('로그인 중 오류가 발생했습니다. 다시 시도해 주세요.');
     } finally {
-      setLoading(false);
+      setLoading(false); // 로딩 종료
     }
   };
 
-  return { login, loading, errorMessage };
+  return { login, errorMessage };
 };
 export default useLogin;

@@ -5,7 +5,6 @@ import Board from '../components/Board';
 import Landing from '../components/Landing';
 import Login from '../components/Login';
 import Register from '../components/Register';
-import MyPage from '../components/MyPage';
 import Calendar from '../components/Calendar';
 import RequestResetPassword from '../components/RequestResetPassword';
 import ResetPassword from '../components/ResetPassword';

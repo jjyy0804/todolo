@@ -30,20 +30,21 @@ const useRegisterUser = () => {
       return;
     }
 
-    // 이메일 형식 확인 (간단한 정규식)
+    // 이메일 형식 확인
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       setErrorMessage('유효한 이메일 주소를 입력해 주세요.');
       return;
     }
 
-    // 비밀번호 형식 검사: 특수문자 포함 여부 및 10자 이내 제한
+    // 비밀번호 형식 검사
     const passwordRegex =
       /^(?=.*[!@#$%^&*()_\-+=])[a-zA-Z0-9!@#$%^&*()_\-+=]{1,10}$/;
     if (!passwordRegex.test(password)) {
       setErrorMessage('비밀번호는 특수문자를 포함하고 10자 이내여야 합니다.');
       return;
     }
+
     // 비밀번호 확인
     if (password !== passwordConfirm) {
       setErrorMessage('비밀번호가 일치하지 않습니다.');
@@ -52,18 +53,30 @@ const useRegisterUser = () => {
 
     try {
       // 서버 전송 폼 데이터
-      const formData = {
-        name,
-        email,
-        password,
-        avatar: profileImage === basicProfileImage ? '' : profileImage, // 기본 이미지일 경우 빈 문자열로 설정
-      };
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('email', email);
+      formData.append('password', password);
+
+      // Blob 처리 및 FormData에 추가
+      if (profileImage !== basicProfileImage && profileImage) {
+        const response = await fetch(profileImage);
+        const blob = await response.blob();
+        const fileName = 'profile-image.jpg'; // 이미지 파일명 지정
+        formData.append('avatar', blob, fileName);
+      }
+
       const response = await axios.post(
         'http://localhost:3000/users/register',
         formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data', // 파일 전송 시 Content-Type 지정
+          },
+        },
       );
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         alert('회원가입이 완료되었습니다!');
         setErrorMessage(''); // 성공 시 오류 메시지 초기화
         navigate('/login');
@@ -73,7 +86,6 @@ const useRegisterUser = () => {
       setErrorMessage('회원가입 중 오류가 발생했습니다. 다시 시도해 주세요.');
     }
   };
-
   return { errorMessage, register };
 };
 
