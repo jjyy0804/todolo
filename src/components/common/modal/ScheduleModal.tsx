@@ -34,9 +34,18 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       setTeamMembers(schedule.teamMembers || []);
     }
   }, [schedule]);
-  /**일정 추가하기
-   * 서버로 새로운 일정 등록 요청 후 input 초기화 , 모달 창 닫음
-   */
+  /**상태값 초기화 */
+  const clearForm = () => {
+    setScheduleName('');
+    setProjectName('');
+    setScheduleContent('');
+    setStartDate('');
+    setEndDate('');
+    setPriority('중간');
+    setStatus('할 일');
+    setTeamMembers([]);
+  };
+  /**일정 추가 요청 보내기*/
   const handleAddClick = async () => {
     const newSchedule = {
       id: Date.now(), // 임시로 현재 시간을 ID로 사용
@@ -67,17 +76,13 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       console.log(newSchedule);
     } finally {
       onClose();
+      clearForm();
     }
-    // 폼 초기화
-    setScheduleName('');
-    setProjectName('');
-    setScheduleContent('');
-    setStartDate('');
-    setEndDate('');
-    setStatus('할 일');
-    setPriority('중간');
-    setTeamMembers([]);
+  };
+  /**모달창(수정모드) 닫기 시 입력 필드 초기화 */
+  const handleModalClose = () => {
     onClose();
+    clearForm();
   };
   if (!isOpen) return null;
   return (
@@ -85,7 +90,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       <div className="relative bg-white w-[600px] rounded-[10px] shadow-lg p-8">
         <button
           className="absolute top-3 right-4 text-gray-500 hover:text-gray-700 text-2xl"
-          onClick={onClose}>
+          onClick={handleModalClose}>
           &times;
         </button>
 
@@ -106,7 +111,8 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
         <div className="flex mb-6 items-center justify-end gap-2">
           <select
             className="w-[140px] border border-gray-300 rounded-[10px] p-2 focus:outline-none"
-            onChange={(e) => setProjectName(e.target.value)}>
+            onChange={(e) => setProjectName(e.target.value)}
+          >
             <option value="">프로젝트 선택</option>
             <option value="프로젝트 A">프로젝트 A</option>
             <option value="프로젝트 B">프로젝트 B</option>
@@ -145,7 +151,8 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
               onChange={(e) =>
                 setStatus(e.target.value as '할 일' | '진행 중' | '완료')
               }
-              className="p-2 border border-gray-300 rounded-[10px] focus:outline-none">
+              className="p-2 border border-gray-300 rounded-[10px] focus:outline-none"
+            >
               <option value="할 일">할 일</option>
               <option value="진행 중">진행 중</option>
               <option value="완료">완료</option>
@@ -158,9 +165,11 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
             </label>
             <label
               className="flex items-center space-x-2 cursor-pointer"
-              onClick={() => setPriority('높음')}>
+              onClick={() => setPriority('높음')}
+            >
               <div
-                className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#7F56D9]`}>
+                className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#7F56D9]`}
+              >
                 {priority === '높음' && (
                   <span className="text-[#7F56D9] text-lg font-semibold">
                     ✔
@@ -172,9 +181,11 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
 
             <label
               className="flex items-center space-x-2 cursor-pointer"
-              onClick={() => setPriority('중간')}>
+              onClick={() => setPriority('중간')}
+            >
               <div
-                className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#FFC14A]`}>
+                className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#FFC14A]`}
+              >
                 {priority === '중간' && (
                   <span className="text-[#FFC14A] text-lg font-semibold">
                     ✔
@@ -186,9 +197,11 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
 
             <label
               className="flex items-center space-x-2 cursor-pointer"
-              onClick={() => setPriority('낮음')}>
+              onClick={() => setPriority('낮음')}
+            >
               <div
-                className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#938f99]`}>
+                className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#938f99]`}
+              >
                 {priority === '낮음' && (
                   <span className="text-[#938f99] text-lg font-semibold">
                     ✔
@@ -251,7 +264,8 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
           </button>
           <button
             className="bg-primary text-white rounded-[10px] px-4 py-2 hover:bg-[#257ADA] transition-colors ease-linear"
-            onClick={handleAddClick}>
+            onClick={handleAddClick}
+          >
             {isEdit ? '수정' : '등록'}
           </button>
         </div>

@@ -18,9 +18,13 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
+<<<<<<< HEAD
     'prettier/prettier': 'warn',
     'no-undef': 'warn', // This will trigger a warning instead of an error
     'no-unused-vars': 'warn', // Will now trigger a warning instead of an error
+=======
+    'prettier/prettier': 'error',
+>>>>>>> 1fb0d03db95e03c8369cbae5321f07ddfc314b94
   },
   settings: {
     react: {
