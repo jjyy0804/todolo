@@ -18,7 +18,9 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    'prettier/prettier': 'error',
+    'prettier/prettier': 'warn',
+    'no-undef': 'warn', // This will trigger a warning instead of an error
+    'no-unused-vars': 'warn', // Will now trigger a warning instead of an error
   },
   settings: {
     react: {

@@ -1,6 +1,7 @@
+import React from 'react';
 import Spinner from '../assets/spinner.gif';
 
-export default function Calendar() {
+export default function Loading() {
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       {/* spinner */}
