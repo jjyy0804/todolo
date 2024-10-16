@@ -459,7 +459,3 @@ export default function Board() {
     </div>
   );
 }
-function fetchSchedulesFromServer(team_id: string | undefined, token: string) {
-  throw new Error('Function not implemented.');
-}
-
