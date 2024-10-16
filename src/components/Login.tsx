@@ -73,7 +73,8 @@ export default function Login() {
 
         {/* 로그인 밑에 회원가입, 아이디, 비밀번호 찾기 */}
         <div className="w-[267px] h-[20px] mt-4 text-[#757575] text-center">
-          <a href="/register">회원가입</a> /<a href="#">비밀번호찾기</a>
+          <a href="/register">회원가입</a> /
+          <a href="/req-reset-pw">비밀번호찾기</a>
         </div>
       </form>
     </div>

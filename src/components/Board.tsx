@@ -16,9 +16,10 @@ import useDeleteTask from '../hooks/task/useDeleteTask';
 import BasicImage from '../assets/images/basic_user_profile.png'; //프로필 기본이미지
 //사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
 import { TeamMember, Schedule } from '../types/scheduleTypes';
+import { useNavigate } from 'react-router-dom';
+import {ROUTE_LINK } from '../routes/routes';
 
 export default function Board() {
-  const [projects, setProjects] = useState([]); // 서버로부터 받은 프로젝트 목록
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
   const [searchTerm, setSearchTerm] = useState(''); // 검색어 (프로젝트명, 사용자명)
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
@@ -30,84 +31,37 @@ export default function Board() {
     null,
   ); //삭제할 일정
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false); //유저 정보 모달 상태
-  const { user } = useUserStore();
-  const { schedules, removeSchedule, updateSchedule, setSchedules } =
-    useScheduleStore();
-
+  const { user , isAuthenticated } = useUserStore();
+  const { schedules, removeSchedule, updateSchedule, setSchedules, fetchSchedulesFromServer } =useScheduleStore();
   const [filteredSchedules, setFilteredSchedules] =
     useState<Schedule[]>(schedules); //사용자 및 프로젝트 검색
   const openUserInfoModal = () => setIsUserInfoModalOpen(true);
   const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
   const { deleteTask } = useDeleteTask(); //일정 삭제 커스텀 훅
-  /**
-   * 서버로부터 받은 데이터를 Schedule 배열로 변환하는 함수
-   */
-  const transformDataToSchedules = (data: any[]): Schedule[] => {
-    const transformedSchedules: Schedule[] = [];
-
-    data.forEach((team) => {
-      team.projects.forEach((project: any) => {
-        const task = project.tasks;
-
-        const schedule: Schedule = {
-          id: task._id,
-          title: task.title,
-          content: task.content,
-          projectTitle: project.title,
-          status: task.status as '할 일' | '진행 중' | '완료',
-          priority: task.priority as '높음' | '중간' | '낮음',
-          taskMember: task.task_member_details.map((member: any) => ({
-            id: member._id,
-            name: member.name,
-            avatar: member.avatar,
-          })) as TeamMember[],
-          startDate: task.created_AT,
-          endDate: task.updated_AT,
-          team_id: team._id,
-        };
-
-        transformedSchedules.push(schedule);
-      });
-    });
-
-    return transformedSchedules;
-  };
-
+  const token = localStorage.getItem('accessToken'); // 토큰 가져오기
   useEffect(() => {
-    const token = localStorage.getItem('accessToken'); // 토큰 가져오기
-    if (!token) throw new Error('인증 토큰이 없습니다. 다시 로그인해주세요.');
+    if (!token) {
+      alert('로그인이 필요합니다.');
+      return;
+    }
 
-    const fetchSchedules = async () => {
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/teams/${user?.team_id}`, // 팀 ID에 따른 일정 가져오기
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // Bearer 토큰 추가
-            },
-          },
-        );
-        console.log('서버로부터 받은 데이터:', response.data);
-        // 서버에서 받은 데이터를 Schedule 인터페이스에 맞게 변환
-        const transformedSchedules = transformDataToSchedules(response.data);
-        setSchedules(transformedSchedules); // 서버에서 받은 데이터를 스토어에 저장
-      } catch (error) {
-        console.error('일정 데이터 가져오기 실패:', error);
-      }
-    };
-
-    fetchSchedules(); // 컴포넌트가 마운트될 때 데이터 가져오기
-  }, [setSchedules]);
-
+    // 새로운 사용자가 로그인했을 때, 팀이 없으면 일정 초기화
+    if (!isAuthenticated || !user?.team_id) {
+      useScheduleStore.getState().clearSchedules(); // 상태 초기화
+    } else {
+      // 현재 사용자의 팀 일정을 서버에서 가져옴
+      fetchSchedulesFromServer(user.team_id, token);
+    }
+  }, [fetchSchedulesFromServer, user?.team_id, token, isAuthenticated]);
+  // 일정 필터링
   useEffect(() => {
-    if (!schedules) return; // schedules가 아직 로드되지 않았을 때 반환
     const filtered = schedules.filter((schedule) => {
       const projectMatch = schedule.projectTitle
         ?.toLowerCase()
         .includes(searchTerm.toLowerCase());
 
       const memberMatch = schedule.taskMember?.some((member) =>
-        member.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+        member.name?.toLowerCase().includes(searchTerm.toLowerCase())
       );
 
       return projectMatch || memberMatch;
@@ -115,6 +69,7 @@ export default function Board() {
 
     setFilteredSchedules(filtered);
   }, [schedules, searchTerm]);
+
 
   /** 드래그가 끝났을 때 호출되며, 항목이 드롭된 위치에 맞게 schedules 배열을 업데이트 */
   const onDragEnd = async (result: any) => {
@@ -225,7 +180,7 @@ export default function Board() {
           </div>
         </div>
 
-        {/* 사용자 검색 창 => 나중에 수정필요 */}
+        {/* 사용자 검색 창 */}
         <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-36">
           <div className="relative w-[343px]">
             {' '}
@@ -255,7 +210,7 @@ export default function Board() {
                 <Droppable droppableId="할 일">
                   {(provided) => (
                     <div
-                      className="flex flex-col items-start"
+                      className="flex flex-col h-full"
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                     >
@@ -267,68 +222,64 @@ export default function Board() {
                         />
                         <h3 className="text-[17px] font-regular mb-2">Todo</h3>
                       </div>
-                      {/* 상태 = "할 일" 인 일정 카드 */}
-                      <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg overflow-y-auto flex flex-col">
-                        <div className="p-4 flex flex-col space-y-4">
-                          {schedules
-                            .filter((schedule) => schedule.status === '할 일')
-                            .map((schedule, index) => (
-                              <Draggable
-                                key={schedule.id}
-                                draggableId={schedule.id.toString()}
-                                index={index}
-                              >
-                                {(provided) => (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
-                                  >
-                                    <div>
-                                      <h4 className="font-bol">
-                                        {schedule.title}
-                                      </h4>
-                                      <p className="text-sm">
-                                        {schedule.projectTitle}
-                                      </p>
-                                      <p className="text-sm">
-                                        우선순위 {schedule.priority}
-                                      </p>
-                                    </div>
-                                    <div className="flex space-x-2">
-                                      <button
-                                        className="text-gray-400 hover:text-red-500"
-                                        onClick={() =>
-                                          openDeleteModal(schedule)
-                                        }
-                                      >
-                                        <FiTrash2 size={20} />
-                                      </button>
-                                      <button className="text-gray-400 hover:text-blue-500">
-                                        <FiEdit3
-                                          size={20}
-                                          onClick={() =>
-                                            handleOpenModal(schedule)
-                                          }
-                                        />
-                                      </button>
-                                    </div>
+
+                      {/* 일정 목록이 스크롤되는 영역 */}
+                      <div className="w-[374px] h-[710px] bg-[#DFEDF9] rounded-lg overflow-y-auto p-4 space-y-4">
+                        {filteredSchedules
+                          .filter((schedule) => schedule.status === '할 일')
+                          .map((schedule, index) => (
+                            <Draggable
+                              key={schedule.id}
+                              draggableId={schedule.id.toString()}
+                              index={index}
+                            >
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                                >
+                                  <div>
+                                    <h4 className="font-bold">{schedule.title}</h4>
+                                    <p className="text-sm">{schedule.projectTitle}</p>
+                                    <p className="text-sm">우선순위 {schedule.priority}</p>
                                   </div>
-                                )}
-                              </Draggable>
-                            ))}
-                          {provided.placeholder}
-                        </div>
-                        {/* + ADD 버튼을 하단에 고정 */}
-                        <div className="sticky bottom-0 flex justify-center bg-[#DFEDF9] p-4">
-                          <button
-                            className="w-[302px] h-[51px] bg-primary text-white font-bold px-4 py-2 rounded-[56px] hover:bg-[#257ADA] transition-colors ease-linear"
-                            onClick={() => handleOpenModal(null)}
-                          >
-                            + ADD
-                          </button>
-                        </div>
+                                  <div className="flex space-x-2">
+                                    <button
+                                      className="text-gray-400 hover:text-red-500"
+                                      onClick={() => openDeleteModal(schedule)}
+                                    >
+                                      <FiTrash2 size={20} />
+                                    </button>
+                                    <button className="text-gray-400 hover:text-blue-500">
+                                      <FiEdit3
+                                        size={20}
+                                        onClick={() => handleOpenModal(schedule)}
+                                      />
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                        {provided.placeholder}
+                      </div>
+
+                      {/* + ADD 버튼을 컨테이너 밖에 고정 */}
+                      <div className="w-full flex justify-center mt-4">
+                        <button
+                          className="w-[90%] h-[51px] bg-primary text-white font-bold rounded-full hover:bg-[#257ADA] transition-colors ease-linear"
+                          onClick={() => {
+                            if (!isAuthenticated || !user?.team_id) {
+                              alert('로그인 및 팀이 필요합니다.');
+                            } else {
+                              handleOpenModal(null);
+                            }
+                          }}
+                        >
+                          + ADD
+                        </button>
                       </div>
                     </div>
                   )}
@@ -370,15 +321,9 @@ export default function Board() {
                                     className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
                                   >
                                     <div>
-                                      <h4 className="font-bol">
-                                        {schedule.title}
-                                      </h4>
-                                      <p className="text-sm">
-                                        {schedule.projectTitle}
-                                      </p>
-                                      <p className="text-sm">
-                                        우선순위 {schedule.priority}
-                                      </p>
+                                      <h4 className="font-bold">{schedule.title}</h4>
+                                      <p className="text-sm">{schedule.projectTitle}</p>
+                                      <p className="text-sm">우선순위 {schedule.priority}</p>
                                     </div>
                                     <div className="flex space-x-2">
                                       <button
@@ -444,17 +389,11 @@ export default function Board() {
                                     {...provided.dragHandleProps}
                                     className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
                                   >
-                                    <div>
-                                      <h4 className="font-bol">
-                                        {schedule.title}
-                                      </h4>
-                                      <p className="text-sm">
-                                        {schedule.projectTitle}
-                                      </p>
-                                      <p className="text-sm">
-                                        우선순위 {schedule.priority}
-                                      </p>
-                                    </div>
+                                   <div>
+                                      <h4 className="font-bold">{schedule.title}</h4>
+                                      <p className="text-sm">{schedule.projectTitle}</p>
+                                      <p className="text-sm">우선순위 {schedule.priority}</p>
+                                   </div>
                                     <div className="flex space-x-2">
                                       <button
                                         className="text-gray-400 hover:text-red-500"
@@ -509,3 +448,7 @@ export default function Board() {
     </div>
   );
 }
+function fetchSchedulesFromServer(team_id: string | undefined, token: string) {
+  throw new Error('Function not implemented.');
+}
+
