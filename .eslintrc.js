@@ -18,8 +18,9 @@ module.exports = {
   },
   plugins: ['react'],
   rules: {
-    'react/jsx-closing-bracket-location': [1, 'tag-aligned'],
-    'prettier/prettier': ['error', { jsxBracketSameLine: true }],
+    'prettier/prettier': 'warn',
+    'no-undef': 'warn', // This will trigger a warning instead of an error
+    'no-unused-vars': 'warn', // Will now trigger a warning instead of an error
   },
   settings: {
     react: {

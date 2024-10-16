@@ -5,7 +5,6 @@ import Board from '../components/Board';
 import Landing from '../components/Landing';
 import Login from '../components/Login';
 import Register from '../components/Register';
-import MyPage from '../components/MyPage';
 import Calendar from '../components/Calendar';
 import ErrorPage from '../components/ErrorPage';
 
@@ -29,10 +28,6 @@ const routes = [
       {
         path: 'main',
         element: <Board />,
-      },
-      {
-        path: 'myPage',
-        element: <MyPage />,
       },
       {
         path: 'calendar',
