@@ -540,15 +540,9 @@ export default function Board() {
         isOpen={isUserInfoModalOpen}
         onClose={closeUserInfoModal}
       />
-      {/* 캘린더 상세 모달 */}
-      <CalendarModal
-        isOpen={isCalendarModalOpen}
-        onClose={closeModal}
-        task={task}
-        onCommentSubmit={handleCommentSubmit}
-        onCommentEdit={handleCommentEdit} // 추가된 핸들러
-        onCommentDelete={handleCommentDelete} // 추가된 핸들러
-      />
     </div>
   );
+}
+function fetchSchedulesFromServer(team_id: string | undefined, token: string) {
+  throw new Error('Function not implemented.');
 }

@@ -12,17 +12,16 @@ export default function ResetPassword() {
   const { token } = useParams();
   const [message, setMessage] = useState('');
 
-  // const response = await axios.put('/users/reset-pw');
   useEffect(() => {
     if (!token) {
       alert(
         '토큰이 없습니다.\n입력하신 이메일을 확인해 주세요.\n비밀번호 재설정 요청 페이지로 이동합니다.',
-      ); // 두번뜨는 이유,,,?
-    }
+      ); // 두번뜨는건 strict mode때문...
 
-    setTimeout(() => {
-      navigate(ROUTE_LINK.REQ_RESET_PASSWORD.link);
-    }, 2000);
+      setTimeout(() => {
+        navigate(ROUTE_LINK.REQ_RESET_PASSWORD.link);
+      }, 2000);
+    }
   }, [token]);
 
   const handleConfirmPasswordChange = (
@@ -39,10 +38,13 @@ export default function ResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await axios.put(`/users/reset-pw/`, {
-        token: token,
-        newpassword: password,
-      });
+      const response = await axios.put(
+        `${process.env.REACT_APP_API_BASE_URL}/users/reset-pw/`,
+        {
+          token: token,
+          newPassword: password,
+        },
+      );
       console.log(response.data.message);
       setMessage('비밀번호 재설정되었습니다.');
       // 재설정 후 로그인 페이지로 이동

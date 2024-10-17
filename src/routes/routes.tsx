@@ -16,7 +16,7 @@ export const ROUTE_LINK = {
   LOGIN: { path: 'login', link: '/login' },
   REGISTER: { path: 'register', link: '/register' },
   MAIN: { path: 'main', link: '/main' },
-  CALENDER: { path: 'calender', link: '/register' },
+  CALENDAR: { path: 'calendar', link: '/calendar' },
   REQ_RESET_PASSWORD: { path: 'req-reset-pw', link: '/req-reset-pw' },
   RESET_PASSWORD: { path: 'reset-pw/:token?', link: '/reset-pw/:token?' },
   ERROR: { path: '*', link: '/*' },
@@ -45,7 +45,7 @@ const routes = [
         element: <Board />,
       },
       {
-        path: ROUTE_LINK.CALENDER.path,
+        path: ROUTE_LINK.CALENDAR.path,
         element: <Calendar />,
       },
       {
