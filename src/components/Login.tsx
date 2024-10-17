@@ -10,9 +10,10 @@ export default function Login() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
   // 훅에서 로딩 및 에러 상태, 로그인 함수 가져오기
   const { login, errorMessage } = useLogin();
-  const { isLoading } = useUserStore(); //서버로 요청 보낼 때는 버튼 비활성화
+  const { isLoading, user } = useUserStore(); //서버로 요청 보낼 때는 버튼 비활성화
   /** 로그인 버튼 클릭*/
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

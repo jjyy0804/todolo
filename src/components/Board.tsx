@@ -19,8 +19,6 @@ import { Schedule } from '../types/scheduleTypes';
 import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
 
-
-  
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
   const [searchTerm, setSearchTerm] = useState(''); // 검색어 (프로젝트명, 사용자명)
@@ -33,8 +31,14 @@ export default function Board() {
     null,
   ); //삭제할 일정
   const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false); //유저 정보 모달 상태
-  const { user , isAuthenticated } = useUserStore();
-  const { schedules, removeSchedule, updateSchedule, setSchedules, fetchSchedulesFromServer } =useScheduleStore();
+  const { user, isAuthenticated } = useUserStore();
+  const {
+    schedules,
+    removeSchedule,
+    updateSchedule,
+    setSchedules,
+    fetchSchedulesFromServer,
+  } = useScheduleStore();
   const [filteredSchedules, setFilteredSchedules] =
     useState<Schedule[]>(schedules); //사용자 및 프로젝트 검색
   const openUserInfoModal = () => setIsUserInfoModalOpen(true);
@@ -62,7 +66,7 @@ export default function Board() {
         .includes(searchTerm.toLowerCase());
 
       const memberMatch = schedule.taskMember?.some((member) =>
-        member.name?.toLowerCase().includes(searchTerm.toLowerCase())
+        member.name?.toLowerCase().includes(searchTerm.toLowerCase()),
       );
 
       return projectMatch || memberMatch;
@@ -70,7 +74,6 @@ export default function Board() {
 
     setFilteredSchedules(filtered);
   }, [schedules, searchTerm]);
-
 
   /** 드래그가 끝났을 때 호출되며, 항목이 드롭된 위치에 맞게 schedules 배열을 업데이트 */
   const onDragEnd = async (result: any) => {
@@ -151,13 +154,13 @@ export default function Board() {
     if (scheduleToDelete) {
       try {
         console.log(`삭제할 일정 ID: ${scheduleToDelete.id}`);
-        
+
         // 서버에서 삭제 요청
         const isDeleted = await deleteTask(scheduleToDelete.id); //서버에서 일정 삭제
-        
+
         // 삭제 성공 여부에 따른 처리
         if (isDeleted) {
-          removeSchedule(scheduleToDelete.id);   // 서버에서 삭제 성공 시 스토어에서 일정 삭제
+          removeSchedule(scheduleToDelete.id); // 서버에서 삭제 성공 시 스토어에서 일정 삭제
           alert('일정이 성공적으로 삭제되었습니다.');
         } else {
           alert('일정 삭제에 실패했습니다. 다시 시도해주세요.');
@@ -175,7 +178,7 @@ export default function Board() {
     ? `http://localhost:3000/uploads/${user.avatar.split('\\').pop()}`
     : `${BasicImage}`; // 기본 이미지
 
-    //-------------------CalendarModal---------------------
+  //-------------------CalendarModal---------------------
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [task, setTask] = useState({
     title: 'title: 일정(업무)의 이름',
@@ -308,12 +311,17 @@ export default function Board() {
                                   onClick={openModal}
                                 >
                                   <div>
-                                    <h4 className="font-bold">{schedule.title}</h4>
-                                    <p className="text-sm">{schedule.projectTitle}</p>
-                                    <p className="text-sm">우선순위 {schedule.priority}</p>
+                                    <h4 className="font-bold">
+                                      {schedule.title}
+                                    </h4>
+                                    <p className="text-sm">
+                                      {schedule.projectTitle}
+                                    </p>
+                                    <p className="text-sm">
+                                      우선순위 {schedule.priority}
+                                    </p>
                                   </div>
                                   <div className="flex space-x-2">
-
                                     <button
                                       className="text-gray-400 hover:text-red-500"
                                       onClick={(event) => {
@@ -325,16 +333,14 @@ export default function Board() {
                                     </button>
 
                                     <button
-                                        className="text-gray-400 hover:text-blue-500"
-                                        onClick={(event) => {
-                                          event.stopPropagation();
-                                          handleOpenModal(schedule);
-                                        }}
-                                      >
-                                        <FiEdit3 size={20} />
-                                      </button>
-
-
+                                      className="text-gray-400 hover:text-blue-500"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleOpenModal(schedule);
+                                      }}
+                                    >
+                                      <FiEdit3 size={20} />
+                                    </button>
                                   </div>
                                 </div>
                               )}
@@ -398,9 +404,15 @@ export default function Board() {
                                     className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
                                   >
                                     <div>
-                                      <h4 className="font-bold">{schedule.title}</h4>
-                                      <p className="text-sm">{schedule.projectTitle}</p>
-                                      <p className="text-sm">우선순위 {schedule.priority}</p>
+                                      <h4 className="font-bold">
+                                        {schedule.title}
+                                      </h4>
+                                      <p className="text-sm">
+                                        {schedule.projectTitle}
+                                      </p>
+                                      <p className="text-sm">
+                                        우선순위 {schedule.priority}
+                                      </p>
                                     </div>
                                     <div className="flex space-x-2">
                                       <button
@@ -466,11 +478,17 @@ export default function Board() {
                                     {...provided.dragHandleProps}
                                     className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
                                   >
-                                   <div>
-                                      <h4 className="font-bold">{schedule.title}</h4>
-                                      <p className="text-sm">{schedule.projectTitle}</p>
-                                      <p className="text-sm">우선순위 {schedule.priority}</p>
-                                   </div>
+                                    <div>
+                                      <h4 className="font-bold">
+                                        {schedule.title}
+                                      </h4>
+                                      <p className="text-sm">
+                                        {schedule.projectTitle}
+                                      </p>
+                                      <p className="text-sm">
+                                        우선순위 {schedule.priority}
+                                      </p>
+                                    </div>
                                     <div className="flex space-x-2">
                                       <button
                                         className="text-gray-400 hover:text-red-500"
@@ -522,15 +540,9 @@ export default function Board() {
         isOpen={isUserInfoModalOpen}
         onClose={closeUserInfoModal}
       />
-      {/* 캘린더 상세 모달 */}
-      <CalendarModal
-        isOpen={isCalendarModalOpen}
-        onClose={closeModal}
-        task={task}
-        onCommentSubmit={handleCommentSubmit}
-        onCommentEdit={handleCommentEdit} // 추가된 핸들러
-        onCommentDelete={handleCommentDelete} // 추가된 핸들러
-      />
     </div>
   );
+}
+function fetchSchedulesFromServer(team_id: string | undefined, token: string) {
+  throw new Error('Function not implemented.');
 }
