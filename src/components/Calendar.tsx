@@ -1,92 +1,81 @@
-import React from 'react';
-// import{ useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 // import interactionPlugin from '@fullcalendar/interaction';
-import NavigationBar from './common/NavigationBar';
+import { type EventClickArg } from '@fullcalendar/core';
+
 import '../calendar.css';
-
+import NavigationBar from './common/NavigationBar';
+import ScheduleModal from './common/modal/ScheduleModal';
 // import useUserStore from '../store/useUserstore';
-// import axios, { AxiosError, AxiosResponse } from 'axios';
-// import { type EventClickArg } from '@fullcalendar/core';
 
+interface Task {
+  taskId: string;
+  title: string;
+  start: string;
+  end: string;
+  color: string;
+}
 export default function Calendar() {
-  // const { userInfo, isAuthenticated } = useUserStore();
-  // const [tasks, setTasks] = useState([]);
+  // const { team_id } = useUserStore();
+  const [projects, setProjects] = useState<any[]>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Task | null>(null);
 
-  /* 
   useEffect(() => {
     // login 했고, team이 지정이 되어있때만 api 호출
-    if (isAuthenticated && userInfo.team !== '') {
-      axios
-        .get('/')
-        .then(function (response: AxiosResponse<T>) {
-          // handle success
-          console.log(response);
-        })
-        .catch(function (error: AxiosError) {
-          console.log('Calendar get Data Error...', error);
-        })
-        .finally(function () {
-          // always executed
-        });
-    }
+    // userStore, scheduleStore 정리되면  변경!!!
+    // if (isAuthenticated && user?.team){
+
+    // }
+    const accessToken = localStorage.getItem('accessToken');
+
+    axios
+      .get(
+        // `${process.env.REACT_APP_API_BASE_URL}/teams/${team_id},
+        `${process.env.REACT_APP_API_BASE_URL}/teams/6710a1f2df52cd53f2d9c77f`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      )
+      .then((response) => {
+        const fetchedProjects = response.data.data[0].projects;
+        console.log({ fetchedProjects });
+        setProjects(fetchedProjects);
+      });
   }, []);
-  */
-  // temp data => will be deleted when it's connected api and accessible database
-  const tasks = [
-    {
-      title: 'html1',
-      start: '2024-10-10',
-      end: '2024-10-14',
-      color: '#F2DCF7',
-    },
-    {
-      title: 'html2',
-      start: '2024-10-10',
-      end: '2024-10-14',
-      color: '#F2DCF7',
-    },
-    {
-      title: 'html3',
-      start: '2024-10-10',
-      end: '2024-10-14',
-      color: '#F2DCF7',
-    },
-    {
-      title: 'html4',
-      start: '2024-10-10',
-      end: '2024-10-14',
-      color: '#F2DCF7',
-    },
-    {
-      title: 'css',
-      start: '2024-10-12',
-      end: '2024-10-16',
-      color: '#F2DCF7',
-    },
-    {
-      title: 'node.js',
-      start: '2024-10-13',
-      end: '2024-10-21',
-      color: '#FFE1A7',
-    },
-    {
-      title: 'mongoose',
-      start: '2024-10-14',
-      end: '2024-10-21',
-      color: 'green',
-    },
-  ];
+
+  const tasks = projects?.map((project) => ({
+    taskId: project.tasks._id,
+    title: project.tasks.title,
+    start: project.tasks.startDate?.split('T')[0],
+    end: project.tasks.endDate?.split('T')[0],
+    color: project.projectColor || '#FFE1A7',
+  }));
+  console.log({ tasks });
 
   // eventClickHandler param으로 checkInfo:EventClickArg 삽입해야함. (에러로 잠시 빼놓은것..)
-  const eventClickHandler = () => {
-    // calendar detail modal open
+  const eventClickHandler = (clickInfo: EventClickArg) => {
+    // Calendar Modal open
+    const clickedEvent = clickInfo.event.extendedProps as Task;
+    setSelectedEvent(clickedEvent);
+    setIsModalOpen(true); // Show modal
+  };
+
+  // Calendar Modal Close
+  const closeModal = () => {
+    setIsModalOpen(false); // Close the modal
+    setSelectedEvent(null); // Clear selected event data
   };
 
   return (
     <>
       <NavigationBar />
+      {/* icon with name(team) display => insert Component later */}
       <FullCalendar
         plugins={[dayGridPlugin]}
         initialView="dayGridMonth"
@@ -95,6 +84,14 @@ export default function Calendar() {
         eventClick={eventClickHandler}
         editable={true}
       />
+      {/* Calendar Modal */}
+      {isModalOpen && selectedEvent && (
+        <ScheduleModal
+          isOpen={isModalOpen}
+          onClose={closeModal} // Function to close the modal
+          taskId={selectedEvent.taskId} // Pass the clicked event details to the modal
+        />
+      )}
     </>
   );
 }

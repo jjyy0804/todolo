@@ -19,14 +19,6 @@ import { Schedule } from '../types/scheduleTypes';
 import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
 
-// 댓글 인터페이스 정의
-interface Comment {
-  id: number;
-  user: string;
-  date: string;
-  content: string;
-}
-
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
   const [searchTerm, setSearchTerm] = useState(''); // 검색어 (프로젝트명, 사용자명)
@@ -547,15 +539,6 @@ export default function Board() {
       <UserInfoModal
         isOpen={isUserInfoModalOpen}
         onClose={closeUserInfoModal}
-      />
-      {/* 캘린더 상세 모달 */}
-      <CalendarModal
-        isOpen={isCalendarModalOpen}
-        onClose={closeModal}
-        task={task}
-        onCommentSubmit={handleCommentSubmit}
-        onCommentEdit={handleCommentEdit} // 추가된 핸들러
-        onCommentDelete={handleCommentDelete} // 추가된 핸들러
       />
     </div>
   );

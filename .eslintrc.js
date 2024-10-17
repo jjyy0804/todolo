@@ -22,6 +22,7 @@ module.exports = {
     'no-undef': 'warn', // This will trigger a warning instead of an error
     'no-unused-vars': 'warn', // Will now trigger a warning instead of an error
     'react-hooks/rules-of-hooks': 'warn',
+    'react/jsx-no-undef': 'warn',
   },
   settings: {
     react: {
