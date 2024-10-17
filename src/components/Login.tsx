@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import logo from '../assets/logos/todolo_logo_main.png';
 import useLogin from '../hooks/useLogin';
+import useUserStore from '../store/useUserstore';
 
 export default function Login() {
   // 인풋값 입력시, 색상 변경하기
@@ -11,8 +12,9 @@ export default function Login() {
   const [password, setPassword] = useState('');
 
   // 훅에서 로딩 및 에러 상태, 로그인 함수 가져오기
-  const { login, loading, errorMessage } = useLogin();
-
+  const { login, errorMessage } = useLogin();
+  const { isLoading } = useUserStore(); //서버로 요청 보낼 때는 버튼 비활성화
+  /** 로그인 버튼 클릭*/
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     await login(email, password);
@@ -58,9 +60,9 @@ export default function Login() {
         <button
           type="submit"
           className="p-[18px-20px] w-[464px] h-[56px] bg-[#599BFF] border rounded-[10px] text-white font-bold"
-          disabled={loading}
+          disabled={isLoading}
         >
-          {loading ? '로그인 중...' : '로그인'}
+          {isLoading ? '로그인 중...' : '로그인'}
         </button>
 
         {/* 오류 메시지 표시 */}
