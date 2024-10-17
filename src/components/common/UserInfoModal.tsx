@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import basicProfileImage from '../../assets/images/basic_user_profile.png';
 import { FaCheckCircle } from 'react-icons/fa';
+import axios from 'axios';
 
 // props 타입 정의
 interface ProfileModalProps {
@@ -17,6 +18,8 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [isEditable, setIsEditable] = useState(false); // 프로필 이미지 및 비밀번호 수정 가능 여부
+  const [selectedFile, setSelectedFile] = useState<File | null>(null); // selectedFile 상태 정의
+
 
   /** 파일 선택 시 profileImage의 상태를 해당 url로 변경 */
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,6 +54,38 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     setIsEditable(false);
     setPassword('');
     setPasswordConfirm('');
+  };
+
+  // 저장 버튼 눌렀을 때, (아바타, 비밀번호) 데이터 전송하기
+  const handleSaveClick = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password !== passwordConfirm) {
+      alert('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
+    // FormData를 사용해 파일과 데이터를 보낼 준비
+    const formData = new FormData();
+    if (selectedFile) formData.append('avatar', selectedFile);
+    if (password) formData.append('password', password);
+
+    try {
+      // JWT 토큰 설정 (예시로 로컬 스토리지에서 가져옴)
+      const token = localStorage.getItem('token');
+
+      const response = await axios.put(`/users/update/:userId`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`, // JWT 토큰 추가
+          'Content-Type': 'multipart/form-data', // multipart/form-data 설정
+        },
+      });
+
+      alert(response.data.message); // 성공 메시지 알림
+      onClose(); // 창 닫기
+    } catch (error) {
+      console.error('Error:', error);
+      alert('정보 업데이트에 실패했습니다.');
+    }
   };
 
   return (
@@ -163,7 +198,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
                 <button
                   type="submit"
                   className="py-2 px-4 bg-primary text-white rounded-lg shadow-sm font-bold text-sm hover:bg-secondary"
-                  onClick={onClose}
+                  onClick={handleSaveClick}
                 >
                   저장
                 </button>
