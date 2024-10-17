@@ -9,6 +9,7 @@ import Calendar from '../components/Calendar';
 import RequestResetPassword from '../components/RequestResetPassword';
 import ResetPassword from '../components/ResetPassword';
 import ErrorPage from '../components/ErrorPage';
+import SetTeam from '../components/SetTeam';
 
 export const ROUTE_LINK = {
   LANDING: { path: '/', link: '/' },
@@ -19,6 +20,7 @@ export const ROUTE_LINK = {
   REQ_RESET_PASSWORD: { path: 'req-reset-pw', link: '/req-reset-pw' },
   RESET_PASSWORD: { path: 'reset-pw/:token?', link: '/reset-pw/:token?' },
   ERROR: { path: '*', link: '/*' },
+  SET_TEAM: { path: 'set-team/:token?', link: '/set-team/:token?' },
 };
 
 const routes = [
@@ -53,6 +55,10 @@ const routes = [
       {
         path: ROUTE_LINK.RESET_PASSWORD.path,
         element: <ResetPassword />,
+      },
+      {
+        path: ROUTE_LINK.SET_TEAM.path,
+        element: <SetTeam />,
       },
     ],
   },

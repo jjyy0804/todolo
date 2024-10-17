@@ -1,6 +1,10 @@
 import React, { useState, useRef } from 'react';
 import basicProfileImage from '../../assets/images/basic_user_profile.png';
 import { FaCheckCircle } from 'react-icons/fa';
+import useUserStore from '../../store/useUserstore'; // Zustand 스토어 임포트
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+
 
 // props 타입 정의
 interface ProfileModalProps {
@@ -11,9 +15,13 @@ interface ProfileModalProps {
 function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   if (!isOpen) return null;
 
-  const [profileImage, setProfileImage] = useState(basicProfileImage);
-  const fileInputRef = useRef<HTMLInputElement | null>(null); // useRef로 파일 인풋을 참조
+  const { user } = useUserStore(); // Zustand에서 user 정보 가져오기
+  const navigate = useNavigate();
+  const [profileImage, setProfileImage] = useState(
+    user?.avatar || `${basicProfileImage}`,
+  );
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null); // useRef로 파일 인풋을 참조
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [isEditable, setIsEditable] = useState(false); // 프로필 이미지 및 비밀번호 수정 가능 여부
@@ -33,6 +41,28 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       fileInputRef.current?.click(); // useRef로 파일 인풋을 클릭
     }
   };
+
+  /** 팀 설정 페이지로 이동 */
+  const handleSetTeamClick = async() => {
+    try {
+      const accessToken = localStorage.getItem('accessToken');
+      const response = await axios.post(
+          `${process.env.REACT_APP_API_BASE_URL}/users/send-confirmation-email`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+      );
+      console.log(response.data.message);
+      alert('메일이 발송되었습니다. 확인해주세요.'); // 성공 시 알림창 표시
+    } catch (error) {
+      console.log(error);
+      alert('메일을 전송하는데 실패했습니다. 다시 시도해주세요.'); // 실패 시 메시지 설정
+    }
+  };
+
 
   /** 비밀번호 확인 */
   const handleConfirmPasswordChange = (
@@ -69,7 +99,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           onClick={handleImageClick}
         >
           <img
-            src={profileImage}
+            src={basicProfileImage}
             alt="basic_profile_image"
             className="w-full h-full rounded-full"
           />
@@ -88,7 +118,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         />
 
         <p className="flex items-center justify-center mt-2 text-sm text-gray-600">
-          elicetrack99@gmail.com
+          {user?.email || 'example@gmail.com'}
         </p>
 
         <form className="space-y-4">
@@ -98,7 +128,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               이름
             </label>
             <div className="mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none">
-              이주영
+              {user?.name || '이름'}
             </div>
           </div>
 
@@ -108,7 +138,17 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               소속
             </label>
             <div className="mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none">
-              2팀
+              {user?.team ? (
+                user.team
+              ) : (
+                <button
+                  type="button"
+                  className="text-blue-500 underline"
+                  onClick={handleSetTeamClick} // 버튼 클릭 시 /set-team 페이지로 이동
+                >
+                  소속팀 정하기
+                </button>
+              )}
             </div>
           </div>
 
@@ -122,7 +162,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
               className={`mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none ${
                 isEditable ? 'bg-white' : 'bg-gray-100'
               }`}
-              placeholder="*******(기존비번)"
+              placeholder="기존 비밀번호"
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setPassword(e.target.value)
