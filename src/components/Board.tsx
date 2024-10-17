@@ -12,68 +12,16 @@ import useScheduleStore from '../store/useScheduleStore';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './common/UserInfoModal';
-<<<<<<< HEAD
-import CalendarModal from '../components/common/modal/CalendarModal';
-
-interface Schedule {
-  id: number;
-  scheduleName: string;
-  projectName: string;
-  scheduleContent: string;
-  status: '할 일' | '진행 중' | '완료';
-  priority: '높음' | '중간' | '낮음';
-  teamMembers: TeamMember[];
-  startDate: string;
-  endDate: string;
-}
-
-interface TeamMember {
-  id: number;
-  name: string;
-}
-=======
 import useDeleteTask from '../hooks/task/useDeleteTask';
 import BasicImage from '../assets/images/basic_user_profile.png'; //프로필 기본이미지
 //사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
 import { Schedule } from '../types/scheduleTypes';
->>>>>>> 5d91f7436c76c6d1e742c07ce4491f187bef3ae5
+import { Comment } from '../types/calendarModalTypes';
+import CalendarModal from '../components/common/modal/CalendarModal';
 
-// 댓글 인터페이스 정의
-interface Comment {
-  id: number;
-  user: string;
-  date: string;
-  content: string;
-}
 
+  
 export default function Board() {
-<<<<<<< HEAD
-  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); // 등록, 수정 모달 상태
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
-    null,
-  ); // 수정할 일정
-  const [isEdit, setIsEdit] = useState(false); // 수정 모드 여부
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false); // 삭제 모달 상태
-  const [scheduleToDelete, setScheduleToDelete] = useState<Schedule | null>(
-    null,
-  ); // 삭제할 일정
-
-  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false);
-
-  const openUserInfoModal = () => setIsUserInfoModalOpen(true);
-  const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
-
-  const { user } = useUserStore();
-  const {
-    schedules,
-    addSchedule,
-    removeSchedule,
-    updateSchedule,
-    setSchedules,
-  } = useScheduleStore();
-
-=======
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
   const [searchTerm, setSearchTerm] = useState(''); // 검색어 (프로젝트명, 사용자명)
   const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(
@@ -93,7 +41,6 @@ export default function Board() {
   const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
   const { deleteTask } = useDeleteTask(); //일정 삭제 커스텀 훅
   const token = localStorage.getItem('accessToken'); // 토큰 가져오기
->>>>>>> 5d91f7436c76c6d1e742c07ce4491f187bef3ae5
   useEffect(() => {
     if (!token) {
       alert('로그인이 필요합니다.');
@@ -132,48 +79,6 @@ export default function Board() {
     // 드롭되지 않은 경우 종료
     if (!destination) return;
 
-<<<<<<< HEAD
-    // 같은 보드 내 이동 처리
-    if (source.droppableId === destination.droppableId) {
-      const items = Array.from(
-        schedules.filter((schedule) => schedule.status === source.droppableId),
-      );
-
-      const [reorderedItem] = items.splice(source.index, 1);
-      items.splice(destination.index, 0, reorderedItem);
-
-      const updatedSchedules = schedules.map(
-        (schedule) => items.find((item) => item.id === schedule.id) || schedule,
-      );
-
-      setSchedules(updatedSchedules);
-    } else {
-      // 다른 보드로 이동 처리
-      const sourceItems = schedules.filter(
-        (schedule) => schedule.status === source.droppableId,
-      );
-      const destinationItems = schedules.filter(
-        (schedule) => schedule.status === destination.droppableId,
-      );
-
-      const [movedItem] = sourceItems.splice(source.index, 1);
-      movedItem.status = destination.droppableId as
-        | '할 일'
-        | '진행 중'
-        | '완료';
-      destinationItems.splice(destination.index, 0, movedItem);
-
-      const updatedSchedules = [
-        ...sourceItems,
-        ...destinationItems,
-        ...schedules.filter(
-          (schedule) =>
-            schedule.status !== source.droppableId &&
-            schedule.status !== destination.droppableId,
-        ),
-      ];
-
-=======
     // 이동된 일정 찾기 (source에서 해당 index의 일정 찾기)
     const sourceTasks = filteredSchedules.filter(
       (schedule) => schedule.status === source.droppableId,
@@ -214,7 +119,6 @@ export default function Board() {
       );
 
       setFilteredSchedules(updatedSchedules);
->>>>>>> 5d91f7436c76c6d1e742c07ce4491f187bef3ae5
       setSchedules(updatedSchedules);
     } catch (error) {
       console.error('상태 업데이트 중 오류:', error);
@@ -266,8 +170,12 @@ export default function Board() {
     setIsDeleteModalOpen(false);
     setScheduleToDelete(null);
   };
-<<<<<<< HEAD
+  // avatar가 절대 경로가 아닌 경우 처리
+  const avatarUrl = user?.avatar
+    ? `http://localhost:3000/uploads/${user.avatar.split('\\').pop()}`
+    : `${BasicImage}`; // 기본 이미지
 
+    //-------------------CalendarModal---------------------
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
   const [task, setTask] = useState({
     title: 'title: 일정(업무)의 이름',
@@ -288,7 +196,6 @@ export default function Board() {
     ],
   });
 
-  //-------------------CalendarModal---------------------
   // CalendarModal 오픈 & 클로즈
   const openModal = () => setIsCalendarModalOpen(true);
   const closeModal = () => setIsCalendarModalOpen(false);
@@ -318,12 +225,6 @@ export default function Board() {
       comments: prevTask.comments.filter((comment) => comment.id !== id),
     }));
   };
-=======
-  // avatar가 절대 경로가 아닌 경우 처리
-  const avatarUrl = user?.avatar
-    ? `http://localhost:3000/uploads/${user.avatar.split('\\').pop()}`
-    : `${BasicImage}`; // 기본 이미지
->>>>>>> 5d91f7436c76c6d1e742c07ce4491f187bef3ae5
 
   return (
     <div>
@@ -345,11 +246,7 @@ export default function Board() {
           </div>
         </div>
 
-<<<<<<< HEAD
-        {/* 사용자 검색 창 => 나중에 수정필요 */}
-=======
         {/* 사용자 검색 창 */}
->>>>>>> 5d91f7436c76c6d1e742c07ce4491f187bef3ae5
         <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-36">
           <div className="relative w-[343px]">
             {' '}
@@ -391,58 +288,6 @@ export default function Board() {
                         />
                         <h3 className="text-[17px] font-regular mb-2">Todo</h3>
                       </div>
-<<<<<<< HEAD
-                      {/*상태 = "할 일" 인 일정 카드 */}
-                      <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg overflow-y-auto flex flex-col justify-between">
-                        <div className="p-4 flex flex-col space-y-4">
-                          {schedules
-                            .filter((schedule) => schedule.status === '할 일')
-                            .map((schedule, index) => (
-                              <Draggable
-                                key={schedule.id}
-                                draggableId={schedule.id.toString()}
-                                index={index}
-                              >
-                                {(provided) => (
-                                  <div
-                                    ref={provided.innerRef}
-                                    {...provided.draggableProps}
-                                    {...provided.dragHandleProps}
-                                    className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
-                                    onClick={openModal}
-                                  >
-                                    <div>
-                                      <h4 className="font-bol">
-                                        {schedule.scheduleName}
-                                      </h4>
-                                      <p className="text-sm">
-                                        {schedule.projectName}
-                                      </p>
-                                      <p className="text-sm">
-                                        우선순위 {schedule.priority}
-                                      </p>
-                                    </div>
-                                    <div className="flex space-x-2">
-                                      <button
-                                        className="text-gray-400 hover:text-red-500"
-                                        onClick={(event) => {
-                                          event.stopPropagation();
-                                          openDeleteModal(schedule);
-                                        }}
-                                      >
-                                        <FiTrash2 size={20} />
-                                      </button>
-                                      <button
-                                        className="text-gray-400 hover:text-blue-500"
-                                        onClick={(event) => {
-                                          event.stopPropagation();
-                                          handleOpenModal(schedule);
-                                        }}
-                                      >
-                                        <FiEdit3 size={20} />
-                                      </button>
-                                    </div>
-=======
 
                       {/* 일정 목록이 스크롤되는 영역 */}
                       <div className="w-[374px] h-[710px] bg-[#DFEDF9] rounded-lg overflow-y-auto p-4 space-y-4">
@@ -460,26 +305,36 @@ export default function Board() {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                                  onClick={openModal}
                                 >
                                   <div>
                                     <h4 className="font-bold">{schedule.title}</h4>
                                     <p className="text-sm">{schedule.projectTitle}</p>
                                     <p className="text-sm">우선순위 {schedule.priority}</p>
->>>>>>> 5d91f7436c76c6d1e742c07ce4491f187bef3ae5
                                   </div>
                                   <div className="flex space-x-2">
+
                                     <button
                                       className="text-gray-400 hover:text-red-500"
-                                      onClick={() => openDeleteModal(schedule)}
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        openDeleteModal(schedule);
+                                      }}
                                     >
                                       <FiTrash2 size={20} />
                                     </button>
-                                    <button className="text-gray-400 hover:text-blue-500">
-                                      <FiEdit3
-                                        size={20}
-                                        onClick={() => handleOpenModal(schedule)}
-                                      />
-                                    </button>
+
+                                    <button
+                                        className="text-gray-400 hover:text-blue-500"
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          handleOpenModal(schedule);
+                                        }}
+                                      >
+                                        <FiEdit3 size={20} />
+                                      </button>
+
+
                                   </div>
                                 </div>
                               )}
