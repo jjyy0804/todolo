@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/logos/todolo_logo_noslog.png';
+import useScheduleStore from '../../store/useScheduleStore';
 import useUserStore from '../../store/useUserstore';
 
 const NavigationBar = () => {
@@ -8,24 +9,29 @@ const NavigationBar = () => {
   const location = useLocation(); // 현재 경로를 가져옴
   const isAuthenticated = useUserStore((state) => state.isAuthenticated); // 로그인 상태 관리
   const logout = useUserStore((state) => state.logout);
-  /**로고 이미지 클릭 시 홈 화면으로 이동 */
+  const { clearSchedules } = useScheduleStore();
+  /** 로고 이미지 클릭 시, 토큰이 있으면 메인 페이지로 이동, 없으면 홈 화면으로 이동 */
   const handleLogoClick = () => {
-    navigate('/');
+    const token = localStorage.getItem('accessToken'); // 토큰 가져오기
+
+    if (token) {
+      navigate('/main'); // 토큰이 있으면 메인 페이지로 이동
+    } else {
+      navigate('/'); // 토큰이 없으면 홈 화면으로 이동
+    }
   };
   const handleLoginButtonClick = () => {
     if (isAuthenticated) {
       // 로그아웃 로직
       logout();
+      localStorage.removeItem('accessToken');
+      useScheduleStore.getState().clearSchedules(); // 상태 초기화
       alert('로그아웃 되었습니다.');
       navigate('/');
     } else {
       // 로그인 페이지로 이동
       navigate('/login');
     }
-  };
-
-  const handleMyPageClick = () => {
-    navigate('/myPage');
   };
 
   const handleCalendarClick = () => {
@@ -43,16 +49,6 @@ const NavigationBar = () => {
       <div className="flex items-center gap-4">
         {isAuthenticated && (
           <>
-            <button
-              className={`text-sm hover:text-primary ${
-                location.pathname === '/myPage'
-                  ? 'text-primary font-bold'
-                  : 'text-darkgray'
-              }`}
-              onClick={handleMyPageClick}
-            >
-              My Page
-            </button>
             <button
               className={`text-sm hover:text-primary ${
                 location.pathname === '/calendar'
