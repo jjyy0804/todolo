@@ -25,15 +25,17 @@ const TeamMemberSelector = ({
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
-        ); 
+          },
+        );
         console.log('API 응답:', response.data.data[0].teamMembers); // 응답 데이터 확인
         // response.data.teamMembers에서 필요한 필드만 추출
-        const formattedMembers = response.data.data[0].teamMembers.map((member: any) => ({
-          id: member._id, // _id를 id로 매핑
-          name: member.name,
-          avatar: member.avatar !== 'N/A' ? member.avatar : basicProfile, // avatar가 없을 경우 기본 이미지 제공
-        }));
+        const formattedMembers = response.data.data[0].teamMembers.map(
+          (member: any) => ({
+            id: member._id, // _id를 id로 매핑
+            name: member.name,
+            avatar: member.avatar !== 'N/A' ? member.avatar : basicProfile, // avatar가 없을 경우 기본 이미지 제공
+          }),
+        );
 
         setMembers(formattedMembers); // 인터페이스에 맞게 변환된 데이터로 상태 업데이트
       } catch (error) {
@@ -51,14 +53,14 @@ const TeamMemberSelector = ({
     } else {
       setFilteredMembers(
         members.filter((member) =>
-          member.name.toLowerCase().includes(searchTerm.toLowerCase())
-        )
+          member.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        ),
       );
     }
   }, [searchTerm, members]);
 
-   // 팀원 선택 핸들러
-   const handleSelectMember = (member: TeamMember) => {
+  // 팀원 선택 핸들러
+  const handleSelectMember = (member: TeamMember) => {
     // 이미 선택된 팀원이 아닐 때만 추가
     if (!selectedMembers.some((m) => m.id === member.id)) {
       const newSelectedMembers = [...selectedMembers, member];
@@ -87,8 +89,8 @@ const TeamMemberSelector = ({
               src={member.avatar}
               alt={`${member.name}의 아바타`}
               className="w-8 h-8 rounded-full mr-2 object-cover"
-              onError={(e) =>
-                (e.currentTarget.src = 'https://via.placeholder.com/150') // 이미지 로딩 실패 시 기본 이미지 표시
+              onError={
+                (e) => (e.currentTarget.src = 'https://via.placeholder.com/150') // 이미지 로딩 실패 시 기본 이미지 표시
               }
             />
             {member.name}

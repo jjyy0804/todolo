@@ -247,7 +247,9 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
                 className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#7F56D9]`}
               >
                 {priority === '높음' && (
-                  <span className="text-[#7F56D9] text-lg font-semibold">✔</span>
+                  <span className="text-[#7F56D9] text-lg font-semibold">
+                    ✔
+                  </span>
                 )}
               </div>
               <span className="text-darkgray">높음</span>
@@ -261,7 +263,9 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
                 className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#FFC14A]`}
               >
                 {priority === '중간' && (
-                  <span className="text-[#FFC14A] text-lg font-semibold">✔</span>
+                  <span className="text-[#FFC14A] text-lg font-semibold">
+                    ✔
+                  </span>
                 )}
               </div>
               <span className="text-darkgray">중간</span>
@@ -275,7 +279,9 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
                 className={`w-6 h-6 flex items-center justify-center rounded-[10px] border-2 border-[#938f99]`}
               >
                 {priority === '낮음' && (
-                  <span className="text-[#938f99] text-lg font-semibold">✔</span>
+                  <span className="text-[#938f99] text-lg font-semibold">
+                    ✔
+                  </span>
                 )}
               </div>
               <span className="text-darkgray">낮음</span>
@@ -325,7 +331,8 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
                     className="w-6 h-6 rounded-full mr-2 object-cover"
                   />
                   {member.name}
-                  <span className="ml-auto text-red-500">제거</span> {/* 제거 표시 */}
+                  <span className="ml-auto text-red-500">제거</span>{' '}
+                  {/* 제거 표시 */}
                 </li>
               ))
             )}
