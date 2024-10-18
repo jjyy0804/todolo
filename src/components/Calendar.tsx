@@ -8,7 +8,8 @@ import { type EventClickArg } from '@fullcalendar/core';
 
 import '../calendar.css';
 import NavigationBar from './common/NavigationBar';
-import ScheduleModal from './common/modal/ScheduleModal';
+//import ScheduleModal from './common/modal/ScheduleModal';
+import CalendarModal from './common/modal/CalendarModal';
 // import useUserStore from '../store/useUserstore';
 
 interface Task {
@@ -86,7 +87,7 @@ export default function Calendar() {
       />
       {/* Calendar Modal */}
       {isModalOpen && selectedEvent && (
-        <ScheduleModal
+        <CalendarModal
           isOpen={isModalOpen}
           onClose={closeModal} // Function to close the modal
           taskId={selectedEvent.taskId} // Pass the clicked event details to the modal

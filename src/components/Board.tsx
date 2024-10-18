@@ -18,6 +18,7 @@ import BasicImage from '../assets/images/basic_user_profile.png'; //프로필 �
 import { Schedule } from '../types/scheduleTypes';
 import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
+import { Task } from '../types/calendarModalTypes';
 
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
@@ -180,6 +181,10 @@ export default function Board() {
 
   //-------------------CalendarModal---------------------
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null); // 선택된 태스크 저장
+
+
+  /*
   const [task, setTask] = useState({
     title: 'title: 일정(업무)의 이름',
     date: '10/5~10/10',
@@ -198,37 +203,80 @@ export default function Board() {
       },
     ],
   });
+  */
 
   // CalendarModal 오픈 & 클로즈
-  const openModal = () => setIsCalendarModalOpen(true);
-  const closeModal = () => setIsCalendarModalOpen(false);
+
+  const handleOpenCalendarModal = () => {
+    setIsCalendarModalOpen(true); // 모달 열기
+  };
+
+  const handleCloseCalendarModal = () => {
+    setIsCalendarModalOpen(false); // 모달 닫기
+  };
 
   // 댓글 등록 핸들러
-  const handleCommentSubmit = (newComment: Comment) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      comments: [...prevTask.comments, newComment],
-    }));
+  const handleCommentSubmit = (newCommentContent: string) => {
+    if (newCommentContent.trim() === '') return; // 댓글 비었을 때 등록 X
+  
+    const newComment: Comment = {
+      id: Date.now(),
+      user: user?.name || 'Unknown User',
+      date: new Date().toLocaleDateString(),
+      content: newCommentContent,
+    };
+  
+    setSelectedTask((prevTask) => {
+      if (!prevTask) {
+        return {
+          title: '', // 기본값 설정
+          date: '',
+          projectName: '',
+          teamMembers: [],
+          details: '',
+          comments: [newComment], // 새 댓글 추가
+        };
+      }
+  
+      return {
+        ...prevTask,
+        comments: [...prevTask.comments, newComment], // 댓글 추가
+      };
+    });
   };
+  
 
   // 댓글 수정 핸들러
-  const handleCommentEdit = (id: number, updatedContent: string) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      comments: prevTask.comments.map((comment) =>
-        comment.id === id ? { ...comment, content: updatedContent } : comment,
-      ),
-    }));
-  };
+const handleCommentEdit = (id: number, updatedContent: string) => {
+  if (selectedTask) {
+    setSelectedTask((prevTask) => {
+      if (!prevTask) return prevTask; // prevTask가 null인 경우를 처리
 
-  // 댓글 삭제 핸들러
-  const handleCommentDelete = (id: number) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      comments: prevTask.comments.filter((comment) => comment.id !== id),
-    }));
-  };
+      return {
+        ...prevTask,
+        comments: prevTask.comments.map((comment) =>
+          comment.id === id ? { ...comment, content: updatedContent } : comment
+        ),
+      };
+    });
+  }
+};
 
+// 댓글 삭제 핸들러
+const handleCommentDelete = (id: number) => {
+  if (selectedTask) {
+    setSelectedTask((prevTask) => {
+      if (!prevTask) return prevTask; // prevTask가 null인 경우를 처리
+
+      return {
+        ...prevTask,
+        comments: prevTask.comments.filter((comment) => comment.id !== id),
+      };
+    });
+  }
+};
+
+  
   return (
     <div>
       <NavigationBar />
@@ -308,7 +356,11 @@ export default function Board() {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
-                                  onClick={openModal}
+                                  onClick={() => {
+                                    // 모달을 여는 함수 호출
+                                    handleOpenCalendarModal(); 
+                                  }}
+
                                 >
                                   <div>
                                     <h4 className="font-bold">
@@ -415,22 +467,25 @@ export default function Board() {
                                       </p>
                                     </div>
                                     <div className="flex space-x-2">
-                                      <button
-                                        className="text-gray-400 hover:text-red-500"
-                                        onClick={() =>
-                                          openDeleteModal(schedule)
-                                        }
-                                      >
-                                        <FiTrash2 size={20} />
-                                      </button>
-                                      <button className="text-gray-400 hover:text-blue-500">
-                                        <FiEdit3
-                                          size={20}
-                                          onClick={() =>
-                                            handleOpenModal(schedule)
-                                          }
-                                        />
-                                      </button>
+                                    <button
+                                      className="text-gray-400 hover:text-red-500"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        openDeleteModal(schedule);
+                                      }}
+                                    >
+                                      <FiTrash2 size={20} />
+                                    </button>
+
+                                      <button className="text-gray-400 hover:text-blue-500"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        handleOpenModal(schedule);
+                                      }}
+                                    >
+                                      <FiEdit3 size={20} />
+                                    </button>
+
                                     </div>
                                   </div>
                                 )}
@@ -539,6 +594,15 @@ export default function Board() {
       <UserInfoModal
         isOpen={isUserInfoModalOpen}
         onClose={closeUserInfoModal}
+      />
+       {/* 캘린더 상세 모달 */}
+       <CalendarModal
+        isOpen={isCalendarModalOpen} 
+        onClose={handleCloseCalendarModal} 
+        task={selectedTask}
+        onCommentSubmit={handleCommentSubmit} 
+  onCommentEdit={handleCommentEdit}     
+  onCommentDelete={handleCommentDelete}  
       />
     </div>
   );

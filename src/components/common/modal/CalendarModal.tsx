@@ -1,7 +1,11 @@
-import React, { useState } from 'react';
 import calendarImg from '../../../assets/icons/calendar.png';
 import trashImg from '../../../assets/icons/trash.png';
 import editImg from '../../../assets/icons/edit.png';
+import useUserStore from '../../../store/useUserstore';
+import React, { useEffect, useState } from 'react';
+import axios, { AxiosError, AxiosResponse } from 'axios';
+import basicProfileImage from '../../assets/images/basic_user_profile.png';
+
 
 interface TeamMember {
   name: string;
@@ -11,6 +15,7 @@ interface TeamMember {
 interface Comment {
   id: number;
   user: string;
+  avatar?: string;  // 추가
   date: string;
   content: string;
 }
@@ -27,7 +32,7 @@ interface Task {
 interface CalendarModalProps {
   isOpen: boolean;
   onClose: () => void;
-  task: Task;
+  task: Task | null;
   onCommentSubmit: (newComment: Comment) => void; // 댓글 추가 로직을 부모에서 관리
   onCommentEdit: (id: number, updatedContent: string) => void; // 댓글 수정 로직
   onCommentDelete: (id: number) => void; // 댓글 삭제 로직
@@ -36,33 +41,76 @@ interface CalendarModalProps {
 function CalendarModal({
   isOpen,
   onClose,
-  task,
+  task, // task 추가
   onCommentSubmit,
   onCommentEdit,
-  onCommentDelete,
+  onCommentDelete
 }: CalendarModalProps) {
-  if (!isOpen) return null; // 모달이 열리지 않은 경우 렌더링 X
 
+  const { user } = useUserStore(); // Zustand에서 user 정보 가져오기
+  const [profileImage, setProfileImage] = useState(
+    user?.avatar || `${basicProfileImage}`,
+  );
+  const [currentTask, setCurrentTask] = useState<Task | null>(null); // Task 상태 관리
   const [newComment, setNewComment] = useState('');
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null); // 현재 수정 중인 댓글 ID
   const [editedContent, setEditedContent] = useState(''); // 수정된 댓글 내용
 
-  // {댓글 등록 로직}
+  useEffect(() => {
+    const accessToken = localStorage.getItem('accessToken');
+    axios
+      .get(
+        `${process.env.REACT_APP_API_BASE_URL}/teams/6710a1f2df52cd53f2d9c77f`,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      )
+      .then((response) => {
+        const fetchedTask = response.data.data[0]; // 예시로 첫 번째 태스크만 가져온다고 가정
+        const formattedTask = {
+          title: fetchedTask.title,
+          date: `${fetchedTask.startDate.split('T')[0]} ~ ${fetchedTask.endDate.split('T')[0]}`,
+          projectName: fetchedTask.project.title,
+          teamMembers: fetchedTask.taskMembers.map((member: any) => ({
+            name: member.name,
+            avatar: member.avatar || basicProfileImage,
+          })),
+          details: fetchedTask.content,
+          comments: fetchedTask.comments || [],
+        };
+        setCurrentTask(formattedTask);
+      })
+      .catch((error) => {
+        console.error('Error fetching task:', error);
+      });
+  }, []);
+
+  if (!isOpen || !task) return null; // 모달이 열리지 않거나 task가 없는 경우 렌더링 X
+
+ 
+
+  // -----------------<댓글: Comment>-----------------
+  // 댓글 등록
   const handleCommentSubmit = () => {
     if (newComment.trim() === '') return; // 댓글 비었을 때 등록 X
 
     const comment: Comment = {
-      id: Date.now(), // 임시 ID (실제 프로젝트에서는 고유한 ID가 필요)
-      user: '현재 사용자', // !!!!!!!!!!!실제 로그인 된 사용자로 수정하기!!!!!!!!!!!
+      id: Date.now(),
+      user: user?.name || 'Unknown User',
       date: new Date().toLocaleDateString(),
       content: newComment,
     };
 
-    onCommentSubmit(comment); // 부모 컴포넌트에 댓글 추가 요청
+    setCurrentTask((prevTask) => prevTask && ({
+      ...prevTask,
+      comments: [...prevTask.comments, comment],
+    }));
     setNewComment(''); // 댓글 입력 필드 초기화
   };
 
-  // {댓글 수정}
+  // 댓글 수정
   const handleEditClick = (comment: Comment) => {
     setEditingCommentId(comment.id);
     setEditedContent(comment.content);
@@ -70,17 +118,24 @@ function CalendarModal({
 
   const handleEditSave = (id: number) => {
     if (editedContent.trim() === '') return;
-    onCommentEdit(id, editedContent);
+    setCurrentTask((prevTask) => prevTask && ({
+      ...prevTask,
+      comments: prevTask.comments.map((comment) =>
+        comment.id === id ? { ...comment, content: editedContent } : comment
+      ),
+    }));
     setEditingCommentId(null);
     setEditedContent('');
   };
 
-  // {댓글 삭제}
+  // 댓글 삭제
   const handleDeleteClick = (id: number) => {
-    // 삭제 경고 알람
     const isConfirmed = window.confirm('정말 삭제하시겠습니까?');
     if (isConfirmed) {
-      onCommentDelete(id);
+      setCurrentTask((prevTask) => prevTask && ({
+        ...prevTask,
+        comments: prevTask.comments.filter((comment) => comment.id !== id),
+      }));
     }
   };
 
