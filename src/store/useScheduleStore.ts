@@ -41,14 +41,11 @@ const useScheduleStore = create<ScheduleState>((set) => ({
   /** 서버에서 일정을 가져오는 메서드 추가 */
   fetchSchedulesFromServer: async (teamId, token) => {
     try {
-      const response = await apiClient.get(
-        `${process.env.REACT_APP_API_BASE_URL}/teams/${teamId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      const response = await apiClient.get(`/teams/${teamId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-      );
+      });
       console.log(response.data);
       // 데이터 변환
       const transformDataToSchedules = (data: any): Schedule[] => {

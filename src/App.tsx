@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import apiClient from './utils/apiClient'; // axios instance with interceptors
 
 function App() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     // check if user is authenticated
@@ -44,6 +45,9 @@ function App() {
       }
     };
 
+    if (location.pathname.includes('login')) return;
+
+    // not on login
     checkAuthentication();
   }, [navigate]);
 

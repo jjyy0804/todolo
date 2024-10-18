@@ -99,7 +99,7 @@ export default function Board() {
 
       // 서버에 상태 업데이트 요청
       await apiClient.put(
-        `${process.env.REACT_APP_API_BASE_URL}/tasks/${movedItem.id}`,
+        `/tasks/${movedItem.id}`,
         { ...movedItem, status: newStatus },
         {
           headers: {

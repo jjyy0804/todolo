@@ -18,13 +18,10 @@ const useLogin = () => {
     setErrorMessage('');
     try {
       setLoading(true);
-      const response = await apiClient.post(
-        `${process.env.REACT_APP_API_BASE_URL}/users/login`,
-        {
-          email,
-          password,
-        },
-      );
+      const response = await apiClient.post(`/users/login`, {
+        email,
+        password,
+      });
       //로그인 성공 시
       if (response.status === 200) {
         const data = response.data;

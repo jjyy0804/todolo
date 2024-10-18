@@ -38,13 +38,10 @@ export default function ResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await apiClient.put(
-        `${process.env.REACT_APP_API_BASE_URL}/users/reset-pw/`,
-        {
-          token: token,
-          newPassword: password,
-        },
-      );
+      const response = await apiClient.put(`/users/reset-pw/`, {
+        token: token,
+        newPassword: password,
+      });
       console.log(response.data.message);
       setMessage('비밀번호 재설정되었습니다.');
       // 재설정 후 로그인 페이지로 이동

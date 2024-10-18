@@ -35,8 +35,8 @@ export default function Calendar() {
 
     apiClient
       .get(
-        // `${process.env.REACT_APP_API_BASE_URL}/teams/${team_id},
-        `${process.env.REACT_APP_API_BASE_URL}/teams/6710a1f2df52cd53f2d9c77f`,
+        // `/teams/${team_id},
+        `/teams/6710a1f2df52cd53f2d9c77f`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -85,14 +85,14 @@ export default function Calendar() {
         eventClick={eventClickHandler}
         editable={true}
       />
-      {/* Calendar Modal */}
+      {/* Calendar Modal
       {isModalOpen && selectedEvent && (
         <ScheduleModal
           isOpen={isModalOpen}
           onClose={closeModal} // Function to close the modal
           taskId={selectedEvent.taskId} // Pass the clicked event details to the modal
         />
-      )}
+      )} */}
     </>
   );
 }

@@ -47,7 +47,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const response = await apiClient.post(
-        `${process.env.REACT_APP_API_BASE_URL}/users/send-confirmation-email`,
+        `/users/send-confirmation-email`,
         {},
         {
           headers: {

@@ -18,13 +18,10 @@ export default function SetTeam() {
 
   const sendHandleClick = async () => {
     try {
-      const response = await apiClient.post(
-        `${process.env.REACT_APP_API_BASE_URL}/users/confirm-team`,
-        {
-          token: token,
-          team: selectedTeam,
-        },
-      );
+      const response = await apiClient.post(`/users/confirm-team`, {
+        token: token,
+        team: selectedTeam,
+      });
       console.log(response.data.message);
       setMessage('팀이 변경되었습니다.');
       // 재설정 후 로그인 페이지로 이동
