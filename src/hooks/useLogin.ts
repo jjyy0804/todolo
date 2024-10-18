@@ -27,6 +27,10 @@ const useLogin = () => {
         const data = response.data;
         // 로그인 성공 시 사용자 정보 및 토큰 저장
         localStorage.setItem('accessToken', data.accessToken);
+
+        // refreshToken 쿠키에 저장
+        document.cookie = `refreshToken=${data.refreshToken}; path=/; Secure; HttpOnly; SameSite=Strict`;
+
         // 서버에서 받아온 사용자 정보를 상태관리
         setUser({
           name: data.data.name,
