@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../store/useUserstore';
@@ -18,18 +18,19 @@ const useLogin = () => {
     setErrorMessage('');
     try {
       setLoading(true);
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/users/login`,
-        {
-          email,
-          password,
-        },
-      );
+      const response = await apiClient.post(`/users/login`, {
+        email,
+        password,
+      });
       //로그인 성공 시
       if (response.status === 200) {
         const data = response.data;
         // 로그인 성공 시 사용자 정보 및 토큰 저장
         localStorage.setItem('accessToken', data.accessToken);
+
+        // refreshToken 쿠키에 저장
+        document.cookie = `refreshToken=${data.refreshToken}; path=/; Secure; HttpOnly; SameSite=Strict`;
+
         // 서버에서 받아온 사용자 정보를 상태관리
         setUser({
           name: data.data.name,
