@@ -50,8 +50,6 @@ const useScheduleStore = create<ScheduleState>((set) => ({
         },
       });
 
-      console.log(response.data);
-
       // 데이터 변환(schedules 배열 스토어에 저장할 데이터 형식으로)
       const transformDataToSchedules = (projects: any[]): Schedule[] => {
         return projects.flatMap((project) => {

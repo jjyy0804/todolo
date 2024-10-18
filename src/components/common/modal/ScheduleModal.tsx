@@ -11,7 +11,7 @@ import ProjectSelector from '../ProjectSelector';
 interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
-  schedule: any | null;
+  schedule: any;
   isEdit: boolean; // 수정 모드 여부
 }
 
@@ -25,15 +25,10 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
   const [priority, setPriority] = useState<'높음' | '중간' | '낮음'>('중간');
   const [projectColor, setProjectColor] = useState('#599BFF'); // 프로젝트 색상 추가
   const [selectedMembers, setSelectedMembers] = useState<TeamMember[]>([]); // 선택된 팀원 배열
-  const [selectedProject, setSelectedProject] = useState<{ title: string; color: string } | null>(null);
   const user = useUserStore((state) => state.user); // 사용자 정보 가져오기
   const teamId = user?.team_id; // team_id 가져오기
   // 일정 상태관리에서 가져오기
   const { addSchedule, updateSchedule } = useScheduleStore();
-  const handleProjectSelect = (project: { title: string; color: string }) => {
-    setSelectedProject(project); // 선택된 프로젝트 정보를 모달 상태로 설정
-  };
-
   // 날짜를 YYYY-MM-DD 형식으로 변환하는 함수
   const formatDate = (dateString: string | undefined): string => {
     if (!dateString) return '';
@@ -44,18 +39,19 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
   };
   // 모달이 열릴 때 선택된 일정 데이터로 초기화
   useEffect(() => {
-    if (schedule) {
+    if (isEdit && schedule) {
+      // 수정 모드일 때, 기존 일정의 데이터를 초기화
       setScheduleName(schedule.title || '');
       setScheduleContent(schedule.content || '');
       setStartDate(formatDate(schedule.startDate) || '');
       setEndDate(formatDate(schedule.endDate) || '');
       setStatus(schedule.status || '할 일');
       setPriority(schedule.priority || '중간');
-      setProjectColor("#DFEDF9");
-      setSelectedMembers(schedule.taskMember || []); // 수정 모드일 때 선택된 팀원 로드
-      setSelectedProject(schedule.project ? { title: schedule.project.title, color: schedule.project.color } : null);
+      setProjectName(schedule.projectTitle || ''); // 프로젝트명 설정
+      setProjectColor(schedule.projectColor || '#000000'); // 프로젝트 색상 설정
+      setSelectedMembers(schedule.taskMember || []); // 선택된 팀원 로드
     }
-  }, [schedule]);
+  }, [isEdit, schedule]);
 
   /** 상태값 초기화 */
   const clearForm = () => {
@@ -68,19 +64,15 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
     setStatus('할 일');
     setSelectedMembers([]);
     setProjectColor("#DFEDF9");
-    setSelectedProject(null);
   };
-
+  // input 값 확인
   const isFormValid = () => {
     return (
       scheduleName.trim() !== '' &&
-      selectedProject !== null && // 프로젝트가 선택되었는지 확인
-      selectedProject.title.trim() !== '' && // 프로젝트 타이틀이 있는지 확인
-      selectedProject.color.trim() !== '' && // 프로젝트 색상이 있는지 확인
+      projectName.trim() !== '' &&
       scheduleContent.trim() !== '' &&
       startDate.trim() !== '' &&
-      endDate.trim() !== '' &&
-      selectedMembers.length > 0 // 팀원이 선택되었는지 확인
+      endDate.trim() !== ''
     );
   };
   /** 일정 추가 요청 보내기 */
@@ -89,18 +81,19 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
     const newScheduleforServer = {
       title: scheduleName,
       content: scheduleContent,
-      projectTitle: selectedProject?.title,
+      projectTitle: projectName,
       team_id: teamId, // team_id는 로그인 시 받아와 store에 저장해 둔 값
       startDate,
       endDate,
       status,
       priority,
-      projectColor: selectedProject?.color,
+      projectColor: projectColor,
       taskMember: selectedMembers.map((member) => member.id),
     };
-    console.log(newScheduleforServer)
+    console.log(newScheduleforServer);
+
     if (!isFormValid()) {
-      alert('모든 필드를 입력해야 합니다.');
+      alert('모든 필드를 입력해주세요..');
       return;
     }
 
@@ -200,16 +193,38 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
           />
         </div>
 
-        {/* 프로젝트 선택 */}
-        <ProjectSelector onSelectProject={setSelectedProject} selectedProject={selectedProject} />
+        {/* 프로젝트 선택 영역 */}
+        <div className="flex items-center space-x-2">
+          {/* 기존 프로젝트 선택 */}
+          <select
+            className="border border-gray-300 p-2 rounded-[10px] w-6 flex justify-center items-center"
+          >
+            <option value="">프로젝트 선택</option>
+            {/* {projects.map((project) => (  //서버로 부터 가져와서 목록 뿌리기
+              <option key={project.id} value={project.id}>
+                {project.title}
+              </option>
+            ))} */}
+          </select>
 
-        {selectedProject && (
-          <div className="mt-4">
-            <p>선택된 프로젝트: {selectedProject.title}</p>
-            <p>선택된 색상: <span style={{ color: selectedProject.color }}>{selectedProject.color}</span></p>
-          </div>
-        )}
+          {/* 새로운 프로젝트 이름 입력 */}
+          <input
+            type="text"
+            className="border p-2 border-gray-300 rounded-[10px] flex-1 focus:outline-none"
+            placeholder="프로젝트 이름을 입력하세요"
+            value={projectName}  // 입력된 프로젝트 이름
+            onChange={(e) => setProjectName(e.target.value)}  // 입력값 변경 시 호출
+          />
 
+          {/* 프로젝트 색상 선택 */}
+          <input
+            type="color"
+            className="w-7 h-7 cursor-pointer"
+            value={projectColor}  // 선택된 색상 값
+            onChange={(e) => setProjectColor(e.target.value)}  // 색상 선택 시 호출
+          />
+
+        </div>
         {/* 일정 상세 내용 */}
         <div className="mb-6 mt-6 flex items-center gap-4">
           <textarea

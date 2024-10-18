@@ -247,7 +247,7 @@ export default function Board() {
             <input
               type="text"
               placeholder="프로젝트 및 사용자 이름 검색"
-              className="w-[343px] h-[32px] border-none rounded-[10px] p-2 pl-8 bg-slate-100 focus:outline-none"
+              className="w-[343px] h-[32px] border-none rounded-[10px] p-2 pl-8 bg-slate-50 focus:outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
