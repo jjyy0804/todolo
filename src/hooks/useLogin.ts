@@ -18,7 +18,7 @@ const useLogin = () => {
     setErrorMessage('');
     try {
       setLoading(true);
-      const response = await apiClient.post(`/users/login`, {
+      const response = await apiClient.post(`/api/users/login`, {
         email,
         password,
       });
@@ -28,8 +28,8 @@ const useLogin = () => {
         // 로그인 성공 시 사용자 정보 및 토큰 저장
         localStorage.setItem('accessToken', data.accessToken);
 
-        // refreshToken 쿠키에 저장
-        document.cookie = `refreshToken=${data.refreshToken}; path=/; Secure; HttpOnly; SameSite=Strict`;
+        // // refreshToken 쿠키에 저장 --보통 back에서 함
+        // document.cookie = `refreshToken=${data.refreshToken}; path=/; Secure; HttpOnly; SameSite=Strict`;
 
         // 서버에서 받아온 사용자 정보를 상태관리
         setUser({

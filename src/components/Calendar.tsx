@@ -9,7 +9,8 @@ import { type EventClickArg } from '@fullcalendar/core';
 
 import '../calendar.css';
 import NavigationBar from './common/NavigationBar';
-import ScheduleModal from './common/modal/ScheduleModal';
+//import ScheduleModal from './common/modal/ScheduleModal';
+import CalendarModal from './common/modal/CalendarModal';
 // import useUserStore from '../store/useUserstore';
 
 interface Task {
@@ -36,7 +37,7 @@ export default function Calendar() {
     apiClient
       .get(
         // `/teams/${team_id},
-        `/teams/6710a1f2df52cd53f2d9c77f`,
+        `api/teams/6710af6fc60ed1fdc6acf5e8`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -45,7 +46,7 @@ export default function Calendar() {
       )
       .then((response) => {
         const fetchedProjects = response.data.data[0].projects;
-        console.log({ fetchedProjects });
+        // console.log({ fetchedProjects });
         setProjects(fetchedProjects);
       });
   }, []);
@@ -57,7 +58,7 @@ export default function Calendar() {
     end: project.tasks.endDate?.split('T')[0],
     color: project.projectColor || '#FFE1A7',
   }));
-  console.log({ tasks });
+  // console.log({ tasks });
 
   // eventClickHandler param으로 checkInfo:EventClickArg 삽입해야함. (에러로 잠시 빼놓은것..)
   const eventClickHandler = (clickInfo: EventClickArg) => {
@@ -85,14 +86,14 @@ export default function Calendar() {
         eventClick={eventClickHandler}
         editable={true}
       />
-      {/* Calendar Modal
+      {/* { CalendarModal} */}
       {isModalOpen && selectedEvent && (
-        <ScheduleModal
+        <CalendarModal
           isOpen={isModalOpen}
           onClose={closeModal} // Function to close the modal
           taskId={selectedEvent.taskId} // Pass the clicked event details to the modal
         />
-      )} */}
+      )}
     </>
   );
 }

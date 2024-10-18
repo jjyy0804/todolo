@@ -7,17 +7,16 @@ import { ROUTE_LINK } from '../routes/routes';
 
 export default function ResetPassword() {
   const navigate = useNavigate();
+  const { token } = useParams();
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
-  const { token } = useParams();
   const [message, setMessage] = useState('');
+  const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
     if (!token) {
-      alert(
-        '입력하신 이메일의 링크를 확인해 주세요.\n비밀번호 재설정 요청 페이지로 이동합니다.',
-      ); // 두번뜨는건 strict mode때문...
-
+      setMessage('입력하신 이메일의 링크를 확인해 주세요.');
+      setDisabled(true);
       setTimeout(() => {
         navigate(ROUTE_LINK.REQ_RESET_PASSWORD.link);
       }, 2000);
@@ -38,7 +37,7 @@ export default function ResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await apiClient.put(`/users/reset-pw/`, {
+      const response = await apiClient.put(`/api/users/reset-pw/`, {
         token: token,
         newPassword: password,
       });
@@ -100,6 +99,7 @@ export default function ResetPassword() {
         </button>
         <button
           type="submit"
+          disabled={disabled}
           className="py-2 px-4 bg-primary text-white rounded-lg shadow-sm text-sm hover:bg-secondary"
           onClick={handleChangeButtonClick}
         >
