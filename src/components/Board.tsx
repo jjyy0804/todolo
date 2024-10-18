@@ -45,6 +45,7 @@ export default function Board() {
   const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
   const { deleteTask } = useDeleteTask(); //일정 삭제 커스텀 훅
   const token = localStorage.getItem('accessToken'); // 토큰 가져오기
+
   useEffect(() => {
     if (!token) {
       alert('로그인이 필요합니다.');
@@ -57,24 +58,26 @@ export default function Board() {
       // 현재 사용자의 팀 일정을 서버에서 가져옴
       fetchSchedulesFromServer(user.team_id, token);
     }
-  }, [fetchSchedulesFromServer, user?.team_id, token, isAuthenticated]);
+  }, [fetchSchedulesFromServer, user?.team_id, token, isAuthenticated, isScheduleModalOpen]);
+
   // 일정 필터링
   useEffect(() => {
     const filtered = schedules.filter((schedule) => {
       const projectMatch = schedule.projectTitle
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase());
+        ? schedule.projectTitle.toLowerCase().includes(searchTerm.toLowerCase())
+        : false; // projectTitle이 없는 경우 false 반환
 
-      const memberMatch = schedule.taskMember?.some((member) =>
-        member.name?.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
+      const memberMatch = schedule.taskMember
+        ? schedule.taskMember.some((member) =>
+          member?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+        )
+        : false; // taskMember가 없는 경우 false 반환
 
       return projectMatch || memberMatch;
     });
 
     setFilteredSchedules(filtered);
   }, [schedules, searchTerm]);
-
   /** 드래그가 끝났을 때 호출되며, 항목이 드롭된 위치에 맞게 schedules 배열을 업데이트 */
   const onDragEnd = async (result: any) => {
     const { source, destination } = result;
@@ -125,7 +128,7 @@ export default function Board() {
       setSchedules(updatedSchedules);
     } catch (error) {
       console.error('상태 업데이트 중 오류:', error);
-      alert('상태 업데이트에 실패했습니다. 다시 시도해주세요.');
+      alert('상태 변경 권한이 없습니다.');
     }
   };
   /**일정을 클릭했을 경우 수정모드,
@@ -299,7 +302,7 @@ export default function Board() {
                           .map((schedule, index) => (
                             <Draggable
                               key={schedule.id}
-                              draggableId={schedule.id.toString()}
+                              draggableId={schedule.id ? schedule.id.toString() : 'default-id'}
                               index={index}
                             >
                               {(provided) => (
@@ -393,7 +396,7 @@ export default function Board() {
                             .map((schedule, index) => (
                               <Draggable
                                 key={schedule.id}
-                                draggableId={schedule.id.toString()}
+                                draggableId={schedule.id ? schedule.id.toString() : 'default-id'}
                                 index={index}
                               >
                                 {(provided) => (
@@ -468,7 +471,7 @@ export default function Board() {
                             .map((schedule, index) => (
                               <Draggable
                                 key={schedule.id}
-                                draggableId={schedule.id.toString()}
+                                draggableId={schedule.id ? schedule.id.toString() : 'default-id'}
                                 index={index}
                               >
                                 {(provided) => (
@@ -543,6 +546,4 @@ export default function Board() {
     </div>
   );
 }
-function fetchSchedulesFromServer(team_id: string | undefined, token: string) {
-  throw new Error('Function not implemented.');
-}
+

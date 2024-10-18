@@ -36,9 +36,8 @@ export default function Login() {
           }}
           onBlur={() => setEmailFocused(false)}
           required
-          className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${
-            emailFocused ? 'text-black' : 'text-[#757575]'
-          }`}
+          className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${emailFocused ? 'text-black' : 'text-[#757575]'
+            }`}
         />
         {/* 비밀번호 인풋 박스 */}
         <input
@@ -52,9 +51,8 @@ export default function Login() {
           }}
           onBlur={() => setPasswordFocused(false)}
           required
-          className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${
-            passwordFocused ? 'text-black' : 'text-[#757575]'
-          }`}
+          className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${passwordFocused ? 'text-black' : 'text-[#757575]'
+            }`}
         />
         {/* 로그인 버튼 */}
         <button
@@ -73,8 +71,9 @@ export default function Login() {
         )}
 
         {/* 로그인 밑에 회원가입, 아이디, 비밀번호 찾기 */}
-        <div className="w-[267px] h-[20px] mt-4 text-[#757575] text-center">
-          <a href="/register">회원가입</a> /
+        <div className="w-[267px] h-[20px] mt-4 text-[#757575] text-center flex justify-between">
+          <a href="/register">회원가입</a>
+          /
           <a href="/req-reset-pw">비밀번호찾기</a>
         </div>
       </form>

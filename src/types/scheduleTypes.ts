@@ -12,6 +12,7 @@ export interface Schedule {
   status: '할 일' | '진행 중' | '완료';
   priority: '높음' | '중간' | '낮음';
   taskMember: TeamMember[];
+  projectColor: string;
   startDate: string;
   endDate: string;
   team_id?: string;
