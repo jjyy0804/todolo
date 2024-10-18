@@ -37,7 +37,7 @@ export default function Calendar() {
     apiClient
       .get(
         // `/teams/${team_id},
-        `/teams/6710af6fc60ed1fdc6acf5e8`,
+        `api/teams/6710af6fc60ed1fdc6acf5e8`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

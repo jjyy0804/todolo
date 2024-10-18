@@ -15,6 +15,9 @@ apiClient.interceptors.response.use(
     const originalRequest = error.config;
 
     if (originalRequest.url === '/api/users/login') return;
+    if (originalRequest.url === '/api/users/refresh-token') return;
+
+    console.log({ originalRequest: originalRequest });
 
     if (error.response.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true; //횟수제한

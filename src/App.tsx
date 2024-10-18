@@ -61,11 +61,12 @@ function App() {
       }
     };
 
+    // if (location.pathname.includes('')) return;
     if (location.pathname.includes('login')) return;
     if (location.pathname.includes('reset-pw')) return;
     if (location.pathname.includes('register')) return;
 
-    console.log({ 'location.pathname': location.pathname });
+    // console.log({ 'location.pathname': location.pathname });
     // not on login
     checkAuthentication();
   }, []);
