@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../utils/apiClient';
 import { TeamMember } from '../../types/scheduleTypes'; // 사용자정보 인터페이스
 import useUserStore from '../../store/useUserstore';
 import basicProfile from '../../assets/images/basic_user_profile.png';
@@ -24,14 +24,11 @@ const TeamMemberSelector = ({
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_API_BASE_URL}/teams/${user?.team_id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await apiClient.get(`/teams/${user?.team_id}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
         console.log('API 응답:', response.data.data[0].teamMembers); // 응답 데이터 확인
         // response.data.teamMembers에서 필요한 필드만 추출
         const formattedMembers = response.data.data[0].teamMembers.map(

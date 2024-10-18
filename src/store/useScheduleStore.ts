@@ -1,6 +1,6 @@
 import { create } from 'zustand';
-import axios from 'axios';
-// 사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
+import apiClient from '../utils/apiClient';
+//사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
 import { TeamMember, Schedule } from '../types/scheduleTypes';
 
 /** Zustand 스토어 인터페이스 정의 */
@@ -45,15 +45,15 @@ const useScheduleStore = create<ScheduleState>((set) => ({
   /** 서버에서 일정을 가져오는 메서드 */
   fetchSchedulesFromServer: async (teamId, token) => {
     try {
-      const response = await axios.get(
-        `${process.env.REACT_APP_API_BASE_URL}/teams/${teamId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      console.log("서버 응답 데이터:", response.data);
+      const response = await apiClient.get(`/teams/${teamId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data);
+      // 데이터 변환
+      const transformDataToSchedules = (data: any): Schedule[] => {
+        const transformedSchedules: Schedule[] = [];
 
       const fetchedProjects = response.data?.data[0]?.projects || [];
       console.log("Fetched Projects:", fetchedProjects);
