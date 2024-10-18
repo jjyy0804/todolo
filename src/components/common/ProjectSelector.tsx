@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import useUserStore from '../../store/useUserstore';
+import apiClient from '../../utils/apiClient';
 
 interface Project {
   id?: number;  // 새 프로젝트는 ID가 필요 없으므로 선택적 필드로 처리
@@ -25,7 +25,7 @@ const ProjectSelector: React.FC<ProjectSelectorProps> = ({ onSelectProject, sele
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await axios.get(
+        const response = await apiClient.get(
           `${process.env.REACT_APP_API_BASE_URL}/teams/${user?.team_id}`,
           {
             headers: {

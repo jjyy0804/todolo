@@ -14,10 +14,10 @@ import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './common/UserInfoModal';
 import useDeleteTask from '../hooks/task/useDeleteTask';
 import BasicImage from '../assets/images/basic_user_profile.png'; //프로필 기본이미지
-//사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
 import { Schedule } from '../types/scheduleTypes';
 import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
+import MyProfile from './common/MyProfile';
 
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
@@ -176,10 +176,11 @@ export default function Board() {
     setIsDeleteModalOpen(false);
     setScheduleToDelete(null);
   };
-  // avatar가 절대 경로가 아닌 경우 처리
+
+  // 상대 경로를 절대 경로로 변환
   const avatarUrl = user?.avatar
-    ? `http://localhost:3000/uploads/${user.avatar.split('\\').pop()}`
-    : `${BasicImage}`; // 기본 이미지
+    ? `http://localhost:3000${user.avatar}`
+    : BasicImage; // 기본 이미지 사용
 
   //-------------------CalendarModal---------------------
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
@@ -237,30 +238,16 @@ export default function Board() {
       <NavigationBar />
       <div className="flex flex-col w-screen h-screen bg-white overflow-auto">
         {/* 사용자 정보 (프로필사진, 이름, 소속팀) */}
-        <div className="flex items-start space-x-2 mt-12 ml-2 mb-4">
-          <img
-            src={avatarUrl}
-            alt="Profile_Img"
-            className="w-[40px] h-[40px] rounded-full cursor-pointer"
-            onClick={openUserInfoModal}
-            onError={(e) => (e.currentTarget.src = `${BasicImage}`)} // 오류 시 기본 이미지로 대체
-          />
-          <div>
-            <h4 className="text-[17px] font-regular mt-2">
-              {user?.name} ({user?.team || '아직 팀이 없습니다.'})
-            </h4>
-          </div>
-        </div>
-
+        <MyProfile openUserInfoModal={openUserInfoModal} />
         {/* 사용자 검색 창 */}
-        <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-36">
+        <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-32">
           <div className="relative w-[343px]">
             {' '}
             {/* 인풋 박스를 감싸는 relative 컨테이너 */}
             <input
               type="text"
               placeholder="프로젝트 및 사용자 이름 검색"
-              className="w-[343px] h-[32px] border rounded-[10px] p-2 pl-8 bg-gray-100"
+              className="w-[343px] h-[32px] border-none rounded-[10px] p-2 pl-8 bg-slate-100 focus:outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -286,17 +273,34 @@ export default function Board() {
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                     >
-                      <div className="flex items-center">
-                        <img
-                          src={todoImg}
-                          alt="Todo Icon"
-                          className="w-[25px] h-[25px] mr-1 mb-2"
-                        />
-                        <h3 className="text-[17px] font-regular mb-2">Todo</h3>
+                      {/* Todo 제목과 + 버튼이 함께 배치되는 영역 */}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center">
+                          <img
+                            src={todoImg}
+                            alt="Todo Icon"
+                            className="w-[25px] h-[25px] mr-1"
+                          />
+                          <h3 className="text-[17px] font-regular">Todo</h3>
+                        </div>
+
+                        {/* 일정 등록버튼 */}
+                        <button
+                          className="bg-primary text-white font-bold rounded-full w-[25px] h-[25px] flex items-center justify-center hover:bg-hoverprimary transition-colors ease-linear"
+                          onClick={() => {
+                            if (!isAuthenticated || !user?.team_id) {
+                              alert('로그인 및 팀이 필요합니다.');
+                            } else {
+                              handleOpenModal(null);
+                            }
+                          }}
+                        >
+                          +
+                        </button>
                       </div>
 
                       {/* 일정 목록이 스크롤되는 영역 */}
-                      <div className="w-[374px] h-[710px] bg-[#DFEDF9] rounded-lg overflow-y-auto p-4 space-y-4">
+                      <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg overflow-y-auto p-4 space-y-4">
                         {filteredSchedules
                           .filter((schedule) => schedule.status === '할 일')
                           .map((schedule, index) => (
@@ -314,27 +318,11 @@ export default function Board() {
                                   onClick={openModal}
                                 >
                                   <div>
-                                    <h4 className="font-bold">
-                                      {schedule.title}
-                                    </h4>
-                                    <p className="text-sm">
-                                      {schedule.projectTitle}
-                                    </p>
-                                    <p className="text-sm">
-                                      우선순위 {schedule.priority}
-                                    </p>
+                                    <h4 className="font-bold">{schedule.title}</h4>
+                                    <p className="text-sm">{schedule.projectTitle}</p>
+                                    <p className="text-sm">우선순위 {schedule.priority}</p>
                                   </div>
-                                  <div className="flex space-x-2">
-                                    <button
-                                      className="text-gray-400 hover:text-red-500"
-                                      onClick={(event) => {
-                                        event.stopPropagation();
-                                        openDeleteModal(schedule);
-                                      }}
-                                    >
-                                      <FiTrash2 size={20} />
-                                    </button>
-
+                                  <div className="flex space-x-4">
                                     <button
                                       className="text-gray-400 hover:text-blue-500"
                                       onClick={(event) => {
@@ -344,28 +332,21 @@ export default function Board() {
                                     >
                                       <FiEdit3 size={20} />
                                     </button>
+                                    <button
+                                      className="text-gray-400 hover:text-red-500"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        openDeleteModal(schedule);
+                                      }}
+                                    >
+                                      <FiTrash2 size={20} />
+                                    </button>
                                   </div>
                                 </div>
                               )}
                             </Draggable>
                           ))}
                         {provided.placeholder}
-                      </div>
-
-                      {/* + ADD 버튼을 컨테이너 밖에 고정 */}
-                      <div className="w-full flex justify-center mt-4">
-                        <button
-                          className="w-[90%] h-[51px] bg-primary text-white font-bold rounded-full hover:bg-[#257ADA] transition-colors ease-linear"
-                          onClick={() => {
-                            if (!isAuthenticated || !user?.team_id) {
-                              alert('로그인 및 팀이 필요합니다.');
-                            } else {
-                              handleOpenModal(null);
-                            }
-                          }}
-                        >
-                          + ADD
-                        </button>
                       </div>
                     </div>
                   )}
@@ -417,15 +398,7 @@ export default function Board() {
                                         우선순위 {schedule.priority}
                                       </p>
                                     </div>
-                                    <div className="flex space-x-2">
-                                      <button
-                                        className="text-gray-400 hover:text-red-500"
-                                        onClick={() =>
-                                          openDeleteModal(schedule)
-                                        }
-                                      >
-                                        <FiTrash2 size={20} />
-                                      </button>
+                                    <div className="flex space-x-4">
                                       <button className="text-gray-400 hover:text-blue-500">
                                         <FiEdit3
                                           size={20}
@@ -433,6 +406,14 @@ export default function Board() {
                                             handleOpenModal(schedule)
                                           }
                                         />
+                                      </button>
+                                      <button
+                                        className="text-gray-400 hover:text-red-500"
+                                        onClick={() =>
+                                          openDeleteModal(schedule)
+                                        }
+                                      >
+                                        <FiTrash2 size={20} />
                                       </button>
                                     </div>
                                   </div>
@@ -492,15 +473,7 @@ export default function Board() {
                                         우선순위 {schedule.priority}
                                       </p>
                                     </div>
-                                    <div className="flex space-x-2">
-                                      <button
-                                        className="text-gray-400 hover:text-red-500"
-                                        onClick={() =>
-                                          openDeleteModal(schedule)
-                                        }
-                                      >
-                                        <FiTrash2 size={20} />
-                                      </button>
+                                    <div className="flex space-x-4">
                                       <button className="text-gray-400 hover:text-blue-500">
                                         <FiEdit3
                                           size={20}
@@ -508,6 +481,14 @@ export default function Board() {
                                             handleOpenModal(schedule)
                                           }
                                         />
+                                      </button>
+                                      <button
+                                        className="text-gray-400 hover:text-red-500"
+                                        onClick={() =>
+                                          openDeleteModal(schedule)
+                                        }
+                                      >
+                                        <FiTrash2 size={20} />
                                       </button>
                                     </div>
                                   </div>
