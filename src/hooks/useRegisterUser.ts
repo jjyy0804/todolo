@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 import useUserStore from '../store/useUserstore';
 
 interface UseRegisterUserProps {
@@ -66,15 +66,11 @@ const useRegisterUser = () => {
         formData.append('avatar', blob, fileName);
       }
 
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_BASE_URL}/users/register`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data', // 파일 전송 시 Content-Type 지정
-          },
+      const response = await apiClient.post(`/users/register`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data', // 파일 전송 시 Content-Type 지정
         },
-      );
+      });
 
       if (response.status === 201) {
         alert('회원가입이 완료되었습니다!');

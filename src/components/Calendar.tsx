@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
+import apiClient from '../utils/apiClient';
 
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -33,10 +34,10 @@ export default function Calendar() {
     // }
     const accessToken = localStorage.getItem('accessToken');
 
-    axios
+    apiClient
       .get(
-        // `${process.env.REACT_APP_API_BASE_URL}/teams/${team_id},
-        `${process.env.REACT_APP_API_BASE_URL}/teams/6710a1f2df52cd53f2d9c77f`,
+        // `/teams/${team_id},
+        `/teams/6710a1f2df52cd53f2d9c77f`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,
@@ -85,14 +86,14 @@ export default function Calendar() {
         eventClick={eventClickHandler}
         editable={true}
       />
-      {/* Calendar Modal */}
+      {/* Calendar Modal
       {isModalOpen && selectedEvent && (
         <CalendarModal
           isOpen={isModalOpen}
           onClose={closeModal} // Function to close the modal
           taskId={selectedEvent.taskId} // Pass the clicked event details to the modal
         />
-      )}
+      )} */}
     </>
   );
 }
