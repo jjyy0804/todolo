@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { FaCheckCircle } from 'react-icons/fa';
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 import Loading from './Loading';
 import { ROUTE_LINK } from '../routes/routes';
 
@@ -15,7 +15,7 @@ export default function ResetPassword() {
   useEffect(() => {
     if (!token) {
       alert(
-        '토큰이 없습니다.\n입력하신 이메일을 확인해 주세요.\n비밀번호 재설정 요청 페이지로 이동합니다.',
+        '입력하신 이메일의 링크를 확인해 주세요.\n비밀번호 재설정 요청 페이지로 이동합니다.',
       ); // 두번뜨는건 strict mode때문...
 
       setTimeout(() => {
@@ -38,7 +38,7 @@ export default function ResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await axios.put(
+      const response = await apiClient.put(
         `${process.env.REACT_APP_API_BASE_URL}/users/reset-pw/`,
         {
           token: token,

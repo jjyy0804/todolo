@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useUserStore from '../store/useUserstore';
@@ -18,7 +18,7 @@ const useLogin = () => {
     setErrorMessage('');
     try {
       setLoading(true);
-      const response = await axios.post(
+      const response = await apiClient.post(
         `${process.env.REACT_APP_API_BASE_URL}/users/login`,
         {
           email,

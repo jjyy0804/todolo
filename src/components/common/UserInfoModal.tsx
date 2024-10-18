@@ -3,7 +3,7 @@ import basicProfileImage from '../../assets/images/basic_user_profile.png';
 import { FaCheckCircle } from 'react-icons/fa';
 import useUserStore from '../../store/useUserstore'; // Zustand 스토어 임포트
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import apiClient from '../../utils/apiClient';
 
 // props 타입 정의
 interface ProfileModalProps {
@@ -46,7 +46,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const handleSetTeamClick = async () => {
     try {
       const accessToken = localStorage.getItem('accessToken');
-      const response = await axios.post(
+      const response = await apiClient.post(
         `${process.env.REACT_APP_API_BASE_URL}/users/send-confirmation-email`,
         {},
         {
@@ -99,7 +99,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       // JWT 토큰 설정 (예시로 로컬 스토리지에서 가져옴)
       const token = localStorage.getItem('token');
 
-      const response = await axios.put(`/users/update/:userId`, formData, {
+      const response = await apiClient.put(`/users/update/:userId`, formData, {
         headers: {
           Authorization: `Bearer ${token}`, // JWT 토큰 추가
           'Content-Type': 'multipart/form-data', // multipart/form-data 설정

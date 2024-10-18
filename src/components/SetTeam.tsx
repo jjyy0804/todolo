@@ -1,48 +1,49 @@
 import React, { useState } from 'react';
 import logo from '../assets/logos/todolo_logo_main.png';
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 import { useNavigate, useParams } from 'react-router-dom';
-import {ROUTE_LINK} from '../routes/routes'
+import { ROUTE_LINK } from '../routes/routes';
 import NavigationBar from './common/NavigationBar';
 
 export default function SetTeam() {
   const [selectedTeam, setSelectedTeam] = useState<string>('');
   const [message, setMessage] = useState('');
 
-  const {token} = useParams();
+  const { token } = useParams();
   const navigate = useNavigate();
- 
+
   const handleTeamChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedTeam(event.target.value);
   };
 
-  const sendHandleClick = async() => {
+  const sendHandleClick = async () => {
     try {
-        const response = await axios.post(
-            `${process.env.REACT_APP_API_BASE_URL}/users/confirm-team`,{
-            token: token,
-            team: selectedTeam,
-          },
-        );
-        console.log(response.data.message);
-        setMessage('팀이 변경되었습니다.');
-        // 재설정 후 로그인 페이지로 이동
-        setTimeout(() => {
-          navigate(ROUTE_LINK.LOGIN.link);
-        }, 2000);
-      } catch (error) {
-        console.error('Error confirming team change:', error);
-        setMessage('팀 변경에 실패했습니다. 다시 시도해주세요.');
-        // 실패 후 메인 페이지로 이동
-        setTimeout(() => {
-          navigate(ROUTE_LINK.LOGIN.link);
-        }, 2000);
-      }
-  }
+      const response = await apiClient.post(
+        `${process.env.REACT_APP_API_BASE_URL}/users/confirm-team`,
+        {
+          token: token,
+          team: selectedTeam,
+        },
+      );
+      console.log(response.data.message);
+      setMessage('팀이 변경되었습니다.');
+      // 재설정 후 로그인 페이지로 이동
+      setTimeout(() => {
+        navigate(ROUTE_LINK.LOGIN.link);
+      }, 2000);
+    } catch (error) {
+      console.error('Error confirming team change:', error);
+      setMessage('팀 변경에 실패했습니다. 다시 시도해주세요.');
+      // 실패 후 메인 페이지로 이동
+      setTimeout(() => {
+        navigate(ROUTE_LINK.LOGIN.link);
+      }, 2000);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center h-screen bg-gray-100">
-        <NavigationBar />
+      <NavigationBar />
       <div className="flex flex-col items-center justify-center w-[700px] h-[500px] p-6 bg-white shadow-lg rounded-[10px]">
         <img src={logo} alt="logo" className="mb-1 w-[364px] h-[118px]" />
         <p className="mb-0 text-primary text-[16px] font-bold">
@@ -65,10 +66,12 @@ export default function SetTeam() {
           <option value="4팀">4팀</option>
         </select>
 
-         {/* 성공 또는 실패 시 메시지 표시 */}
-         {message && (
-            <div className="mt-1 text-center text-sm text-red-500 mb-4 ">{message}</div>
-          )}
+        {/* 성공 또는 실패 시 메시지 표시 */}
+        {message && (
+          <div className="mt-1 text-center text-sm text-red-500 mb-4 ">
+            {message}
+          </div>
+        )}
 
         <button
           className={`px-6 py-2 text-white font-semibold bg-primary rounded-lg transition-opacity duration-300 ${

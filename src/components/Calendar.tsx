@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import axios, { AxiosError, AxiosResponse } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
+import apiClient from '../utils/apiClient';
 
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -32,7 +33,7 @@ export default function Calendar() {
     // }
     const accessToken = localStorage.getItem('accessToken');
 
-    axios
+    apiClient
       .get(
         // `${process.env.REACT_APP_API_BASE_URL}/teams/${team_id},
         `${process.env.REACT_APP_API_BASE_URL}/teams/6710a1f2df52cd53f2d9c77f`,

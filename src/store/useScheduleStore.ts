@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 //사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
 import { TeamMember, Schedule } from '../types/scheduleTypes';
 
@@ -41,7 +41,7 @@ const useScheduleStore = create<ScheduleState>((set) => ({
   /** 서버에서 일정을 가져오는 메서드 추가 */
   fetchSchedulesFromServer: async (teamId, token) => {
     try {
-      const response = await axios.get(
+      const response = await apiClient.get(
         `${process.env.REACT_APP_API_BASE_URL}/teams/${teamId}`,
         {
           headers: {

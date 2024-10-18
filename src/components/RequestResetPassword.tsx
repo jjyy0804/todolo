@@ -1,4 +1,4 @@
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 import React, { useState } from 'react';
 
 export default function RequestResetPassword() {
@@ -11,7 +11,7 @@ export default function RequestResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await axios.post(
+      const response = await apiClient.post(
         `${process.env.REACT_APP_API_BASE_URL}/users/request-password-reset`,
         {
           email: email,

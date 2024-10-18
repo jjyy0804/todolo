@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import apiClient from '../../utils/apiClient';
 import { TeamMember } from '../../types/scheduleTypes'; // 사용자정보 인터페이스
 import useUserStore from '../../store/useUserstore';
 import basicProfile from '../../assets/images/basic_user_profile.png';
@@ -19,7 +19,7 @@ const TeamMemberSelector = ({
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await axios.get(
+        const response = await apiClient.get(
           `${process.env.REACT_APP_API_BASE_URL}/teams/${user?.team_id}`,
           {
             headers: {

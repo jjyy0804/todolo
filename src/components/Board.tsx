@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import apiClient from '../utils/apiClient';
 import { FiTrash2, FiEdit3 } from 'react-icons/fi';
 import NavigationBar from './common/NavigationBar';
 import todoImg from '../assets/icons/todo.png';
@@ -98,7 +98,7 @@ export default function Board() {
       if (!token) throw new Error('인증 토큰이 없습니다.');
 
       // 서버에 상태 업데이트 요청
-      await axios.put(
+      await apiClient.put(
         `${process.env.REACT_APP_API_BASE_URL}/tasks/${movedItem.id}`,
         { ...movedItem, status: newStatus },
         {
