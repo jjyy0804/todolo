@@ -19,7 +19,7 @@ const TeamMemberSelector = ({
   useEffect(() => {
     const fetchMembers = async () => {
       try {
-        const response = await apiClient.get(`/teams/${user?.team_id}`, {
+        const response = await apiClient.get(`/api/teams/${user?.team_id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

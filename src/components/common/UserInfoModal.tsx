@@ -47,7 +47,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const response = await apiClient.post(
-        `/users/send-confirmation-email`,
+        `/api/users/send-confirmation-email`,
         {},
         {
           headers: {
@@ -99,12 +99,16 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       // JWT 토큰 설정 (예시로 로컬 스토리지에서 가져옴)
       const token = localStorage.getItem('token');
 
-      const response = await apiClient.put(`/users/update/:userId`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`, // JWT 토큰 추가
-          'Content-Type': 'multipart/form-data', // multipart/form-data 설정
+      const response = await apiClient.put(
+        `/api/users/update/:userId`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // JWT 토큰 추가
+            'Content-Type': 'multipart/form-data', // multipart/form-data 설정
+          },
         },
-      });
+      );
 
       alert(response.data.message); // 성공 메시지 알림
       onClose(); // 창 닫기

@@ -94,7 +94,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       if (isEdit) {
         // 수정 로직
         const response = await apiClient.put(
-          `/tasks/${schedule.id}`,
+          `/api/tasks/${schedule.id}`,
           newScheduleforServer,
           {
             headers: {
@@ -110,12 +110,16 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
         updateSchedule(schedule.id, newScheduleForStore);
       } else {
         // 등록 로직
-        const response = await apiClient.post(`/tasks`, newScheduleforServer, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Bearer 토큰 헤더 추가
-            'Content-Type': 'application/json',
+        const response = await apiClient.post(
+          `/api/tasks`,
+          newScheduleforServer,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Bearer 토큰 헤더 추가
+              'Content-Type': 'application/json',
+            },
           },
-        });
+        );
         alert('일정이 성공적으로 추가되었습니다.');
         console.log('응답 데이터:', response.data);
 

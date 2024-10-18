@@ -16,5 +16,5 @@
     "allowJs": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"]
+  "include": ["src", "setupProxy.js"]
 }

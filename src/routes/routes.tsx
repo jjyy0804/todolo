@@ -19,8 +19,8 @@ export const ROUTE_LINK = {
   CALENDAR: { path: 'calendar', link: '/calendar' },
   REQ_RESET_PASSWORD: { path: 'req-reset-pw', link: '/req-reset-pw' },
   RESET_PASSWORD: { path: 'reset-pw/:token?', link: '/reset-pw/:token?' },
-  ERROR: { path: '*', link: '/*' },
   SET_TEAM: { path: 'set-team/:token?', link: '/set-team/:token?' },
+  ERROR: { path: '*', link: '/*' },
 };
 
 const routes = [
