@@ -66,7 +66,7 @@ const useRegisterUser = () => {
         formData.append('avatar', blob, fileName);
       }
 
-      const response = await apiClient.post(`/users/register`, formData, {
+      const response = await apiClient.post(`/api/users/register`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data', // 파일 전송 시 Content-Type 지정
         },

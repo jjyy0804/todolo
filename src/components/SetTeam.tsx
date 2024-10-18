@@ -18,7 +18,7 @@ export default function SetTeam() {
 
   const sendHandleClick = async () => {
     try {
-      const response = await apiClient.post(`/users/confirm-team`, {
+      const response = await apiClient.post(`/api/users/confirm-team`, {
         token: token,
         team: selectedTeam,
       });

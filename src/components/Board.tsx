@@ -100,7 +100,7 @@ export default function Board() {
 
       // 서버에 상태 업데이트 요청
       await apiClient.put(
-        `/tasks/${movedItem.id}`,
+        `/api/tasks/${movedItem.id}`,
         { ...movedItem, status: newStatus },
         {
           headers: {

@@ -1,21 +1,32 @@
+import { useNavigate } from 'react-router-dom';
 import apiClient from '../utils/apiClient';
 import React, { useState } from 'react';
+import { ROUTE_LINK } from '../routes/routes';
 
 export default function RequestResetPassword() {
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState(
     '비밀번호를 재설정하고자 하는 todolo계정의 이메일을 입력해주세요.',
   );
-
+  const navigate = useNavigate();
   const handleRequestButtonClick = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      const response = await apiClient.post(`/users/request-password-reset`, {
-        email: email,
-      });
+      const response = await apiClient.post(
+        `/api/users/request-password-reset`,
+        {
+          email: email,
+        },
+      );
       console.log(response.data.message);
-      setMessage('비밀번호 재설정 링크가 이메일로 발송되었습니다.');
+      setMessage(
+        '비밀번호 재설정 링크가 이메일로 발송되었습니다.\n이메일 확인 바랍니다.',
+      );
+
+      setTimeout(() => {
+        navigate(ROUTE_LINK.LOGIN.link);
+      }, 2000);
     } catch (error) {
       console.error('Error requesting reset password :', error);
       setMessage('비밀번호 재설정 요청에 실패했습니다. 다시 시도해주세요.');

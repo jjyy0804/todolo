@@ -2,10 +2,12 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import apiClient from './utils/apiClient'; // axios instance with interceptors
+import useUserStore from './store/useUserstore';
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, isAuthenticated, setUser } = useUserStore();
 
   useEffect(() => {
     // check if user is authenticated
@@ -18,7 +20,7 @@ function App() {
 
     const checkAuthentication = async () => {
       const accessToken = localStorage.getItem('accessToken');
-
+      //console.log(accessToken);
       if (!accessToken) {
         navigate('/login');
         return;
@@ -26,9 +28,23 @@ function App() {
 
       try {
         // Validate and refresh the access token if needed
-        const response = await apiClient.post(`/users/refresh-token`, {
-          token: accessToken,
+        const response = await apiClient.post(
+          '/api/users/refresh-token',
+          { token: accessToken },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          },
+        );
+        const userData = await apiClient.get('/api/users/me', {
+          headers: {
+            Authorization: `Bearer ${response.data.accessToken}`,
+          },
         });
+
+        //console.log({ 'userData.data': userData.data.data });
+        setUser(userData.data.data);
 
         // If the response has a new access token, update it in localStorage
         if (response.data.newAccessToken) {
@@ -46,10 +62,13 @@ function App() {
     };
 
     if (location.pathname.includes('login')) return;
+    if (location.pathname.includes('reset-pw')) return;
+    if (location.pathname.includes('register')) return;
 
+    console.log({ 'location.pathname': location.pathname });
     // not on login
     checkAuthentication();
-  }, [navigate]);
+  }, []);
 
   return (
     <>
