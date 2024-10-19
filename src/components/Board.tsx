@@ -54,8 +54,8 @@ export default function Board() {
     if (!isAuthenticated || !user?.team_id) {
       useScheduleStore.getState().clearSchedules(); // 상태 초기화
     } else {
-      // 현재 사용자의 팀 일정을 서버에서 가져옴
-      fetchSchedulesFromServer(user.team_id, token);
+      // 현재 사용자의 팀 일정을 서버에서 가져와서 tasks에 저장
+      const tasks = fetchSchedulesFromServer(user.team_id, token);
     }
   }, [fetchSchedulesFromServer, user?.team_id, token, isAuthenticated, isScheduleModalOpen]);
 
@@ -189,53 +189,16 @@ export default function Board() {
   //-------------------CalendarModal---------------------
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
 
-  const [task, setTask] = useState({
-    title: 'title: 일정(업무)의 이름',
-    date: '10/5~10/10',
-    projectName: '프로젝트명',
-    teamMembers: [
-      { name: '유저1', avatar: 'path/to/avatar1' },
-      { name: '유저2', avatar: 'path/to/avatar2' },
-    ],
-    details: '이 프로젝트는 어떻게 진행될 예정이고 내용은 이러이러 합니다...',
-    comments: [
-      {
-        id: Date.now(),
-        user: '주영님',
-        date: '2024. 10. 07.',
-        content: '내일까지 프로필 끝내면 될까요??',
-      },
-    ],
-  });
-
-  // CalendarModal 오픈 & 클로즈
-  const openModal = () => setIsCalendarModalOpen(true);
-  const closeModal = () => setIsCalendarModalOpen(false);
-
-  // 댓글 등록 핸들러
-  const handleCommentSubmit = (newComment: Comment) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      comments: [...prevTask.comments, newComment],
-    }));
+  // CalendarModal 모달 열기 함수
+  const openModal = (schedule: any) => {
+    setSelectedSchedule(schedule); // 선택된 일정을 상태에 저장
+    setIsCalendarModalOpen(true); // 모달 열림 상태로 설정
   };
 
-  // 댓글 수정 핸들러
-  const handleCommentEdit = (id: number, updatedContent: string) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      comments: prevTask.comments.map((comment) =>
-        comment.id === id ? { ...comment, content: updatedContent } : comment,
-      ),
-    }));
-  };
-
-  // 댓글 삭제 핸들러
-  const handleCommentDelete = (id: number) => {
-    setTask((prevTask) => ({
-      ...prevTask,
-      comments: prevTask.comments.filter((comment) => comment.id !== id),
-    }));
+  // CalendarModal모달 닫기 함수
+  const closeModal = () => {
+    setIsCalendarModalOpen(false); // 모달 닫음
+    setSelectedSchedule(null); // 선택된 일정 초기화
   };
 
   return (
@@ -263,7 +226,6 @@ export default function Board() {
             />
           </div>
         </div>
-        {/* 드래그 앤 드랍 영역 */}
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="flex flex-col items-center justify-center">
             {/* 메인 컨테이너 */}
@@ -289,7 +251,7 @@ export default function Board() {
                           <h3 className="text-[17px] font-regular">Todo</h3>
                         </div>
 
-                        {/* 일정 등록버튼 */}
+                        {/* 일정 등록 버튼 */}
                         <button
                           className="bg-primary text-white font-bold rounded-full w-[25px] h-[25px] flex items-center justify-center hover:bg-hoverprimary transition-colors ease-linear"
                           onClick={() => {
@@ -320,7 +282,7 @@ export default function Board() {
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
                                   className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
-                                  onClick={openModal}
+                                  onClick={() => openModal(schedule)} // 클릭 시 모달을 여는 함수 호출
                                 >
                                   <div>
                                     <h4 className="font-bold">{schedule.title}</h4>
@@ -328,20 +290,22 @@ export default function Board() {
                                     <p className="text-sm">우선순위 {schedule.priority}</p>
                                   </div>
                                   <div className="flex space-x-4">
+                                    {/* 수정 버튼 */}
                                     <button
                                       className="text-gray-400 hover:text-blue-500"
                                       onClick={(event) => {
-                                        event.stopPropagation();
-                                        handleOpenModal(schedule);
+                                        event.stopPropagation(); // 드래그 및 클릭 이벤트 방지
+                                        handleOpenModal(schedule); // 수정 모달 열기
                                       }}
                                     >
                                       <FiEdit3 size={20} />
                                     </button>
+                                    {/* 삭제 버튼 */}
                                     <button
                                       className="text-gray-400 hover:text-red-500"
                                       onClick={(event) => {
-                                        event.stopPropagation();
-                                        openDeleteModal(schedule);
+                                        event.stopPropagation(); // 드래그 및 클릭 이벤트 방지
+                                        openDeleteModal(schedule); // 삭제 모달 열기
                                       }}
                                     >
                                       <FiTrash2 size={20} />
@@ -356,6 +320,7 @@ export default function Board() {
                     </div>
                   )}
                 </Droppable>
+
                 {/* In Progress 보드 */}
                 <Droppable droppableId="진행 중">
                   {(provided) => (
@@ -370,11 +335,10 @@ export default function Board() {
                           alt="InProgress Icon"
                           className="w-[25px] h-[25px] mr-1 mb-2"
                         />
-                        <h3 className="text-[17px] font-regular mb-2">
-                          In Progress
-                        </h3>
+                        <h3 className="text-[17px] font-regular mb-2">In Progress</h3>
                       </div>
-                      {/*상태 = "진행 중"인 일정 카드 */}
+
+                      {/* 상태 = "진행 중" 일정 카드 */}
                       <div className="overflow-y-auto w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg">
                         <div className="p-4 flex flex-col space-y-4">
                           {filteredSchedules
@@ -391,32 +355,31 @@ export default function Board() {
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                                    onClick={() => openModal(schedule)}
                                   >
                                     <div>
-                                      <h4 className="font-bold">
-                                        {schedule.title}
-                                      </h4>
-                                      <p className="text-sm">
-                                        {schedule.projectTitle}
-                                      </p>
-                                      <p className="text-sm">
-                                        우선순위 {schedule.priority}
-                                      </p>
+                                      <h4 className="font-bold">{schedule.title}</h4>
+                                      <p className="text-sm">{schedule.projectTitle}</p>
+                                      <p className="text-sm">우선순위 {schedule.priority}</p>
                                     </div>
                                     <div className="flex space-x-4">
-                                      <button className="text-gray-400 hover:text-blue-500">
-                                        <FiEdit3
-                                          size={20}
-                                          onClick={() =>
-                                            handleOpenModal(schedule)
-                                          }
-                                        />
+                                      {/* 수정 버튼 */}
+                                      <button
+                                        className="text-gray-400 hover:text-blue-500"
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          handleOpenModal(schedule); // 수정 모달 열기
+                                        }}
+                                      >
+                                        <FiEdit3 size={20} />
                                       </button>
+                                      {/* 삭제 버튼 */}
                                       <button
                                         className="text-gray-400 hover:text-red-500"
-                                        onClick={() =>
-                                          openDeleteModal(schedule)
-                                        }
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          openDeleteModal(schedule); // 삭제 모달 열기
+                                        }}
                                       >
                                         <FiTrash2 size={20} />
                                       </button>
@@ -431,7 +394,8 @@ export default function Board() {
                     </div>
                   )}
                 </Droppable>
-                {/* completed 보드 */}
+
+                {/* Completed 보드 */}
                 <Droppable droppableId="완료">
                   {(provided) => (
                     <div
@@ -445,11 +409,10 @@ export default function Board() {
                           alt="Completed Icon"
                           className="w-[25px] h-[25px] mr-1 mb-2"
                         />
-                        <h3 className="text-[17px] font-regular mb-2">
-                          Completed
-                        </h3>
+                        <h3 className="text-[17px] font-regular mb-2">Completed</h3>
                       </div>
-                      {/*상태 = "완료"인 일정 카드 */}
+
+                      {/* 상태 = "완료" 일정 카드 */}
                       <div className="overflow-y-auto w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg">
                         <div className="p-4 flex flex-col space-y-4">
                           {filteredSchedules
@@ -466,32 +429,31 @@ export default function Board() {
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
                                     className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                                    onClick={() => openModal(schedule)}
                                   >
                                     <div>
-                                      <h4 className="font-bold">
-                                        {schedule.title}
-                                      </h4>
-                                      <p className="text-sm">
-                                        {schedule.projectTitle}
-                                      </p>
-                                      <p className="text-sm">
-                                        우선순위 {schedule.priority}
-                                      </p>
+                                      <h4 className="font-bold">{schedule.title}</h4>
+                                      <p className="text-sm">{schedule.projectTitle}</p>
+                                      <p className="text-sm">우선순위 {schedule.priority}</p>
                                     </div>
                                     <div className="flex space-x-4">
-                                      <button className="text-gray-400 hover:text-blue-500">
-                                        <FiEdit3
-                                          size={20}
-                                          onClick={() =>
-                                            handleOpenModal(schedule)
-                                          }
-                                        />
+                                      {/* 수정 버튼 */}
+                                      <button
+                                        className="text-gray-400 hover:text-blue-500"
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          handleOpenModal(schedule); // 수정 모달 열기
+                                        }}
+                                      >
+                                        <FiEdit3 size={20} />
                                       </button>
+                                      {/* 삭제 버튼 */}
                                       <button
                                         className="text-gray-400 hover:text-red-500"
-                                        onClick={() =>
-                                          openDeleteModal(schedule)
-                                        }
+                                        onClick={(event) => {
+                                          event.stopPropagation();
+                                          openDeleteModal(schedule); // 삭제 모달 열기
+                                        }}
                                       >
                                         <FiTrash2 size={20} />
                                       </button>
@@ -510,6 +472,7 @@ export default function Board() {
             </div>
           </div>
         </DragDropContext>
+
       </div>
       {/*삭제 확인 모달 */}
       <DeleteConfirmModal
@@ -529,17 +492,12 @@ export default function Board() {
         isOpen={isUserInfoModalOpen}
         onClose={closeUserInfoModal}
       />
-      {/* 캘린더 상세 모달 
-       
-       <CalendarModal
+      {/* 캘린더 상세 모달 */}
+      <CalendarModal
         isOpen={isCalendarModalOpen}
         onClose={closeModal}
-        task={task}
-        onCommentSubmit={handleCommentSubmit}
-        onCommentEdit={handleCommentEdit} // 추가된 핸들러
-        onCommentDelete={handleCommentDelete} // 추가된 핸들러
+        taskId={selectedSchedule?.id?.toString() || ""}
       />
-      */}
     </div>
   );
 }

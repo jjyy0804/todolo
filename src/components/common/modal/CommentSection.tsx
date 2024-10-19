@@ -35,7 +35,7 @@ function CommentSection({ taskId }: Props) {
     console.log({ taskId });
 
     apiClient
-      .get(`/tasks/${taskId}`, {
+      .get(`api/tasks/${taskId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -65,7 +65,7 @@ function CommentSection({ taskId }: Props) {
 
     apiClient
       .post(
-        `/tasks/${taskId}/comments`,
+        `api/tasks/${taskId}/comments`,
         { commentContent: newComment },
         {
           headers: {
@@ -88,7 +88,7 @@ function CommentSection({ taskId }: Props) {
     const accessToken = localStorage.getItem('accessToken');
 
     apiClient
-      .get(`/tasks/${taskId}`, {
+      .get(`api/tasks/${taskId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -116,7 +116,7 @@ function CommentSection({ taskId }: Props) {
 
     apiClient
       .put(
-        `/tasks/${taskId}/comments/${commentId}`,
+        `api/tasks/${taskId}/comments/${commentId}`,
         { commentContent: editedContent },
         {
           headers: {
@@ -150,7 +150,7 @@ function CommentSection({ taskId }: Props) {
     const accessToken = localStorage.getItem('accessToken');
 
     apiClient
-      .delete(`/tasks/${taskId}/comments/${commentId}`, {
+      .delete(`api/tasks/${taskId}/comments/${commentId}`, {
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },

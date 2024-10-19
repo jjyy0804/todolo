@@ -12,7 +12,6 @@ import NavigationBar from './common/NavigationBar';
 //import ScheduleModal from './common/modal/ScheduleModal';
 import CalendarModal from './common/modal/CalendarModal';
 import useUserStore from '../store/useUserstore';
-// import useUserStore from '../store/useUserstore';
 
 interface Task {
   taskId: string;
@@ -67,7 +66,7 @@ export default function Calendar() {
     setSelectedEvent(clickedEvent);
     setIsModalOpen(true); // Show modal
   };
-
+  console.log(selectedEvent);
   // Calendar Modal Close
   const closeModal = () => {
     setIsModalOpen(false); // Close the modal
