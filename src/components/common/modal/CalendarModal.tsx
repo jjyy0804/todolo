@@ -4,8 +4,9 @@ import editImg from '../../../assets/icons/edit.png';
 import useUserStore from '../../../store/useUserstore';
 import React, { useEffect, useState } from 'react';
 import { AxiosError, AxiosResponse } from 'axios';
-// import basicProfileImage from '../../assets/images/basic_user_profile.png';
+import basicProfileImage from '../../../assets/images/basic_user_profile.png';
 import apiClient from '../../../utils/apiClient';
+import CommentSection from './CommentSection';
 
 interface Member {
   _id: string;
@@ -36,29 +37,17 @@ interface CalendarModalProps {
   isOpen: boolean;
   onClose: () => void;
   taskId: string;
-  // onCommentSubmit: (newComment: Comment) => void; // 댓글 추가 로직을 부모에서 관리
-  // onCommentEdit: (id: number, updatedContent: string) => void; // 댓글 수정 로직
-  // onCommentDelete: (id: number) => void; // 댓글 삭제 로직
 }
 
 function CalendarModal({
   isOpen,
   onClose,
   taskId, // task 추가
-  // onCommentSubmit,
-  // onCommentEdit,
-  // onCommentDelete
 }: CalendarModalProps) {
-  // const { user } = useUserStore(); // Zustand에서 user 정보 가져오기
-  // const [profileImage, setProfileImage] = useState();
-  // // user?.avatar || `${basicProfileImage}`,
-  // const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
-
-  // const [newComment, setNewComment] = useState('');
-  // const [editingCommentId, setEditingCommentId] = useState<number | null>(null); // 현재 수정 중인 댓글 ID
-  // const [editedContent, setEditedContent] = useState(''); // 수정된 댓글 내용
-
   const [task, setTask] = useState<Task>();
+  // 날짜 너무 길어서 자릿수 제한
+  const fixedStartDate = task?.startDate.substring(0, 10);
+  const fixedEndDate = task?.endDate.substring(0, 10);
 
   useEffect(() => {
     const accessToken = localStorage.getItem('accessToken');
@@ -78,88 +67,24 @@ function CalendarModal({
         const fetchedTask = response.data.data[0]; // 예시로 첫 번째 태스크만 가져온다고 가정
         console.log({ fetchedTask });
 
-        setTask(fetchedTask);
-
-        // const formattedTask = {
-        //   title: fetchedTask.title,
-        //   date: `${fetchedTask.startDate.split('T')[0]} ~ ${fetchedTask.endDate.split('T')[0]}`,
-        //   projectName: fetchedTask.project.title,
-        //   teamMembers: fetchedTask.taskMembers.map((member: any) => ({
-        //     name: member.name,
-        //     avatar: member.avatar || basicProfileImage,
-        //   })),
-        //   details: fetchedTask.content,
-        //   comments: fetchedTask.comments || [],
-        // };
-        // setCurrentTask(formattedTask);
+        setTask({
+          ...fetchedTask,
+          projectTitle: fetchedTask.project?.title, // project.title을 projectTitle에 매핑
+          taskMembers: fetchedTask.taskMembers.map((member: any) => ({
+            ...member,
+            avatar: member.avatar !== 'N/A' ? member.avatar : basicProfileImage,
+            // 'N/A' -> avatar가 없을 때 나타나는 값
+            // 있을 때 -> member.avatar
+            // 없을 때 -> basicProfileImage로 대체
+          })),
+        });
       })
       .catch((error) => {
         console.error('Error fetching task:', error);
       });
   }, []);
 
-  // 더 수정될 수 있을 듯 합니다....
-
   // if (!isOpen || !task) return null; // 모달이 열리지 않거나 task가 없는 경우 렌더링 X
-
-  // -----------------<댓글: Comment>-----------------
-  // 댓글 등록
-  // const handleCommentSubmit = () => {
-  //   if (newComment.trim() === '') return; // 댓글 비었을 때 등록 X
-
-  //   const comment: Comment = {
-  //     id: Date.now(),
-  //     user: user?.name || 'Unknown User',
-  //     date: new Date().toLocaleDateString(),
-  //     content: newComment,
-  //   };
-
-  //   setCurrentTask(
-  //     (prevTask) =>
-  //       prevTask && {
-  //         ...prevTask,
-  //         comments: [...prevTask.comments, comment],
-  //       },
-  //   );
-  //   setNewComment(''); // 댓글 입력 필드 초기화
-  // };
-
-  // 댓글 수정
-  // const handleEditClick = (comment: Comment) => {
-  //   setEditingCommentId(comment.id);
-  //   setEditedContent(comment.content);
-  // };
-
-  // const handleEditSave = (id: number) => {
-  //   if (editedContent.trim() === '') return;
-  //   setCurrentTask(
-  //     (prevTask) =>
-  //       prevTask && {
-  //         ...prevTask,
-  //         comments: prevTask.comments.map((comment) =>
-  //           comment.id === id
-  //             ? { ...comment, content: editedContent }
-  //             : comment,
-  //         ),
-  //       },
-  //   );
-  //   setEditingCommentId(null);
-  //   setEditedContent('');
-  // };
-
-  // 댓글 삭제
-  // const handleDeleteClick = (id: number) => {
-  //   const isConfirmed = window.confirm('정말 삭제하시겠습니까?');
-  //   if (isConfirmed) {
-  //     setCurrentTask(
-  //       (prevTask) =>
-  //         prevTask && {
-  //           ...prevTask,
-  //           comments: prevTask.comments.filter((comment) => comment.id !== id),
-  //         },
-  //     );
-  //   }
-  // };
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
@@ -191,7 +116,7 @@ function CalendarModal({
               {task?.title}
             </h2>
             <p className="text-softgray">
-              {task?.startDate}~{task?.endDate}
+              {fixedStartDate}~{fixedEndDate}
             </p>
           </div>
         </div>
@@ -232,7 +157,7 @@ function CalendarModal({
         <div className="mb-4">
           <label className="block text-darkgray">상세 내용</label>
           <textarea
-            // value={task.details}
+            value={task?.content}
             readOnly
             className="w-full h-[200px] p-2 mt-1 border border-gray-300 rounded-lg text-darkgray"
           />
@@ -242,6 +167,7 @@ function CalendarModal({
         <hr className="my-4 border-t border-gray-300" />
 
         {/* 댓글 섹션 */}
+        <CommentSection taskId={taskId} />
       </div>
     </div>
   );
