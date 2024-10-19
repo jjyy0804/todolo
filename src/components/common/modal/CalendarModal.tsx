@@ -53,15 +53,12 @@ function CalendarModal({
     const accessToken = localStorage.getItem('accessToken');
     console.log({ taskId });
     apiClient
-      .post(
-        '/refresh-token',
-        { token: 'asdfasdf' },
-        {
-          headers: {
-            Authorization: accessToken,
-          },
-        },
-      )
+    .get(`api/tasks/${taskId}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+    
       .then((response) => {
         console.log({ response });
         const fetchedTask = response.data.data[0]; // 예시로 첫 번째 태스크만 가져온다고 가정
