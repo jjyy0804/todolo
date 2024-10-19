@@ -45,7 +45,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
     try {
       const accessToken = localStorage.getItem('accessToken');
       const response = await apiClient.post(
-        `/api/users/send-confirmation-email`,
+        `api/users/send-confirmation-email`,
         {},
         {
           headers: {
@@ -98,7 +98,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
       const token = localStorage.getItem('token');
 
       const response = await apiClient.put(
-        `/api/users/update/:userId`,
+        `api/users/update/:userId`,
         formData,
         {
           headers: {

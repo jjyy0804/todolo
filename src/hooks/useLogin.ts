@@ -18,7 +18,7 @@ const useLogin = () => {
     setErrorMessage('');
     try {
       setLoading(true);
-      const response = await apiClient.post(`/api/users/login`, {
+      const response = await apiClient.post(`api/users/login`, {
         email,
         password,
       });

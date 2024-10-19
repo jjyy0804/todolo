@@ -13,7 +13,7 @@ const useDeleteTask = () => {
       const token = localStorage.getItem('accessToken'); // JWT 토큰 가져오기
       if (!token) throw new Error('인증이 필요합니다. 로그인 해주세요.');
 
-      await apiClient.delete(`/api/tasks/${taskId}`, {
+      await apiClient.delete(`api/tasks/${taskId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -37,7 +37,7 @@ export default function ResetPassword() {
     e.preventDefault();
 
     try {
-      const response = await apiClient.put(`/api/users/reset-pw/`, {
+      const response = await apiClient.put(`api/users/reset-pw/`, {
         token: token,
         newPassword: password,
       });

@@ -18,7 +18,7 @@ export default function SetTeam() {
 
   const sendHandleClick = async () => {
     try {
-      const response = await apiClient.post(`/api/users/confirm-team`, {
+      const response = await apiClient.post(`api/users/confirm-team`, {
         token: token,
         team: selectedTeam,
       });
@@ -71,11 +71,10 @@ export default function SetTeam() {
         )}
 
         <button
-          className={`px-6 py-2 text-white font-semibold bg-primary rounded-lg transition-opacity duration-300 ${
-            selectedTeam
+          className={`px-6 py-2 text-white font-semibold bg-primary rounded-lg transition-opacity duration-300 ${selectedTeam
               ? 'opacity-100 hover:bg-[#257ADA]'
               : 'opacity-50 cursor-not-allowed'
-          }`}
+            }`}
           disabled={!selectedTeam}
           onClick={sendHandleClick}
         >

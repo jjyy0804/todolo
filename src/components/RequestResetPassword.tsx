@@ -14,7 +14,7 @@ export default function RequestResetPassword() {
 
     try {
       const response = await apiClient.post(
-        `/api/users/request-password-reset`,
+        `api/users/request-password-reset`,
         {
           email: email,
         },
