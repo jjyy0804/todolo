@@ -18,6 +18,7 @@ import { Schedule } from '../types/scheduleTypes';
 import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
 import MyProfile from './common/MyProfile';
+import apiClient from '../utils/apiClient';
 
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
