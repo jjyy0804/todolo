@@ -41,7 +41,7 @@ const useScheduleStore = create<ScheduleState>((set) => ({
   /** 서버에서 일정을 가져오는 메서드 추가 */
   fetchSchedulesFromServer: async (teamId, token) => {
     try {
-      const response = await apiClient.get(`/teams/${teamId}`, {
+      const response = await apiClient.get(`/api/teams/${teamId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

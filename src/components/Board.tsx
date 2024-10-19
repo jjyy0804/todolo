@@ -98,8 +98,8 @@ export default function Board() {
       if (!token) throw new Error('인증 토큰이 없습니다.');
 
       // 서버에 상태 업데이트 요청
-      await axios.put(
-        `${process.env.REACT_APP_API_BASE_URL}/tasks/${movedItem.id}`,
+      await apiClient.put(
+        `/api/tasks/${movedItem.id}`,
         { ...movedItem, status: newStatus },
         {
           headers: {
