@@ -39,22 +39,21 @@ const NavigationBar = () => {
   };
 
   return (
-    <div className="fixed top-0 left-0 flex justify-between items-center w-full h-10 px-8 border-b border-gray-200 bg-white shadow-sm z-50 ">
+    <div className="fixed top-0 left-0 flex justify-between items-center w-full h-11 px-8 border-b border-gray-200 bg-white shadow-sm z-50 ">
       <img
         src={logo}
         alt="Logo"
         className="w-24 h-6 cursor-pointer"
         onClick={handleLogoClick}
       />
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-5">
         {isAuthenticated && (
           <>
             <button
-              className={`text-sm hover:text-primary ${
-                location.pathname === '/calendar'
-                  ? 'text-primary font-bold'
-                  : 'text-darkgray'
-              }`}
+              className={`text-sm hover:text-primary ${location.pathname === '/calendar'
+                ? 'text-primary'
+                : 'text-darkgray'
+                }`}
               onClick={handleCalendarClick}
             >
               Calendar

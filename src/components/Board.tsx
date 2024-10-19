@@ -14,11 +14,10 @@ import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './common/UserInfoModal';
 import useDeleteTask from '../hooks/task/useDeleteTask';
 import BasicImage from '../assets/images/basic_user_profile.png'; //프로필 기본이미지
-//사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id,title,content,projectTitle,status,priority,taskMember,startDate,endDate,team_id )
 import { Schedule } from '../types/scheduleTypes';
 import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
-import apiClient from '../utils/apiClient';
+import MyProfile from './common/MyProfile';
 
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
@@ -46,6 +45,7 @@ export default function Board() {
   const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
   const { deleteTask } = useDeleteTask(); //일정 삭제 커스텀 훅
   const token = localStorage.getItem('accessToken'); // 토큰 가져오기
+
   useEffect(() => {
     if (!token) {
       alert('로그인이 필요합니다.');
@@ -58,24 +58,26 @@ export default function Board() {
       // 현재 사용자의 팀 일정을 서버에서 가져옴
       fetchSchedulesFromServer(user.team_id, token);
     }
-  }, [fetchSchedulesFromServer, user?.team_id, token, isAuthenticated]);
+  }, [fetchSchedulesFromServer, user?.team_id, token, isAuthenticated, isScheduleModalOpen]);
+
   // 일정 필터링
   useEffect(() => {
     const filtered = schedules.filter((schedule) => {
       const projectMatch = schedule.projectTitle
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase());
+        ? schedule.projectTitle.toLowerCase().includes(searchTerm.toLowerCase())
+        : false; // projectTitle이 없는 경우 false 반환
 
-      const memberMatch = schedule.taskMember?.some((member) =>
-        member.name?.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
+      const memberMatch = schedule.taskMember
+        ? schedule.taskMember.some((member) =>
+          member?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+        )
+        : false; // taskMember가 없는 경우 false 반환
 
       return projectMatch || memberMatch;
     });
 
     setFilteredSchedules(filtered);
   }, [schedules, searchTerm]);
-
   /** 드래그가 끝났을 때 호출되며, 항목이 드롭된 위치에 맞게 schedules 배열을 업데이트 */
   const onDragEnd = async (result: any) => {
     const { source, destination } = result;
@@ -126,7 +128,7 @@ export default function Board() {
       setSchedules(updatedSchedules);
     } catch (error) {
       console.error('상태 업데이트 중 오류:', error);
-      alert('상태 업데이트에 실패했습니다. 다시 시도해주세요.');
+      alert('상태 변경 권한이 없습니다.');
     }
   };
   /**일정을 클릭했을 경우 수정모드,
@@ -174,10 +176,11 @@ export default function Board() {
     setIsDeleteModalOpen(false);
     setScheduleToDelete(null);
   };
-  // avatar가 절대 경로가 아닌 경우 처리
+
+  // 상대 경로를 절대 경로로 변환
   const avatarUrl = user?.avatar
-    ? `http://localhost:3000/uploads/${user.avatar.split('\\').pop()}`
-    : `${BasicImage}`; // 기본 이미지
+    ? `http://localhost:3000${user.avatar}`
+    : BasicImage; // 기본 이미지 사용
 
   //-------------------CalendarModal---------------------
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
@@ -236,30 +239,16 @@ export default function Board() {
       <NavigationBar />
       <div className="flex flex-col w-screen h-screen bg-white overflow-auto">
         {/* 사용자 정보 (프로필사진, 이름, 소속팀) */}
-        <div className="flex items-start space-x-2 mt-12 ml-2 mb-4">
-          <img
-            src={avatarUrl}
-            alt="Profile_Img"
-            className="w-[40px] h-[40px] rounded-full cursor-pointer"
-            onClick={openUserInfoModal}
-            onError={(e) => (e.currentTarget.src = `${BasicImage}`)} // 오류 시 기본 이미지로 대체
-          />
-          <div>
-            <h4 className="text-[17px] font-regular mt-2">
-              {user?.name} ({user?.team || '아직 팀이 없습니다.'})
-            </h4>
-          </div>
-        </div>
-
+        <MyProfile openUserInfoModal={openUserInfoModal} />
         {/* 사용자 검색 창 */}
-        <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-36">
+        <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-32">
           <div className="relative w-[343px]">
             {' '}
             {/* 인풋 박스를 감싸는 relative 컨테이너 */}
             <input
               type="text"
               placeholder="프로젝트 및 사용자 이름 검색"
-              className="w-[343px] h-[32px] border rounded-[10px] p-2 pl-8 bg-gray-100"
+              className="w-[343px] h-[32px] border-none rounded-[10px] p-2 pl-8 bg-slate-100 focus:outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -285,23 +274,40 @@ export default function Board() {
                       ref={provided.innerRef}
                       {...provided.droppableProps}
                     >
-                      <div className="flex items-center">
-                        <img
-                          src={todoImg}
-                          alt="Todo Icon"
-                          className="w-[25px] h-[25px] mr-1 mb-2"
-                        />
-                        <h3 className="text-[17px] font-regular mb-2">Todo</h3>
+                      {/* Todo 제목과 + 버튼이 함께 배치되는 영역 */}
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center">
+                          <img
+                            src={todoImg}
+                            alt="Todo Icon"
+                            className="w-[25px] h-[25px] mr-1"
+                          />
+                          <h3 className="text-[17px] font-regular">Todo</h3>
+                        </div>
+
+                        {/* 일정 등록버튼 */}
+                        <button
+                          className="bg-primary text-white font-bold rounded-full w-[25px] h-[25px] flex items-center justify-center hover:bg-hoverprimary transition-colors ease-linear"
+                          onClick={() => {
+                            if (!isAuthenticated || !user?.team_id) {
+                              alert('로그인 및 팀이 필요합니다.');
+                            } else {
+                              handleOpenModal(null);
+                            }
+                          }}
+                        >
+                          +
+                        </button>
                       </div>
 
                       {/* 일정 목록이 스크롤되는 영역 */}
-                      <div className="w-[374px] h-[710px] bg-[#DFEDF9] rounded-lg overflow-y-auto p-4 space-y-4">
+                      <div className="w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg overflow-y-auto p-4 space-y-4">
                         {filteredSchedules
                           .filter((schedule) => schedule.status === '할 일')
                           .map((schedule, index) => (
                             <Draggable
                               key={schedule.id}
-                              draggableId={schedule.id.toString()}
+                              draggableId={schedule.id ? schedule.id.toString() : 'default-id'}
                               index={index}
                             >
                               {(provided) => (
@@ -313,27 +319,11 @@ export default function Board() {
                                   onClick={openModal}
                                 >
                                   <div>
-                                    <h4 className="font-bold">
-                                      {schedule.title}
-                                    </h4>
-                                    <p className="text-sm">
-                                      {schedule.projectTitle}
-                                    </p>
-                                    <p className="text-sm">
-                                      우선순위 {schedule.priority}
-                                    </p>
+                                    <h4 className="font-bold">{schedule.title}</h4>
+                                    <p className="text-sm">{schedule.projectTitle}</p>
+                                    <p className="text-sm">우선순위 {schedule.priority}</p>
                                   </div>
-                                  <div className="flex space-x-2">
-                                    <button
-                                      className="text-gray-400 hover:text-red-500"
-                                      onClick={(event) => {
-                                        event.stopPropagation();
-                                        openDeleteModal(schedule);
-                                      }}
-                                    >
-                                      <FiTrash2 size={20} />
-                                    </button>
-
+                                  <div className="flex space-x-4">
                                     <button
                                       className="text-gray-400 hover:text-blue-500"
                                       onClick={(event) => {
@@ -343,28 +333,21 @@ export default function Board() {
                                     >
                                       <FiEdit3 size={20} />
                                     </button>
+                                    <button
+                                      className="text-gray-400 hover:text-red-500"
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        openDeleteModal(schedule);
+                                      }}
+                                    >
+                                      <FiTrash2 size={20} />
+                                    </button>
                                   </div>
                                 </div>
                               )}
                             </Draggable>
                           ))}
                         {provided.placeholder}
-                      </div>
-
-                      {/* + ADD 버튼을 컨테이너 밖에 고정 */}
-                      <div className="w-full flex justify-center mt-4">
-                        <button
-                          className="w-[90%] h-[51px] bg-primary text-white font-bold rounded-full hover:bg-[#257ADA] transition-colors ease-linear"
-                          onClick={() => {
-                            if (!isAuthenticated || !user?.team_id) {
-                              alert('로그인 및 팀이 필요합니다.');
-                            } else {
-                              handleOpenModal(null);
-                            }
-                          }}
-                        >
-                          + ADD
-                        </button>
                       </div>
                     </div>
                   )}
@@ -395,7 +378,7 @@ export default function Board() {
                             .map((schedule, index) => (
                               <Draggable
                                 key={schedule.id}
-                                draggableId={schedule.id.toString()}
+                                draggableId={schedule.id ? schedule.id.toString() : 'default-id'}
                                 index={index}
                               >
                                 {(provided) => (
@@ -419,22 +402,27 @@ export default function Board() {
                                     <div className="flex space-x-2">
                                       <button
                                         className="text-gray-400 hover:text-red-500"
-                                        onClick={(event) => {
-                                          event.stopPropagation();
-                                          openDeleteModal(schedule);
-                                        }}
+                                        onClick={() =>
+                                          openDeleteModal(schedule)
+                                        }
                                       >
                                         <FiTrash2 size={20} />
                                       </button>
-
+                                      <button className="text-gray-400 hover:text-blue-500">
+                                        <FiEdit3
+                                          size={20}
+                                          onClick={() =>
+                                            handleOpenModal(schedule)
+                                          }
+                                        />
+                                      </button>
                                       <button
-                                        className="text-gray-400 hover:text-blue-500"
-                                        onClick={(event) => {
-                                          event.stopPropagation();
-                                          handleOpenModal(schedule);
-                                        }}
+                                        className="text-gray-400 hover:text-red-500"
+                                        onClick={() =>
+                                          openDeleteModal(schedule)
+                                        }
                                       >
-                                        <FiEdit3 size={20} />
+                                        <FiTrash2 size={20} />
                                       </button>
                                     </div>
                                   </div>
@@ -473,7 +461,7 @@ export default function Board() {
                             .map((schedule, index) => (
                               <Draggable
                                 key={schedule.id}
-                                draggableId={schedule.id.toString()}
+                                draggableId={schedule.id ? schedule.id.toString() : 'default-id'}
                                 index={index}
                               >
                                 {(provided) => (
@@ -494,15 +482,7 @@ export default function Board() {
                                         우선순위 {schedule.priority}
                                       </p>
                                     </div>
-                                    <div className="flex space-x-2">
-                                      <button
-                                        className="text-gray-400 hover:text-red-500"
-                                        onClick={() =>
-                                          openDeleteModal(schedule)
-                                        }
-                                      >
-                                        <FiTrash2 size={20} />
-                                      </button>
+                                    <div className="flex space-x-4">
                                       <button className="text-gray-400 hover:text-blue-500">
                                         <FiEdit3
                                           size={20}
@@ -510,6 +490,14 @@ export default function Board() {
                                             handleOpenModal(schedule)
                                           }
                                         />
+                                      </button>
+                                      <button
+                                        className="text-gray-400 hover:text-red-500"
+                                        onClick={() =>
+                                          openDeleteModal(schedule)
+                                        }
+                                      >
+                                        <FiTrash2 size={20} />
                                       </button>
                                     </div>
                                   </div>
@@ -559,6 +547,4 @@ export default function Board() {
     </div>
   );
 }
-function fetchSchedulesFromServer(team_id: string | undefined, token: string) {
-  throw new Error('Function not implemented.');
-}
+
