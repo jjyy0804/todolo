@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../utils/apiClient';
 import useUserStore from '../store/useUserstore';
+import { showSuccessToast } from '../utils/toast';
 
 interface UseRegisterUserProps {
   name: string;
@@ -73,7 +74,7 @@ const useRegisterUser = () => {
       });
 
       if (response.status === 201) {
-        alert('회원가입이 완료되었습니다!');
+        showSuccessToast('회원가입이 완료되었습니다!');
         setErrorMessage(''); // 성공 시 오류 메시지 초기화
         navigate('/login');
       }

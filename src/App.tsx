@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { Outlet } from 'react-router-dom';
 import apiClient from './utils/apiClient'; // axios instance with interceptors
 import useUserStore from './store/useUserstore';
+import { ToastContainer } from 'react-toastify'; // ToastContainer 임포트
+import 'react-toastify/dist/ReactToastify.css'; // 스타일 임포트
 
 function App() {
   const navigate = useNavigate();
@@ -73,6 +75,7 @@ function App() {
 
   return (
     <>
+      <ToastContainer />
       <Outlet />
     </>
   );

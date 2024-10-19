@@ -3,6 +3,7 @@ import basicProfileImage from '../../assets/images/basic_user_profile.png';
 import { FaCheckCircle } from 'react-icons/fa';
 import useUserStore from '../../store/useUserstore'; // Zustand 스토어 임포트
 import apiClient from '../../utils/apiClient';
+import { showErrorToast, showSuccessToast } from '../../utils/toast';
 
 // props 타입 정의
 interface ProfileModalProps {
@@ -54,10 +55,10 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         },
       );
       console.log(response.data.message);
-      alert('메일이 발송되었습니다. 확인해주세요.'); // 성공 시 알림창 표시
+      showSuccessToast('메일이 발송되었습니다. 확인해주세요.'); // 성공 시 알림창 표시
     } catch (error) {
       console.log(error);
-      alert('메일을 전송하는데 실패했습니다. 다시 시도해주세요.'); // 실패 시 메시지 설정
+      showErrorToast('메일을 전송하는데 실패했습니다. 다시 시도해주세요.'); // 실패 시 메시지 설정
     }
   };
 
@@ -84,7 +85,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   const handleSaveClick = async (e: React.FormEvent) => {
     e.preventDefault();
     if (password !== passwordConfirm) {
-      alert('비밀번호가 일치하지 않습니다.');
+      showErrorToast('비밀번호가 일치하지 않습니다.');
       return;
     }
 
@@ -108,11 +109,11 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
         },
       );
 
-      alert(response.data.message); // 성공 메시지 알림
+      showSuccessToast(response.data.message); // 성공 메시지 알림
       onClose(); // 창 닫기
     } catch (error) {
       console.error('Error:', error);
-      alert('정보 업데이트에 실패했습니다.');
+      showErrorToast('정보 업데이트에 실패했습니다.');
     }
   };
 

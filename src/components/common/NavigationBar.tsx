@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import logo from '../../assets/logos/todolo_logo_noslog.png';
 import useScheduleStore from '../../store/useScheduleStore';
 import useUserStore from '../../store/useUserstore';
+import { showSuccessToast } from '../../utils/toast';
 
 const NavigationBar = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const NavigationBar = () => {
       logout();
       localStorage.removeItem('accessToken');
       useScheduleStore.getState().clearSchedules(); // 상태 초기화
-      alert('로그아웃 되었습니다.');
+      showSuccessToast('로그아웃 되었습니다.');
       navigate('/');
     } else {
       // 로그인 페이지로 이동

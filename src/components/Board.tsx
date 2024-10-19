@@ -17,6 +17,7 @@ import { Schedule } from '../types/scheduleTypes';
 import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
 import MyProfile from './common/MyProfile';
+import { showErrorToast, showSuccessToast } from '../utils/toast';
 
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
@@ -47,7 +48,7 @@ export default function Board() {
 
   useEffect(() => {
     if (!token) {
-      alert('로그인이 필요합니다.');
+      showErrorToast('로그인이 필요합니다.');
       return;
     }
     // 새로운 사용자가 로그인했을 때, 팀이 없으면 일정 초기화
@@ -136,7 +137,7 @@ export default function Board() {
       updateSchedule(movedItem.id, { ...movedItem, status: newStatus });
     } catch (error) {
       console.error('상태 업데이트 중 오류:', error);
-      alert('상태 변경 권한이 없습니다.');
+      showErrorToast('상태 변경 권한이 없습니다.');
     }
   };
 
@@ -172,13 +173,13 @@ export default function Board() {
         // 삭제 성공 여부에 따른 처리
         if (isDeleted) {
           removeSchedule(scheduleToDelete.id); // 서버에서 삭제 성공 시 스토어에서 일정 삭제
-          alert('일정이 성공적으로 삭제되었습니다.');
+          showSuccessToast('일정이 성공적으로 삭제되었습니다.');
         } else {
-          alert('일정 삭제에 실패했습니다. 다시 시도해주세요.');
+          showErrorToast('일정 삭제에 실패했습니다. 다시 시도해주세요.');
         }
       } catch (error: any) {
         console.error('일정 삭제 중 오류 발생:', error);
-        alert('삭제 권한이 없습니다.');
+        showErrorToast('삭제 권한이 없습니다.');
       }
     }
     setIsDeleteModalOpen(false);
@@ -256,7 +257,7 @@ export default function Board() {
                           className="bg-primary text-white font-bold rounded-full w-[25px] h-[25px] flex items-center justify-center hover:bg-hoverprimary transition-colors ease-linear"
                           onClick={() => {
                             if (!isAuthenticated || !user?.team_id) {
-                              alert('로그인 및 팀이 필요합니다.');
+                              showErrorToast('로그인 및 팀이 필요합니다.');
                             } else {
                               handleOpenModal(null);
                             }

@@ -1,3 +1,4 @@
+import { showSuccessToast, showErrorToast } from '../utils/toast'; // 만들어둔 파일 import
 import apiClient from '../utils/apiClient';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -39,8 +40,11 @@ const useLogin = () => {
           team: data.data.team?.team || '', // team이 없으면 빈 문자열 사용
           team_id: data.data.team?._id || '', // team_id가 없으면 빈 문자열 사용
         });
-        alert('로그인 성공');
-        navigate('/main');
+         // 로그인 성공 메시지를 한 번만 출력
+         if (response.status === 200) {
+          showSuccessToast('로그인 성공');  //toast 메세지
+          navigate('/main');
+        }
       }
     } catch (err: any) {
       if (err.response) {

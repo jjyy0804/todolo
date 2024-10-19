@@ -6,6 +6,7 @@ import useUserStore from '../../../store/useUserstore';
 import TeamMemberSelector from '../TeamMemberSelector';
 // 사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id, title, content, projectTitle, status, priority, taskMember, startDate, endDate, team_id )
 import { TeamMember } from '../../../types/scheduleTypes';
+import { showErrorToast, showSuccessToast } from '../../../utils/toast';
 
 interface ModalProps {
   isOpen: boolean;
@@ -90,7 +91,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       taskMember: selectedMembers.map((member) => member.id),
     };
     if (!isFormValid()) {
-      alert('모든 필드를 입력해주세요..');
+      showErrorToast('모든 필드를 입력해주세요..');
       return;
     }
 
@@ -112,7 +113,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
             },
           },
         );
-        alert('일정이 성공적으로 수정되었습니다.');
+        showSuccessToast('일정이 성공적으로 수정되었습니다.');
         console.log('응답 데이터:', response.data);
 
         // 상태 업데이트
@@ -126,7 +127,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
           },
         },
         );
-        alert('일정이 성공적으로 추가되었습니다.');
+        showSuccessToast('일정이 성공적으로 추가되었습니다.');
         console.log('응답 데이터:', response.data);
 
         // 상태 업데이트
@@ -134,7 +135,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       }
     } catch (error) {
       console.error('일정 추가/수정 중 오류 발생:', error);
-      alert('일정 추가/수정에 실패했습니다. 다시 시도해주세요.');
+      showErrorToast('일정 추가/수정에 실패했습니다. 다시 시도해주세요.');
       console.log(newScheduleforServer);
     } finally {
       onClose();
