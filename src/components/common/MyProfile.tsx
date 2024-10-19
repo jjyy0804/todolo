@@ -9,7 +9,7 @@ const MyProfile: React.FC<MyProfileProps> = ({ openUserInfoModal }) => {
   const { user } = useUserStore();
   // 상대 경로를 절대 경로로 변환
   const avatarUrl = user?.avatar
-    ? `http://localhost:3000${user.avatar}`
+    ? user.avatar
     : BasicImage; // 기본 이미지 사용
 
 

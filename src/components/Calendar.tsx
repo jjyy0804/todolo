@@ -11,6 +11,7 @@ import '../calendar.css';
 import NavigationBar from './common/NavigationBar';
 //import ScheduleModal from './common/modal/ScheduleModal';
 import CalendarModal from './common/modal/CalendarModal';
+import useUserStore from '../store/useUserstore';
 // import useUserStore from '../store/useUserstore';
 
 interface Task {
@@ -21,7 +22,7 @@ interface Task {
   color: string;
 }
 export default function Calendar() {
-  // const { team_id } = useUserStore();
+  const { user } = useUserStore();
   const [projects, setProjects] = useState<any[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Task | null>(null);
@@ -36,8 +37,7 @@ export default function Calendar() {
 
     apiClient
       .get(
-        // `/teams/${team_id},
-        `api/teams/6710af6fc60ed1fdc6acf5e8`,
+        `api/teams/${user?.team_id}`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`,

@@ -39,7 +39,6 @@ const useLogin = () => {
           team: data.data.team?.team || '', // team이 없으면 빈 문자열 사용
           team_id: data.data.team?._id || '', // team_id가 없으면 빈 문자열 사용
         });
-        console.log(data.data);
         alert('로그인 성공');
         navigate('/main');
       }

@@ -13,7 +13,6 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './common/UserInfoModal';
 import useDeleteTask from '../hooks/task/useDeleteTask';
-import BasicImage from '../assets/images/basic_user_profile.png'; //프로필 기본이미지
 import { Schedule } from '../types/scheduleTypes';
 import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
@@ -78,12 +77,18 @@ export default function Board() {
 
     setFilteredSchedules(filtered);
   }, [schedules, searchTerm]);
+
   /** 드래그가 끝났을 때 호출되며, 항목이 드롭된 위치에 맞게 schedules 배열을 업데이트 */
   const onDragEnd = async (result: any) => {
     const { source, destination } = result;
 
     // 드롭되지 않은 경우 종료
     if (!destination) return;
+
+    // 같은 상태끼리 움직이면 종료
+    if (source.droppableId === destination.droppableId && source.index === destination.index) {
+      return;
+    }
 
     // 이동된 일정 찾기 (source에서 해당 index의 일정 찾기)
     const sourceTasks = filteredSchedules.filter(
@@ -96,11 +101,16 @@ export default function Board() {
     // 새로운 상태로 변경
     const newStatus = destination.droppableId as '할 일' | '진행 중' | '완료';
 
+    // **같은 상태로 이동 시 상태 업데이트 로직 실행 안함**
+    if (movedItem.status === newStatus) {
+      return;
+    }
+
     try {
       const token = localStorage.getItem('accessToken');
       if (!token) throw new Error('인증 토큰이 없습니다.');
 
-      // 서버에 상태 업데이트 요청
+      // 서버에 상태 업데이트 요청 (먼저 서버 요청을 보냄)
       await apiClient.put(
         `/api/tasks/${movedItem.id}`,
         { ...movedItem, status: newStatus },
@@ -109,28 +119,28 @@ export default function Board() {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-        },
+        }
       );
 
-      // 상태가 성공적으로 변경된 경우 스토어와 UI 업데이트
-      updateSchedule(movedItem.id, { ...movedItem, status: newStatus });
-
-      alert('상태가 성공적으로 업데이트되었습니다.');
-
-      // UI에 반영 (드래그된 일정의 상태 변경)
+      // **서버 요청 성공 후 UI 업데이트**
       const updatedSchedules = schedules.map((schedule) =>
-        schedule.id === movedItem.id
+        schedule.id === movedItem.id && schedule.status !== newStatus
           ? { ...schedule, status: newStatus }
           : schedule,
       );
 
       setFilteredSchedules(updatedSchedules);
       setSchedules(updatedSchedules);
+
+      // 상태가 성공적으로 변경된 경우 스토어 업데이트
+      updateSchedule(movedItem.id, { ...movedItem, status: newStatus });
     } catch (error) {
       console.error('상태 업데이트 중 오류:', error);
       alert('상태 변경 권한이 없습니다.');
     }
   };
+
+
   /**일정을 클릭했을 경우 수정모드,
    * add 버튼을 클릭했을 경우 등록 모드
    */
@@ -156,8 +166,6 @@ export default function Board() {
   const handleConfirmDelete = async () => {
     if (scheduleToDelete) {
       try {
-        console.log(`삭제할 일정 ID: ${scheduleToDelete.id}`);
-
         // 서버에서 삭제 요청
         const isDeleted = await deleteTask(scheduleToDelete.id); //서버에서 일정 삭제
 
@@ -170,17 +178,12 @@ export default function Board() {
         }
       } catch (error: any) {
         console.error('일정 삭제 중 오류 발생:', error);
-        alert('일정 삭제에 실패했습니다. 다시 시도해주세요.');
+        alert('삭제 권한이 없습니다.');
       }
     }
     setIsDeleteModalOpen(false);
     setScheduleToDelete(null);
   };
-
-  // 상대 경로를 절대 경로로 변환
-  const avatarUrl = user?.avatar
-    ? `http://localhost:3000${user.avatar}`
-    : BasicImage; // 기본 이미지 사용
 
   return (
     <div>
@@ -207,7 +210,7 @@ export default function Board() {
             />
           </div>
         </div>
-
+        {/* 드래그 앤 드랍 영역 */}
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="flex flex-col items-center justify-center">
             {/* 메인 컨테이너 */}
@@ -350,7 +353,15 @@ export default function Board() {
                                         우선순위 {schedule.priority}
                                       </p>
                                     </div>
-                                    <div className="flex space-x-2">
+                                    <div className="flex space-x-4">
+                                      <button className="text-gray-400 hover:text-blue-500">
+                                        <FiEdit3
+                                          size={20}
+                                          onClick={() =>
+                                            handleOpenModal(schedule)
+                                          }
+                                        />
+                                      </button>
                                       <button
                                         className="text-gray-400 hover:text-red-500"
                                         onClick={() =>

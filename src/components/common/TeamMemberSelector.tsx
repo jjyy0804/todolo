@@ -29,7 +29,6 @@ const TeamMemberSelector = ({
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('API 응답:', response.data.data[0].teamMembers); // 응답 데이터 확인
         // response.data.teamMembers에서 필요한 필드만 추출
         const formattedMembers = response.data.data[0].teamMembers.map(
           (member: any) => ({

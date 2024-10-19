@@ -5,8 +5,7 @@ import useScheduleStore from '../../../store/useScheduleStore';
 import useUserStore from '../../../store/useUserstore';
 import TeamMemberSelector from '../TeamMemberSelector';
 // 사용자정보 인터페이스( id, name, avatar ), 스케줄 인터페이스 ( id, title, content, projectTitle, status, priority, taskMember, startDate, endDate, team_id )
-import { TeamMember, Schedule } from '../../../types/scheduleTypes';
-import ProjectSelector from '../ProjectSelector';
+import { TeamMember } from '../../../types/scheduleTypes';
 
 interface ModalProps {
   isOpen: boolean;
@@ -81,17 +80,15 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
     const newScheduleforServer = {
       title: scheduleName,
       content: scheduleContent,
-      projectTitle: projectName,
+      projectTitle: projectName, // 수정 시에는 안보냄
       team_id: teamId, // team_id는 로그인 시 받아와 store에 저장해 둔 값
       startDate,
       endDate,
       status,
       priority,
-      projectColor: projectColor,
+      projectColor: projectColor, // 수정 시에는 안보냄
       taskMember: selectedMembers.map((member) => member.id),
     };
-    console.log(newScheduleforServer);
-
     if (!isFormValid()) {
       alert('모든 필드를 입력해주세요..');
       return;
@@ -122,15 +119,12 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
         updateSchedule(schedule.id, newScheduleforServer);
       } else {
         // 등록 로직
-        const response = await apiClient.post(
-          `/api/tasks`,
-          newScheduleforServer,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // Bearer 토큰 헤더 추가
-              'Content-Type': 'application/json',
-            },
+        const response = await apiClient.post(`/api/tasks`, newScheduleforServer, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Bearer 토큰 헤더 추가
+            'Content-Type': 'application/json',
           },
+        },
         );
         alert('일정이 성공적으로 추가되었습니다.');
         console.log('응답 데이터:', response.data);
@@ -214,18 +208,20 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
           {/* 새로운 프로젝트 이름 입력 */}
           <input
             type="text"
-            className="border p-2 border-gray-300 rounded-[10px] flex-1 focus:outline-none"
+            className="border p-2 border-gray-300 rounded-[10px] flex-1 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
             placeholder="프로젝트 이름을 입력하세요"
             value={projectName}  // 입력된 프로젝트 이름
             onChange={(e) => setProjectName(e.target.value)}  // 입력값 변경 시 호출
+            disabled={isEdit} // 프로젝트명은 수정모드일 경우 변경 x
           />
 
           {/* 프로젝트 색상 선택 */}
           <input
             type="color"
-            className="w-7 h-7 cursor-pointer"
+            className="w-7 h-7 cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-100"
             value={projectColor}  // 선택된 색상 값
             onChange={(e) => setProjectColor(e.target.value)}  // 색상 선택 시 호출
+            disabled={isEdit} // 프로젝트명은 수정모드일 경우 변경 x
           />
 
         </div>

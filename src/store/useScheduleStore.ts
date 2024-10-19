@@ -55,7 +55,6 @@ const useScheduleStore = create<ScheduleState>((set) => ({
         return projects.flatMap((project) => {
           const tasks = Array.isArray(project.tasks) ? project.tasks : [project.tasks]; // tasks가 배열인지 확인하고 배열로 처리
           if (!tasks || tasks.length === 0) {
-            console.log('프로젝트에 tasks가 없습니다.');
             return [];
           }
 
@@ -77,14 +76,10 @@ const useScheduleStore = create<ScheduleState>((set) => ({
 
       // 프로젝트 데이터 가져오기
       const fetchedProjects = response.data?.data[0]?.projects || [];
-      console.log('Fetched Projects:', fetchedProjects);
 
       // 변환된 데이터를 Zustand 스토어에 저장
       const schedules = transformDataToSchedules(fetchedProjects);
       set({ schedules });
-
-      // 상태가 잘 업데이트되었는지 확인
-      console.log('현재 스토어에 저장된 스케줄:', useScheduleStore.getState().schedules);
     } catch (error) {
       console.error('서버에서 일정 데이터 가져오기 실패:', error);
     }

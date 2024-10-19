@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import basicProfileImage from '../../assets/images/basic_user_profile.png';
 import { FaCheckCircle } from 'react-icons/fa';
 import useUserStore from '../../store/useUserstore'; // Zustand 스토어 임포트
-import { useNavigate } from 'react-router-dom';
 import apiClient from '../../utils/apiClient';
 
 // props 타입 정의
@@ -15,7 +14,6 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
   if (!isOpen) return null;
 
   const { user } = useUserStore(); // Zustand에서 user 정보 가져오기
-  const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState(
     user?.avatar || `${basicProfileImage}`,
   );
@@ -125,7 +123,7 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
           className="text-darkgray flex items-end justify-end text-[13px] font-regular mb-4 cursor-pointer"
           onClick={onClose} // X 버튼을 클릭하면 onClose 호출
         >
-          X
+          &times;
         </h2>
 
         {/* 프로필 사진 수정 */}
