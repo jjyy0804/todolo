@@ -17,11 +17,19 @@ export default function SetTeam() {
   };
 
   const sendHandleClick = async () => {
+    const accessToken = localStorage.getItem('accessToken');
     try {
-      const response = await apiClient.post(`api/users/confirm-team`, {
-        token: token,
-        team: selectedTeam,
-      });
+      console.log('token', accessToken);
+      const response = await apiClient.post(
+        `api/users/confirm-team`,
+        {
+          token: token,
+          team: selectedTeam,
+        },
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
+      );
       console.log(response.data.message);
       setMessage('팀이 변경되었습니다.');
       // 재설정 후 로그인 페이지로 이동
@@ -71,10 +79,11 @@ export default function SetTeam() {
         )}
 
         <button
-          className={`px-6 py-2 text-white font-semibold bg-primary rounded-lg transition-opacity duration-300 ${selectedTeam
+          className={`px-6 py-2 text-white font-semibold bg-primary rounded-lg transition-opacity duration-300 ${
+            selectedTeam
               ? 'opacity-100 hover:bg-[#257ADA]'
               : 'opacity-50 cursor-not-allowed'
-            }`}
+          }`}
           disabled={!selectedTeam}
           onClick={sendHandleClick}
         >

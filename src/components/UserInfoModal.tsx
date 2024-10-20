@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import defaultProfileImage from '../assets/images/basic_user_profile.png';
 import useUserStore, { User } from '../store/useUserstore'; // Zustand store import
 import apiClient from '../utils/apiClient';
@@ -11,14 +11,24 @@ interface UserInfoModalProps {
 
 export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
   const { user, setUser } = useUserStore();
-  const [profileImage, setProfileImage] = useState(
-    user?.avatar || defaultProfileImage,
-  );
+
+  const [profileImage, setProfileImage] = useState(defaultProfileImage);
+  console.log({ profileImage });
   const fileInputRef = useRef<HTMLInputElement | null>(null); // useRef for file input
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // selectedFile state
   const [message, setMessage] = useState<string>(''); // Message state
   const [isEditing, setIsEditing] = useState<boolean>(false); // State to toggle between "Change" and "Save"
   const navigate = useNavigate(); // Initialize navigate for routing
+
+  useEffect(() => {
+    if (isOpen) {
+      const initialAvatarUrl =
+        user?.avatar && user.avatar.includes('uploads/')
+          ? `/uploads/${user.avatar.split('uploads/')[1]}`
+          : defaultProfileImage; // 기본 이미지 사용
+      setProfileImage(initialAvatarUrl);
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -39,45 +49,51 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
   };
 
   /** Handle save click */
+  /** Handle save click */
   const handleSaveClick = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!selectedFile) return; // Ensure a file is selected
 
-    const formData = new FormData();
-    formData.append('avatar', selectedFile); // Append the file to the form data
-
     const accessToken = localStorage.getItem('accessToken');
 
     try {
-      const response = await apiClient.post(
-        '/api/users/update-profileImg',
-        formData,
-        {
+      const formData = new FormData();
+
+      // Append file(s) to the FormData object
+      formData.append('avatar', selectedFile);
+
+      // Make PUT request to the server
+      apiClient
+        .put('/api/users/update-profileImg', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data', // Set correct content type
-            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${accessToken}`, // Add authorization header
           },
-        },
-      );
-
-      if (response.status === 200) {
-        console.log('Profile picture updated');
-
-        // Update user info including the avatar
-        const newUserInfo: User = {
-          ...user!,
-          avatar: response.data.avatar, // Ensure this is correct
-        };
-
-        setUser(newUserInfo); // Update Zustand store
-        setMessage('Profile picture updated successfully!'); // Success message
-        setIsEditing(false); // Exit editing mode
-        onClose(); // Close the modal
-      }
+        })
+        .then((response) => {
+          if (response.status === 200) {
+            apiClient
+              .get('/api/users/me', {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+              })
+              .then((userData) => {
+                setUser(userData.data.data);
+                setMessage('Profile picture updated successfully!'); // Success message
+                setIsEditing(false); // Exit editing mode
+                onClose(); // Close the modal
+              });
+          }
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+          setMessage('Failed to update profile picture.'); // Error message
+        });
     } catch (error) {
-      console.error('Error:', error);
-      setMessage('Failed to update profile picture.'); // Set error message
+      console.error('Error during file processing:', error);
+      setMessage('Failed to process file.');
     }
   };
 
@@ -124,13 +140,13 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
             className="w-full h-full rounded-full"
           />
           {/* Change/Save button */}
+          <button
+            className="absolute bottom-0 right-0 p-2 bg-white rounded-full cursor-pointer"
+            onClick={isEditing ? handleSaveClick : handleEditClick}
+          >
+            {isEditing ? 'Save' : 'Change'}
+          </button>
         </div>
-        <button
-          className="bg-primary text-white font-bold rounded-10 flex items-center justify-center hover:bg-hoverprimary transition-colors ease-linear"
-          onClick={isEditing ? handleSaveClick : handleEditClick}
-        >
-          {isEditing ? '변경' : '저장'}
-        </button>
         <input
           type="file"
           ref={fileInputRef}
@@ -167,14 +183,6 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
               )}
             </span>
           </div>
-
-          {/* Change Password Button */}
-          <p
-            className="text-blue-600 cursor-pointer text-lg hover:underline mt-4"
-            onClick={handleChangePasswordClick}
-          >
-            비밀번호 변경
-          </p>
         </div>
         {message && <p className="text-center text-green-600">{message}</p>}{' '}
         {/* Display message */}

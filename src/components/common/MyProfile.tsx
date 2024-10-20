@@ -1,6 +1,6 @@
 import React from 'react';
 import useUserStore from '../../store/useUserstore';
-import BasicImage from '../../assets/images/basic_user_profile.png'
+import BasicImage from '../../assets/images/basic_user_profile.png';
 
 interface MyProfileProps {
   openUserInfoModal: () => void; // 부모로부터 내려받을 함수의 타입 정의
@@ -8,10 +8,10 @@ interface MyProfileProps {
 const MyProfile: React.FC<MyProfileProps> = ({ openUserInfoModal }) => {
   const { user } = useUserStore();
   // 상대 경로를 절대 경로로 변환
-  const avatarUrl = user?.avatar
-    ? user.avatar
-    : BasicImage; // 기본 이미지 사용
-
+  const avatarUrl =
+    user?.avatar && user.avatar.includes('uploads/')
+      ? `/uploads/${user.avatar.split('uploads/')[1]}`
+      : BasicImage; // 기본 이미지 사용
 
   return (
     <div>
