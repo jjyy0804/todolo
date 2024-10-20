@@ -1,9 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import defaultProfileImage from '../assets/images/basic_user_profile.png';
-import useUserStore from '../store/useUserstore'; // Zustand store import
+import useUserStore, { User } from '../store/useUserstore'; // Zustand store import
 import apiClient from '../utils/apiClient';
 import { useNavigate } from 'react-router-dom';
-import { showErrorToast, showSuccessToast } from '../utils/toast';
 
 interface UserInfoModalProps {
   isOpen: boolean;
@@ -49,7 +48,6 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
     fileInputRef.current?.click(); // Trigger file input click
   };
 
-  /** Handle save click */
   /** Handle save click */
   const handleSaveClick = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -112,82 +110,103 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
         },
       );
       console.log(response.data.message);
-      showSuccessToast('메일이 발송되었습니다. 확인해주세요.'); // Alert for email sent
+      alert('메일이 발송되었습니다. 확인해주세요.'); // Alert for email sent
     } catch (error) {
       console.log(error);
-      showErrorToast('메일을 전송하는데 실패했습니다. 다시 시도해주세요.'); // Error message
+      alert('메일을 전송하는데 실패했습니다. 다시 시도해주세요.'); // Error message
     }
   };
 
   /** Change Password button click handler */
-  const handleChangePasswordClick = () => {
+  const changePasswordClick = () => {
     navigate('/update-password'); // Redirect to the change password page
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-[400px]">
-        <h2
-          className="text-darkgray flex items-end justify-end text-[13px] font-regular mb-4 cursor-pointer"
-          onClick={onClose}
-        >
-          X
-        </h2>
-        {/* Profile image */}
-        <div className="relative w-24 h-24 mx-auto">
-          <img
-            src={profileImage}
-            alt="profile_image"
-            className="w-full h-full rounded-full"
-          />
-          {/* Change/Save button */}
+    <>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white w-[500px] max-h-[80vh] p-6 rounded-lg relative overflow-y-auto">
           <button
-            className="absolute bottom-0 right-0 p-2 bg-white rounded-full cursor-pointer"
-            onClick={isEditing ? handleSaveClick : handleEditClick}
+            onClick={onClose}
+            className="absolute top-4 right-4 text-softgray hover:text-darkgray"
           >
-            {isEditing ? 'Save' : 'Change'}
+            &times;
           </button>
-        </div>
-        <input
-          type="file"
-          ref={fileInputRef}
-          accept="image/*"
-          onChange={handleImageChange}
-          style={{ display: 'none' }}
-        />
-        <p className="flex items-center justify-center mt-6 text-sm text-gray-600">
-          {user?.email}
-        </p>
-        <div className="space-y-8 p-12 mt-6">
-          <div className="flex items-center justify-between space-x-8">
-            <label className="text-lg font-medium text-softgray w-1/4">
-              이름
-            </label>
-            <span className="block w-full p-4 text-lg">{user?.name}</span>
-          </div>
 
-          <div className="flex items-center justify-between space-x-8 mt-6">
-            <label className="text-lg font-medium text-softgray w-1/4">
-              소속
-            </label>
-            <span className="block w-full p-4 text-lg">
-              {user?.team ? (
-                user.team
-              ) : (
+          {/* Profile image */}
+          <div className='flex flex-col items-center mb-6"'>
+            <div className="w-24 h-24 rounded-full border flex items-center justify-center relative cursor-pointer">
+              <img
+                src={profileImage}
+                alt="profile_image"
+                className="w-full h-full rounded-full"
+              />
+            </div>
+            {/* Change/Save button */}
+            <button
+              className="mt-2 text-sm text-primary"
+              onClick={isEditing ? handleSaveClick : handleEditClick}
+            >
+              {isEditing ? '저장' : '프로필사진 변경'}
+            </button>
+          </div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            accept="image/*"
+            onChange={handleImageChange}
+            style={{ display: 'none' }}
+          />
+          <p className="flex items-center justify-center mt-6 text-sm text-gray-600">
+            {user?.email}
+          </p>
+          <div className="space-y-8 p-[3rem] mt-6">
+            <div className="flex items-center justify-between space-x-8">
+              <label className="block text-base font-medium text-softgray w-1/3">
+                이름
+              </label>
+
+              <span className="mt-1 block w-full p-4 text-left text-dartgray">
+                {user?.name}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between space-x-8 mt-6">
+              <label className="block text-base font-medium text-softgray w-1/3">
+                소속
+              </label>
+              <span className="mt-1 block w-full p-4 text-left text-dartgray">
+                {user?.team ? (
+                  user.team
+                ) : (
+                  <button
+                    type="button"
+                    className="text-left mt-1 block w-full p-4 text-primary"
+                    onClick={handleSetTeamClick}
+                  >
+                    소속팀설정
+                  </button>
+                )}
+              </span>
+            </div>
+
+            <div className="flex items-center justify-between space-x-8 mt-6">
+              <label className="block text-base font-medium text-softgray w-1/3">
+                비밀번호
+              </label>
+              <span className="mt-1 block w-full p-4">
                 <button
                   type="button"
-                  className="text-blue-500 underline"
-                  onClick={handleSetTeamClick}
+                  className="mt-1 block w-full text-left text-primary underline"
+                  onClick={changePasswordClick}
                 >
-                  소속팀설정
+                  비밀번호 변경
                 </button>
-              )}
-            </span>
+              </span>
+            </div>
           </div>
         </div>
-        {message && <p className="text-center text-green-600">{message}</p>}{' '}
-        {/* Display message */}
       </div>
-    </div>
+    </>
   );
 }
