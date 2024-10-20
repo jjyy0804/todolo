@@ -14,8 +14,7 @@
     "isolatedModules": true,
     "noEmit": true,
     "allowJs": true,
-    "noFallthroughCasesInSwitch": true,
-    "typeRoots": ["./node_modules/@types", "./src/types"]
+    "noFallthroughCasesInSwitch": true
   },
   "include": ["src", "setupProxy.js"]
 }
