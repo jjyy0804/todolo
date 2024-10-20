@@ -68,7 +68,9 @@ export default function ResetPassword() {
         </p>
 
         <div className="mb-4">
-          <label className="text-sm font-medium text-softgray">비밀번호</label>
+          <label className="text-sm font-medium text-softgray">
+            새 비밀번호
+          </label>
           <input
             type="password"
             className="mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none"
