@@ -163,7 +163,11 @@ function CommentSection({ taskId }: Props) {
         console.error('Error deleting comment:', error);
       });
   };
-
+  //유저 이미지
+  const avatarUrl =
+    user?.avatar && user.avatar.includes('uploads/')
+      ? `/uploads/${user.avatar.split('uploads/')[1]}`
+      : basicProfileImage; // 기본 이미지 사용
   return (
     <div>
       <h3 className="text-darkgray mb-2 font-medium">댓글</h3>
@@ -173,7 +177,7 @@ function CommentSection({ taskId }: Props) {
             {/** 댓글 유저아바타 */}
             <div className="mt-1 w-8 h-8 rounded-full overflow-hidden">
               <img
-                src={user?.avatar || basicProfileImage}
+                src={avatarUrl || basicProfileImage}
                 alt={user?.name}
                 // 이미지가 div를 가득 채우도록
                 className="w-full h-full object-cover bg-secondary"

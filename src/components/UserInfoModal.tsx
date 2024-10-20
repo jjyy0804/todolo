@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import defaultProfileImage from '../assets/images/basic_user_profile.png';
-import useUserStore, { User } from '../store/useUserstore'; // Zustand store import
+import useUserStore from '../store/useUserstore'; // Zustand store import
 import apiClient from '../utils/apiClient';
 import { useNavigate } from 'react-router-dom';
+import { showErrorToast, showSuccessToast } from '../utils/toast';
 
 interface UserInfoModalProps {
   isOpen: boolean;
@@ -111,10 +112,10 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
         },
       );
       console.log(response.data.message);
-      alert('메일이 발송되었습니다. 확인해주세요.'); // Alert for email sent
+      showSuccessToast('메일이 발송되었습니다. 확인해주세요.'); // Alert for email sent
     } catch (error) {
       console.log(error);
-      alert('메일을 전송하는데 실패했습니다. 다시 시도해주세요.'); // Error message
+      showErrorToast('메일을 전송하는데 실패했습니다. 다시 시도해주세요.'); // Error message
     }
   };
 

@@ -3,7 +3,6 @@ import apiClient from '../../utils/apiClient';
 import { TeamMember } from '../../types/scheduleTypes'; // 사용자정보 인터페이스
 import useUserStore from '../../store/useUserstore';
 import basicProfile from '../../assets/images/basic_user_profile.png';
-import searchIcon from '../../assets/icons/magnifyingglass.png';
 
 const TeamMemberSelector = ({
   onAddMember,
@@ -20,6 +19,7 @@ const TeamMemberSelector = ({
   const toggleListVisibility = () => {
     setIsListVisible(!isListVisible); // 버튼 클릭 시 목록의 가시성 토글
   };
+
   // 팀원 목록 불러오기 (팀 배열만 잘라서 쓰기)
   useEffect(() => {
     const fetchMembers = async () => {
@@ -29,12 +29,15 @@ const TeamMemberSelector = ({
             Authorization: `Bearer ${token}`,
           },
         });
-        // response.data.teamMembers에서 필요한 필드만 추출
+        // 팀원 목록에서 필요한 필드만 추출하고, avatar를 절대 경로로 변환
         const formattedMembers = response.data.data[0].teamMembers.map(
           (member: any) => ({
-            id: member._id, // _id를 id로 매핑
+            id: member._id,
             name: member.name,
-            avatar: member.avatar !== 'N/A' ? member.avatar : basicProfile, // avatar가 없을 경우 기본 이미지 제공
+            avatar:
+              member.avatar && member.avatar.includes('uploads/')
+                ? `${window.location.origin}/uploads/${member.avatar.split('uploads/')[1]}` // 절대 경로 변환
+                : basicProfile, // 기본 이미지 제공
           }),
         );
 
@@ -95,21 +98,29 @@ const TeamMemberSelector = ({
         {/* 검색어가 있거나 목록 보기 버튼을 눌렀을 때 팀원 목록을 보여줌 */}
         {(searchTerm || isListVisible) && (
           <ul className="border rounded max-h-48 overflow-y-auto w-[360px]">
-            {filteredMembers.map((member) => (
-              <li
-                key={member.id}
-                onClick={() => handleSelectMember(member)}
-                className="p-2 flex items-center hover:bg-gray-200 cursor-pointer"
-              >
-                <img
-                  src={member.avatar}
-                  alt={`${member.name}의 아바타`}
-                  className="w-8 h-8 rounded-full mr-2 object-cover"
-                  onError={(e) => (e.currentTarget.src = basicProfile)} // 이미지 로딩 실패 시 기본 이미지 표시
-                />
-                {member.name}
-              </li>
-            ))}
+            {filteredMembers.map((member) => {
+              // 상대 경로를 절대 경로로 변환
+              const avatarUrl =
+                member.avatar && member.avatar.includes('uploads/')
+                  ? `${window.location.origin}/uploads/${member.avatar.split('uploads/')[1]}`
+                  : basicProfile; // 기본 이미지 사용
+
+              return (
+                <li
+                  key={member.id}
+                  onClick={() => handleSelectMember(member)}
+                  className="p-2 flex items-center hover:bg-gray-200 cursor-pointer"
+                >
+                  <img
+                    src={avatarUrl} // 절대 경로로 변환된 avatarUrl 사용
+                    alt={`${member.name}의 아바타`}
+                    className="w-8 h-8 rounded-full mr-2 object-cover"
+                    onError={(e) => (e.currentTarget.src = basicProfile)} // 이미지 로딩 실패 시 기본 이미지 표시
+                  />
+                  {member.name}
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>

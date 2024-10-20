@@ -4,6 +4,7 @@ import basicProfileImage from '../../../assets/images/basic_user_profile.png';
 import CommentSection from './CommentSection';
 import calendarImg from '../../../assets/icons/calendar.png';
 import Loading from '../../Loading';
+import useUserStore from '../../../store/useUserstore';
 
 interface Member {
   _id: string;
@@ -31,7 +32,7 @@ interface CalendarModalProps {
 function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
   const [task, setTask] = useState<Task | null>(null); // 초기 상태 null로 변경
   const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태 관리
-
+  const { user } = useUserStore();
   // 날짜 형식 제한
   const fixedStartDate = task?.startDate?.substring(0, 10);
   const fixedEndDate = task?.endDate?.substring(0, 10);
@@ -57,7 +58,7 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
             taskMembers: fetchedTask.taskMembers.map((member: any) => ({
               ...member,
               avatar:
-                member.avatar !== 'N/A' ? member.avatar : basicProfileImage,
+                member.avatar !== 'N/A' ? member.avatar : avatarUrl,
             })),
           });
           setIsLoading(false); // 로딩 상태 종료
@@ -68,6 +69,12 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
         });
     }
   }, [taskId]);
+
+  // 상대 경로를 절대 경로로 변환
+  const avatarUrl =
+    user?.avatar && user.avatar.includes('uploads/')
+      ? `/uploads/${user.avatar.split('uploads/')[1]}`
+      : basicProfileImage; // 기본 이미지 사용
 
   if (!isOpen) return null; // 모달이 열리지 않으면 렌더링하지 않음
 
@@ -124,15 +131,24 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
             <div className="mb-4">
               <label className="block text-darkgray font-medium">참여한 팀원</label>
               <div className="flex items-center space-x-2 mt-1 p-1 border border-gray-300 rounded-lg bg-white">
-                {task?.taskMembers.map((member: Member, index: number) => (
-                  <div key={index} className="flex items-center">
-                    <img
-                      src={member.avatar}
-                      alt={member.name}
-                      className="w-[30px] h-[30px] rounded-full bg-secondary"
-                    />
-                  </div>
-                ))}
+                {task?.taskMembers.map((member: Member, index: number) => {
+                  // avatar 경로를 절대 경로로 변환
+                  const avatarUrl =
+                    member.avatar && member.avatar.includes('uploads/')
+                      ? `${window.location.origin}/uploads/${member.avatar.split('uploads/')[1]}`
+                      : basicProfileImage; // 기본 이미지 사용
+
+                  return (
+                    <div key={index} className="flex items-center">
+                      <img
+                        src={avatarUrl} // 절대 경로로 변환된 avatarUrl 사용
+                        alt={member.name}
+                        className="w-[30px] h-[30px] rounded-full bg-secondary"
+                        onError={(e) => (e.currentTarget.src = basicProfileImage)} // 이미지 로딩 실패 시 기본 이미지 표시
+                      />
+                    </div>
+                  );
+                })}
               </div>
             </div>
 
