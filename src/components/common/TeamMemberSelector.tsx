@@ -3,7 +3,7 @@ import apiClient from '../../utils/apiClient';
 import { TeamMember } from '../../types/scheduleTypes'; // 사용자정보 인터페이스
 import useUserStore from '../../store/useUserstore';
 import basicProfile from '../../assets/images/basic_user_profile.png';
-import searchIcon from '../../assets/icons/magnifyingglass.png'
+import searchIcon from '../../assets/icons/magnifyingglass.png';
 
 const TeamMemberSelector = ({
   onAddMember,
@@ -74,18 +74,18 @@ const TeamMemberSelector = ({
 
   return (
     <div>
-      <div>
+      <div className="flex flex-row">
         <input
           type="text"
           placeholder="팀원을 검색하세요."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="border p-2 rounded w-[300px] mb-2"
+          className="border border-gray-300 p-2 rounded-lg w-[330px] mb-2"
         />
 
         {/* 목록을 표시하거나 숨기는 버튼 */}
         <button
-          className="text-primary px-2 py-2 rounded mb-2"
+          className="hover:bg-hoversecondary text-primary font-medium border border-primary h-10 px-2 py-2 rounded-lg ml-2 mb-1 flex flex-row justify-center items-center"
           onClick={toggleListVisibility}
         >
           {isListVisible ? '숨기기' : '목록'}

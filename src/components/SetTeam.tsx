@@ -39,10 +39,6 @@ export default function SetTeam() {
     } catch (error) {
       console.error('Error confirming team change:', error);
       setMessage('팀 변경에 실패했습니다. 다시 시도해주세요.');
-      // 실패 후 메인 페이지로 이동
-      setTimeout(() => {
-        navigate(ROUTE_LINK.LOGIN.link);
-      }, 2000);
     }
   };
 

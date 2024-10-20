@@ -7,15 +7,15 @@ export interface Comment {
 }
 
 export interface TeamMember {
-    name: string;
-    avatar: string;
-  }
-  
+  name: string;
+  avatar: string;
+}
+
 export interface Task {
-    title: string;
-    date: string;
-    projectName: string;
-    teamMembers: TeamMember[];
-    details: string;
-    comments: Comment[];
+  title: string;
+  date: string;
+  projectName: string;
+  teamMembers: TeamMember[];
+  details: string;
+  comments: Comment[];
 }

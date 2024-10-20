@@ -5,7 +5,6 @@ import useUserStore from '../../../store/useUserstore'; // Zustand 스토어 임
 import apiClient from '../../../utils/apiClient';
 import basicProfileImage from '../../../assets/images/basic_user_profile.png';
 
-
 interface Comments {
   // 유저이름, 유저아바타, 현재시간, 댓글내용
   _id: string;
@@ -167,18 +166,18 @@ function CommentSection({ taskId }: Props) {
 
   return (
     <div>
-      <h3 className="text-darkgray mb-2">댓글</h3>
+      <h3 className="text-darkgray mb-2 font-medium">댓글</h3>
       <div className="space-y-3">
         {comments.map((comment) => (
           <div key={comment._id} className="flex items-start space-x-3">
             {/** 댓글 유저아바타 */}
             <div className="mt-1 w-8 h-8 rounded-full overflow-hidden">
-                <img
-                    src={user?.avatar || basicProfileImage}
-                    alt={user?.name}
-                    // 이미지가 div를 가득 채우도록
-                    className="w-full h-full object-cover bg-secondary"
-                />
+              <img
+                src={user?.avatar || basicProfileImage}
+                alt={user?.name}
+                // 이미지가 div를 가득 채우도록
+                className="w-full h-full object-cover bg-secondary"
+              />
             </div>
 
             <div className="flex-grow">
@@ -224,7 +223,7 @@ function CommentSection({ taskId }: Props) {
                   handleDeleteClick(comment._id);
                 }}
                 className="mr-2 w-[20px] h-[22.5px] cursor-pointer" // hover 시 빨간색으로 변환
-                />
+              />
             </div>
           </div>
         ))}
@@ -240,7 +239,7 @@ function CommentSection({ taskId }: Props) {
         />
         <button
           onClick={handleCommentSubmit}
-          className="bg-primary text-white font-bold text-[13px] p-1 rounded-lg h-[40px]"
+          className="bg-primary text-white font-bold text-[13px] p-1 rounded-lg h-[40px] hover:bg-hoverprimary"
           style={{ flexBasis: '10%' }}
         >
           등록

@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import apiClient from '../utils/apiClient';
 import React, { useState } from 'react';
 import { ROUTE_LINK } from '../routes/routes';
+import logo from '../assets/logos/todolo_logo_main.png';
 
 export default function RequestResetPassword() {
   const [email, setEmail] = useState('');
@@ -34,9 +35,12 @@ export default function RequestResetPassword() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen">
+    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
+      {/** 요소 담는 흰색 컨테이너 박스 */}
+      <div className="flex flex-col items-center justify-center w-[700px] h-[500px] p-6 bg-white shadow-lg rounded-[10px]">
+      <img src={logo} alt="logo" className="mb-8 w-[364px] h-[118px]" />
       <div>
-        <p className="block text-sm font-medium text-softgray mb-10">
+        <p className="block text-sm font-medium text-softgray mb-3">
           {message}
         </p>
         <input
@@ -57,6 +61,7 @@ export default function RequestResetPassword() {
         >
           다음
         </button>
+      </div>
       </div>
     </div>
   );

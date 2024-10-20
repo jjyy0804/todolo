@@ -208,7 +208,7 @@ export default function Board() {
     setIsCalendarModalOpen(false); // 모달 닫음
     setSelectedSchedule(null); // 선택된 일정 초기화
   };
-
+  //-----------------------------------------------------
   return (
     <div>
       <NavigationBar />
@@ -216,7 +216,7 @@ export default function Board() {
         {/* 사용자 정보 (프로필사진, 이름, 소속팀) */}
         <MyProfile openUserInfoModal={openUserInfoModal} />
         {/* 사용자 검색 창 */}
-        <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-32">
+        <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-80">
           <div className="relative w-[343px]">
             {' '}
             {/* 인풋 박스를 감싸는 relative 컨테이너 */}
