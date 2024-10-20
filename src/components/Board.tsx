@@ -9,6 +9,7 @@ import glassImg from '../assets/icons/magnifyingglass.png';
 import ScheduleModal from './common/modal/ScheduleModal';
 import useUserStore from '../store/useUserstore';
 import useScheduleStore from '../store/useScheduleStore';
+//이거
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './UserInfoModal';
@@ -212,11 +213,11 @@ export default function Board() {
   return (
     <div>
       <NavigationBar />
-      <div className="flex flex-col w-screen h-screen bg-white overflow-auto">
+      <div className="flex flex-col w-screen h-screen overflow-auto bg-white">
         {/* 사용자 정보 (프로필사진, 이름, 소속팀) */}
         <MyProfile openUserInfoModal={openUserInfoModal} />
         {/* 사용자 검색 창 */}
-        <div className="flex flex-row items-end justify-end space-x-4 mb-4 mr-36">
+        <div className="flex flex-row items-end justify-end mb-4 space-x-4 mr-36">
           <div className="relative w-[343px]">
             {' '}
             {/* 인풋 박스를 감싸는 relative 컨테이너 */}
@@ -230,7 +231,7 @@ export default function Board() {
             <img
               src={glassImg}
               alt="Search Icon"
-              className="absolute left-3 top-1/2 transform -translate-y-1/2"
+              className="absolute transform -translate-y-1/2 left-3 top-1/2"
             />
           </div>
         </div>
@@ -293,7 +294,7 @@ export default function Board() {
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                                  className="flex justify-between p-2 bg-white rounded-md shadow-md text-darkgray"
                                   onClick={() => openModal(schedule)} // 클릭 시 모달을 여는 함수 호출
                                 >
                                   <div>
@@ -360,7 +361,7 @@ export default function Board() {
 
                       {/* 상태 = "진행 중" 일정 카드 */}
                       <div className="overflow-y-auto w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg">
-                        <div className="p-4 flex flex-col space-y-4">
+                        <div className="flex flex-col p-4 space-y-4">
                           {filteredSchedules
                             .filter((schedule) => schedule.status === '진행 중')
                             .map((schedule, index) => (
@@ -378,7 +379,7 @@ export default function Board() {
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
-                                    className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                                    className="flex justify-between p-2 bg-white rounded-md shadow-md text-darkgray"
                                     onClick={() => openModal(schedule)}
                                   >
                                     <div>
@@ -446,7 +447,7 @@ export default function Board() {
 
                       {/* 상태 = "완료" 일정 카드 */}
                       <div className="overflow-y-auto w-[374px] h-[780px] bg-[#DFEDF9] rounded-lg">
-                        <div className="p-4 flex flex-col space-y-4">
+                        <div className="flex flex-col p-4 space-y-4">
                           {filteredSchedules
                             .filter((schedule) => schedule.status === '완료')
                             .map((schedule, index) => (
@@ -464,7 +465,7 @@ export default function Board() {
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
                                     {...provided.dragHandleProps}
-                                    className="flex justify-between bg-white p-2 rounded-md shadow-md text-darkgray"
+                                    className="flex justify-between p-2 bg-white rounded-md shadow-md text-darkgray"
                                     onClick={() => openModal(schedule)}
                                   >
                                     <div>
