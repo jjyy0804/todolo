@@ -26,7 +26,7 @@ apiClient.interceptors.response.use(
         // Call the same endpoint to validate and refresh the access token
         const response = await apiClient.post('/api/users/refresh-token');
 
-        const newAccessToken = response.data.newAccessToken;
+        const newAccessToken = response.data.accessToken;
 
         // Store newAccessToken in localStorage
         localStorage.setItem('accessToken', newAccessToken);

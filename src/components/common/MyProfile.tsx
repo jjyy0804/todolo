@@ -8,7 +8,10 @@ interface MyProfileProps {
 const MyProfile: React.FC<MyProfileProps> = ({ openUserInfoModal }) => {
   const { user } = useUserStore();
   // 상대 경로를 절대 경로로 변환
-  const avatarUrl = user?.avatar ? user.avatar : BasicImage; // 기본 이미지 사용
+  const avatarUrl =
+    user?.avatar && user.avatar.includes('uploads/')
+      ? `/uploads/${user.avatar.split('uploads/')[1]}`
+      : BasicImage; // 기본 이미지 사용
 
   return (
     <div>

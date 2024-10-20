@@ -12,6 +12,8 @@ import NavigationBar from './common/NavigationBar';
 //import ScheduleModal from './common/modal/ScheduleModal';
 import CalendarModal from './common/modal/CalendarModal';
 import useUserStore from '../store/useUserstore';
+import MyProfile from './common/MyProfile';
+import UserInfoModal from './UserInfoModal';
 
 interface Task {
   taskId: string;
@@ -25,6 +27,7 @@ export default function Calendar() {
   const [projects, setProjects] = useState<any[]>();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState<Task | null>(null);
+  const [isUserInfoModalOpen, setIsUserInfoModalOpen] = useState(false); //유저 정보 모달 상태
 
   useEffect(() => {
     // login 했고, team이 지정이 되어있때만 api 호출
@@ -34,6 +37,9 @@ export default function Calendar() {
     // }
     const accessToken = localStorage.getItem('accessToken');
 
+    if (!user?.team_id) {
+      return;
+    }
     apiClient
       .get(`api/teams/${user?.team_id}`, {
         headers: {
@@ -44,6 +50,9 @@ export default function Calendar() {
         const fetchedProjects = response.data.data[0].projects;
         // console.log({ fetchedProjects });
         setProjects(fetchedProjects);
+      })
+      .catch((error) => {
+        console.log('calendar fetch data error', error);
       });
   }, []);
 
@@ -73,6 +82,9 @@ export default function Calendar() {
   return (
     <>
       <NavigationBar />
+      <div className="fixed">
+        <MyProfile openUserInfoModal={() => setIsUserInfoModalOpen(true)} />
+      </div>
       {/* icon with name(team) display => insert Component later */}
       <FullCalendar
         plugins={[dayGridPlugin]}
@@ -90,6 +102,10 @@ export default function Calendar() {
           taskId={selectedEvent.taskId} // Pass the clicked event details to the modal
         />
       )}
+      <UserInfoModal
+        isOpen={isUserInfoModalOpen}
+        onClose={() => setIsUserInfoModalOpen(false)}
+      />
     </>
   );
 }

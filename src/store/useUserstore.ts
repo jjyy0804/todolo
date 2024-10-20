@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 /** 사용자 정보 인터페이스 정의 */
-interface User {
+export interface User {
   name: string;
   email: string;
   avatar?: string;

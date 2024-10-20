@@ -17,16 +17,18 @@ export default function SetTeam() {
   };
 
   const sendHandleClick = async () => {
-    console.log('Received token:', token);
-    console.log('Received team:', selectedTeam);
+    const accessToken = localStorage.getItem('accessToken');
     try {
+      console.log('token', accessToken);
       const response = await apiClient.post(
         `api/users/confirm-team`,
         {
-          team: selectedTeam,
           token: token,
+          team: selectedTeam,
         },
-        { headers: { Authorization: `Bearer ${token}` } }, // 헤더에 Authorization 추가
+        {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        },
       );
       console.log(response.data.message);
       setMessage('팀이 변경되었습니다.');
