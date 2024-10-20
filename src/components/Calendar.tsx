@@ -13,6 +13,7 @@ import NavigationBar from './common/NavigationBar';
 import CalendarModal from './common/modal/CalendarModal';
 import useUserStore from '../store/useUserstore';
 
+
 interface Task {
   taskId: string;
   title: string;
@@ -42,11 +43,14 @@ export default function Calendar() {
             Authorization: `Bearer ${accessToken}`,
           },
         },
-      )
+      })
       .then((response) => {
         const fetchedProjects = response.data.data[0].projects;
         // console.log({ fetchedProjects });
         setProjects(fetchedProjects);
+      })
+      .catch((error) => {
+        console.log('calendar fetch data error', error);
       });
   }, []);
 

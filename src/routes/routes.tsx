@@ -10,6 +10,7 @@ import RequestResetPassword from '../components/RequestResetPassword';
 import ResetPassword from '../components/ResetPassword';
 import ErrorPage from '../components/ErrorPage';
 import SetTeam from '../components/SetTeam';
+import UpdatePassword from '../components/UpdatePassword';
 
 export const ROUTE_LINK = {
   LANDING: { path: '/', link: '/' },
@@ -20,6 +21,7 @@ export const ROUTE_LINK = {
   REQ_RESET_PASSWORD: { path: 'req-reset-pw', link: '/req-reset-pw' },
   RESET_PASSWORD: { path: 'reset-pw/:token?', link: '/reset-pw/:token?' },
   SET_TEAM: { path: 'set-team/:token?', link: '/set-team/:token?' },
+  UPDATE_PASSWORD: { path: 'update-password', link: '/update-password' },
   ERROR: { path: '*', link: '/*' },
 };
 
@@ -59,6 +61,10 @@ const routes = [
       {
         path: ROUTE_LINK.SET_TEAM.path,
         element: <SetTeam />,
+      },
+      {
+        path: ROUTE_LINK.UPDATE_PASSWORD.path,
+        element: <UpdatePassword />,
       },
     ],
   },
