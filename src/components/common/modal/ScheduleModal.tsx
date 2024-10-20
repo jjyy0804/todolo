@@ -174,7 +174,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       onClick={handleModalClose} // 배경 클릭 시 모달 닫힘
     >
       <div
-        className="relative bg-white w-[600px] h-[75vh] rounded-[10px] shadow-lg p-8 overflow-y-auto"
+        className="relative bg-white w-[600px] h-[90vh] rounded-[10px] shadow-lg p-8 overflow-y-auto"
         onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 버블링 중지
       >
         <button
