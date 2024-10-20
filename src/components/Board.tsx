@@ -11,7 +11,7 @@ import useUserStore from '../store/useUserstore';
 import useScheduleStore from '../store/useScheduleStore';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
-import UserInfoModal from './common/UserInfoModal';
+import UserInfoModal from './UserInfoModal';
 import useDeleteTask from '../hooks/task/useDeleteTask';
 import { Schedule } from '../types/scheduleTypes';
 import { Comment } from '../types/calendarModalTypes';
@@ -58,7 +58,13 @@ export default function Board() {
       // 현재 사용자의 팀 일정을 서버에서 가져와서 tasks에 저장
       const tasks = fetchSchedulesFromServer(user.team_id, token);
     }
-  }, [fetchSchedulesFromServer, user?.team_id, token, isAuthenticated, isScheduleModalOpen]);
+  }, [
+    fetchSchedulesFromServer,
+    user?.team_id,
+    token,
+    isAuthenticated,
+    isScheduleModalOpen,
+  ]);
 
   // 일정 필터링
   useEffect(() => {
@@ -69,8 +75,8 @@ export default function Board() {
 
       const memberMatch = schedule.taskMember
         ? schedule.taskMember.some((member) =>
-          member?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
-        )
+            member?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+          )
         : false; // taskMember가 없는 경우 false 반환
 
       return projectMatch || memberMatch;
@@ -87,7 +93,10 @@ export default function Board() {
     if (!destination) return;
 
     // 같은 상태끼리 움직이면 종료
-    if (source.droppableId === destination.droppableId && source.index === destination.index) {
+    if (
+      source.droppableId === destination.droppableId &&
+      source.index === destination.index
+    ) {
       return;
     }
 
@@ -120,7 +129,7 @@ export default function Board() {
             Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-        }
+        },
       );
 
       // **서버 요청 성공 후 UI 업데이트**
@@ -140,7 +149,6 @@ export default function Board() {
       showErrorToast('상태 변경 권한이 없습니다.');
     }
   };
-
 
   /**일정을 클릭했을 경우 수정모드,
    * add 버튼을 클릭했을 경우 등록 모드
@@ -185,7 +193,6 @@ export default function Board() {
     setIsDeleteModalOpen(false);
     setScheduleToDelete(null);
   };
-
 
   //-------------------CalendarModal---------------------
   const [isCalendarModalOpen, setIsCalendarModalOpen] = useState(false);
@@ -274,7 +281,11 @@ export default function Board() {
                           .map((schedule, index) => (
                             <Draggable
                               key={schedule.id}
-                              draggableId={schedule.id ? schedule.id.toString() : 'default-id'}
+                              draggableId={
+                                schedule.id
+                                  ? schedule.id.toString()
+                                  : 'default-id'
+                              }
                               index={index}
                             >
                               {(provided) => (
@@ -286,9 +297,15 @@ export default function Board() {
                                   onClick={() => openModal(schedule)} // 클릭 시 모달을 여는 함수 호출
                                 >
                                   <div>
-                                    <h4 className="font-bold">{schedule.title}</h4>
-                                    <p className="text-sm">{schedule.projectTitle}</p>
-                                    <p className="text-sm">우선순위 {schedule.priority}</p>
+                                    <h4 className="font-bold">
+                                      {schedule.title}
+                                    </h4>
+                                    <p className="text-sm">
+                                      {schedule.projectTitle}
+                                    </p>
+                                    <p className="text-sm">
+                                      우선순위 {schedule.priority}
+                                    </p>
                                   </div>
                                   <div className="flex space-x-4">
                                     {/* 수정 버튼 */}
@@ -336,7 +353,9 @@ export default function Board() {
                           alt="InProgress Icon"
                           className="w-[25px] h-[25px] mr-1 mb-2"
                         />
-                        <h3 className="text-[17px] font-regular mb-2">In Progress</h3>
+                        <h3 className="text-[17px] font-regular mb-2">
+                          In Progress
+                        </h3>
                       </div>
 
                       {/* 상태 = "진행 중" 일정 카드 */}
@@ -347,7 +366,11 @@ export default function Board() {
                             .map((schedule, index) => (
                               <Draggable
                                 key={schedule.id}
-                                draggableId={schedule.id ? schedule.id.toString() : 'default-id'}
+                                draggableId={
+                                  schedule.id
+                                    ? schedule.id.toString()
+                                    : 'default-id'
+                                }
                                 index={index}
                               >
                                 {(provided) => (
@@ -359,9 +382,15 @@ export default function Board() {
                                     onClick={() => openModal(schedule)}
                                   >
                                     <div>
-                                      <h4 className="font-bold">{schedule.title}</h4>
-                                      <p className="text-sm">{schedule.projectTitle}</p>
-                                      <p className="text-sm">우선순위 {schedule.priority}</p>
+                                      <h4 className="font-bold">
+                                        {schedule.title}
+                                      </h4>
+                                      <p className="text-sm">
+                                        {schedule.projectTitle}
+                                      </p>
+                                      <p className="text-sm">
+                                        우선순위 {schedule.priority}
+                                      </p>
                                     </div>
                                     <div className="flex space-x-4">
                                       {/* 수정 버튼 */}
@@ -410,7 +439,9 @@ export default function Board() {
                           alt="Completed Icon"
                           className="w-[25px] h-[25px] mr-1 mb-2"
                         />
-                        <h3 className="text-[17px] font-regular mb-2">Completed</h3>
+                        <h3 className="text-[17px] font-regular mb-2">
+                          Completed
+                        </h3>
                       </div>
 
                       {/* 상태 = "완료" 일정 카드 */}
@@ -421,7 +452,11 @@ export default function Board() {
                             .map((schedule, index) => (
                               <Draggable
                                 key={schedule.id}
-                                draggableId={schedule.id ? schedule.id.toString() : 'default-id'}
+                                draggableId={
+                                  schedule.id
+                                    ? schedule.id.toString()
+                                    : 'default-id'
+                                }
                                 index={index}
                               >
                                 {(provided) => (
@@ -433,9 +468,15 @@ export default function Board() {
                                     onClick={() => openModal(schedule)}
                                   >
                                     <div>
-                                      <h4 className="font-bold">{schedule.title}</h4>
-                                      <p className="text-sm">{schedule.projectTitle}</p>
-                                      <p className="text-sm">우선순위 {schedule.priority}</p>
+                                      <h4 className="font-bold">
+                                        {schedule.title}
+                                      </h4>
+                                      <p className="text-sm">
+                                        {schedule.projectTitle}
+                                      </p>
+                                      <p className="text-sm">
+                                        우선순위 {schedule.priority}
+                                      </p>
                                     </div>
                                     <div className="flex space-x-4">
                                       {/* 수정 버튼 */}
@@ -473,7 +514,6 @@ export default function Board() {
             </div>
           </div>
         </DragDropContext>
-
       </div>
       {/*삭제 확인 모달 */}
       <DeleteConfirmModal
@@ -497,9 +537,8 @@ export default function Board() {
       <CalendarModal
         isOpen={isCalendarModalOpen}
         onClose={closeModal}
-        taskId={selectedSchedule?.id?.toString() || ""}
+        taskId={selectedSchedule?.id?.toString() || ''}
       />
     </div>
   );
 }
-
