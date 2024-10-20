@@ -126,11 +126,16 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
               <div className="flex items-center space-x-2 mt-1 p-1 border border-gray-300 rounded-lg bg-white">
                 {task?.taskMembers.map((member: Member, index: number) => (
                   <div key={index} className="flex items-center">
-                    <img
-                      src={member.avatar}
-                      alt={member.name}
-                      className="w-[30px] h-[30px] rounded-full bg-secondary"
-                    />
+                    <div className="relative group">
+                      <img
+                        src={member.avatar}
+                        alt={member.name}
+                        className="w-[30px] h-[30px] rounded-full bg-secondary cursor-pointer"
+                      />
+                      <span className="absolute top-[35px] text-center left-1/2 -translate-x-1/2 min-w-[60px] bg-gray-200 text-darkgray text-xs p-1 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity transform">
+                      {member.name}
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
