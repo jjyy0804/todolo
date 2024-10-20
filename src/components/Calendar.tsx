@@ -13,7 +13,6 @@ import NavigationBar from './common/NavigationBar';
 import CalendarModal from './common/modal/CalendarModal';
 import useUserStore from '../store/useUserstore';
 
-
 interface Task {
   taskId: string;
   title: string;
@@ -36,12 +35,9 @@ export default function Calendar() {
     const accessToken = localStorage.getItem('accessToken');
 
     apiClient
-      .get(
-        `api/teams/${user?.team_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      .get(`api/teams/${user?.team_id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
       })
       .then((response) => {
