@@ -10,7 +10,12 @@ import ScheduleModal from './common/modal/ScheduleModal';
 import useUserStore from '../store/useUserstore';
 import useScheduleStore from '../store/useScheduleStore';
 //이거
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import {
+  DragDropContext,
+  Droppable,
+  Draggable,
+  DroppableProvided,
+} from 'react-beautiful-dnd';
 import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './UserInfoModal';
 import useDeleteTask from '../hooks/task/useDeleteTask';
@@ -243,7 +248,7 @@ export default function Board() {
               <div className="flex justify-between space-x-4">
                 {/* todo 보드 */}
                 <Droppable droppableId="할 일">
-                  {(provided) => (
+                  {(provided: any) => (
                     <div
                       className="flex flex-col h-full"
                       ref={provided.innerRef}
@@ -289,7 +294,7 @@ export default function Board() {
                               }
                               index={index}
                             >
-                              {(provided) => (
+                              {(provided: any) => (
                                 <div
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
