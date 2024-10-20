@@ -4,13 +4,16 @@ import trashImg from '../../../assets/icons/trash.png';
 import useUserStore from '../../../store/useUserstore'; // Zustand 스토어 임포트
 import apiClient from '../../../utils/apiClient';
 import basicProfileImage from '../../../assets/images/basic_user_profile.png';
+import { co } from '@fullcalendar/core/internal-common';
 
 interface Comments {
   // 유저이름, 유저아바타, 현재시간, 댓글내용
   _id: string;
-  name: string;
-  avatar?: string;
-  date: string;
+  user: {
+    name: string;
+    avatar?: string;
+  };
+  createdAt: string;
   content: string;
   commentContent: string;
 }
@@ -163,11 +166,7 @@ function CommentSection({ taskId }: Props) {
         console.error('Error deleting comment:', error);
       });
   };
-  //유저 이미지
-  const avatarUrl =
-    user?.avatar && user.avatar.includes('uploads/')
-      ? `/uploads/${user.avatar.split('uploads/')[1]}`
-      : basicProfileImage; // 기본 이미지 사용
+
   return (
     <div>
       <h3 className="text-darkgray mb-2 font-medium">댓글</h3>
@@ -177,9 +176,12 @@ function CommentSection({ taskId }: Props) {
             {/** 댓글 유저아바타 */}
             <div className="mt-1 w-8 h-8 rounded-full overflow-hidden">
               <img
-                src={avatarUrl || basicProfileImage}
-                alt={user?.name}
-                // 이미지가 div를 가득 채우도록
+                src={
+                  comment.user.avatar && comment.user.avatar.includes('uploads/')
+                    ? `${window.location.origin}/uploads/${comment.user.avatar.split('uploads/')[1]}`
+                    : basicProfileImage // 기본 프로필 이미지
+                }
+                alt={comment.user.name}
                 className="w-full h-full object-cover bg-secondary"
               />
             </div>
@@ -204,8 +206,8 @@ function CommentSection({ taskId }: Props) {
               ) : (
                 <div>
                   <p className="text-darkgray text-sm">
-                    {user?.name}{' '}
-                    <span className="text-softgray">({currentDate})</span>
+                    {comment.user.name}{' '}
+                    <span className="text-softgray">({new Date(comment.createdAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }).substring(0, 12)})</span>
                   </p>
                   <p className="text-darkgray">{comment.commentContent}</p>
                 </div>
