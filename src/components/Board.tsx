@@ -10,12 +10,7 @@ import ScheduleModal from './common/modal/ScheduleModal';
 import useUserStore from '../store/useUserstore';
 import useScheduleStore from '../store/useScheduleStore';
 //이거
-import {
-  DragDropContext,
-  Droppable,
-  Draggable,
-  DroppableProvided,
-} from 'react-beautiful-dnd';
+
 import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './UserInfoModal';
 import useDeleteTask from '../hooks/task/useDeleteTask';
@@ -24,6 +19,7 @@ import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
 import MyProfile from './common/MyProfile';
 import { showErrorToast, showSuccessToast } from '../utils/toast';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
@@ -347,7 +343,7 @@ export default function Board() {
 
                 {/* In Progress 보드 */}
                 <Droppable droppableId="진행 중">
-                  {(provided) => (
+                  {(provided: any) => (
                     <div
                       className="flex flex-col items-start"
                       ref={provided.innerRef}
@@ -379,7 +375,7 @@ export default function Board() {
                                 }
                                 index={index}
                               >
-                                {(provided) => (
+                                {(provided: any) => (
                                   <div
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
@@ -433,7 +429,7 @@ export default function Board() {
 
                 {/* Completed 보드 */}
                 <Droppable droppableId="완료">
-                  {(provided) => (
+                  {(provided: any) => (
                     <div
                       className="flex flex-col items-start"
                       ref={provided.innerRef}
@@ -465,7 +461,7 @@ export default function Board() {
                                 }
                                 index={index}
                               >
-                                {(provided) => (
+                                {(provided: any) => (
                                   <div
                                     ref={provided.innerRef}
                                     {...provided.draggableProps}
