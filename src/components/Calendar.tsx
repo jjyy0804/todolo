@@ -35,14 +35,11 @@ export default function Calendar() {
     const accessToken = localStorage.getItem('accessToken');
 
     apiClient
-      .get(
-        `api/teams/${user?.team_id}`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+      .get(`api/teams/${user?.team_id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
         },
-      )
+      })
       .then((response) => {
         const fetchedProjects = response.data.data[0].projects;
         // console.log({ fetchedProjects });

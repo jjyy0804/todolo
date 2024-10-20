@@ -51,10 +51,11 @@ const NavigationBar = () => {
         {isAuthenticated && (
           <>
             <button
-              className={`text-sm hover:text-primary ${location.pathname === '/calendar'
-                ? 'text-primary'
-                : 'text-darkgray'
-                }`}
+              className={`text-sm hover:text-primary ${
+                location.pathname === '/calendar'
+                  ? 'text-primary'
+                  : 'text-darkgray'
+              }`}
               onClick={handleCalendarClick}
             >
               Calendar

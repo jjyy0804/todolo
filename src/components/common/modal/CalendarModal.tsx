@@ -28,11 +28,7 @@ interface CalendarModalProps {
   taskId: string;
 }
 
-function CalendarModal({
-  isOpen,
-  onClose,
-  taskId,
-}: CalendarModalProps) {
+function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
   const [task, setTask] = useState<Task | null>(null); // 초기 상태 null로 변경
   const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태 관리
 
@@ -60,7 +56,8 @@ function CalendarModal({
             projectTitle: fetchedTask.project?.title,
             taskMembers: fetchedTask.taskMembers.map((member: any) => ({
               ...member,
-              avatar: member.avatar !== 'N/A' ? member.avatar : basicProfileImage,
+              avatar:
+                member.avatar !== 'N/A' ? member.avatar : basicProfileImage,
             })),
           });
           setIsLoading(false); // 로딩 상태 종료

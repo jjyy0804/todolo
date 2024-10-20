@@ -193,8 +193,9 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             </label>
             <input
               type="password"
-              className={`mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none ${isEditable ? 'bg-white' : 'bg-gray-100'
-                }`}
+              className={`mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none ${
+                isEditable ? 'bg-white' : 'bg-gray-100'
+              }`}
               placeholder="기존 비밀번호"
               value={password}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -210,8 +211,9 @@ function ProfileModal({ isOpen, onClose }: ProfileModalProps) {
             </label>
             <input
               type="password"
-              className={`mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none ${isEditable ? 'bg-white' : 'bg-gray-100'
-                }`}
+              className={`mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none ${
+                isEditable ? 'bg-white' : 'bg-gray-100'
+              }`}
               placeholder="다시 한번 입력해주세요."
               value={passwordConfirm}
               onChange={handleConfirmPasswordChange}

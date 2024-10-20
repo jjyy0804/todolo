@@ -32,9 +32,7 @@ const useScheduleStore = create<ScheduleState>((set) => ({
   updateSchedule: (id, updatedSchedule) =>
     set((state) => ({
       schedules: state.schedules.map((schedule) =>
-        schedule.id === id
-          ? { ...schedule, ...updatedSchedule }
-          : schedule
+        schedule.id === id ? { ...schedule, ...updatedSchedule } : schedule,
       ),
     })),
 
@@ -53,7 +51,9 @@ const useScheduleStore = create<ScheduleState>((set) => ({
       // 데이터 변환(schedules 배열 스토어에 저장할 데이터 형식으로)
       const transformDataToSchedules = (projects: any[]): Schedule[] => {
         return projects.flatMap((project) => {
-          const tasks = Array.isArray(project.tasks) ? project.tasks : [project.tasks]; // tasks가 배열인지 확인하고 배열로 처리
+          const tasks = Array.isArray(project.tasks)
+            ? project.tasks
+            : [project.tasks]; // tasks가 배열인지 확인하고 배열로 처리
           if (!tasks || tasks.length === 0) {
             return [];
           }

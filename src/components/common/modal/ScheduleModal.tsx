@@ -1,6 +1,6 @@
 import apiClient from '../../../utils/apiClient';
 import React, { useEffect, useState } from 'react';
-import basicProfile from '../../../assets/images/basic_user_profile.png'
+import basicProfile from '../../../assets/images/basic_user_profile.png';
 import useScheduleStore from '../../../store/useScheduleStore';
 import useUserStore from '../../../store/useUserstore';
 import TeamMemberSelector from '../TeamMemberSelector';
@@ -63,7 +63,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
     setPriority('중간');
     setStatus('할 일');
     setSelectedMembers([]);
-    setProjectColor("#DFEDF9");
+    setProjectColor('#DFEDF9');
   };
   // input 값 확인
   const isFormValid = () => {
@@ -120,12 +120,15 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
         updateSchedule(schedule.id, newScheduleforServer);
       } else {
         // 등록 로직
-        const response = await apiClient.post(`api/tasks`, newScheduleforServer, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Bearer 토큰 헤더 추가
-            'Content-Type': 'application/json',
+        const response = await apiClient.post(
+          `api/tasks`,
+          newScheduleforServer,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Bearer 토큰 헤더 추가
+              'Content-Type': 'application/json',
+            },
           },
-        },
         );
         showSuccessToast('일정이 성공적으로 추가되었습니다.');
         console.log('응답 데이터:', response.data);
@@ -171,7 +174,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       onClick={handleModalClose} // 배경 클릭 시 모달 닫힘
     >
       <div
-        className="relative bg-white w-[600px] h-[90vh] rounded-[10px] shadow-lg p-8 overflow-y-auto"
+        className="relative bg-white w-[600px] h-[75vh] rounded-[10px] shadow-lg p-8 overflow-y-auto"
         onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 버블링 중지
       >
         <button
@@ -181,8 +184,46 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
           &times;
         </button>
 
+        {/* 프로젝트 선택 영역 */}
+        <label className="block text-darkgray mb-1 font-medium">
+          프로젝트명
+        </label>
+        <div className="flex items-center space-x-2">
+          {/* 새로운 프로젝트 이름 입력 */}
+          <input
+            type="text"
+            className="border p-2 border-gray-300 rounded-[10px] flex-1 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
+            placeholder="기존 프로젝트를 선택 or 새로운 프로젝트명을 입력하세요"
+            value={projectName} // 입력된 프로젝트 이름
+            onChange={(e) => setProjectName(e.target.value)} // 입력값 변경 시 호출
+            disabled={isEdit} // 프로젝트명은 수정모드일 경우 변경 x
+          />
+
+          {/* 기존 프로젝트 선택 */}
+          <select className="border border-gray-300 p-2 rounded-[7px] w-5 h-6 flex justify-center items-center">
+            <option value="">프로젝트 선택</option>
+            {/* {projects.map((project) => (  //서버로 부터 가져와서 목록 뿌리기
+              <option key={project.id} value={project.id}>
+                {project.title}
+              </option>
+            ))} */}
+          </select>
+
+          {/* 프로젝트 색상 선택 */}
+          <input
+            type="color"
+            className="w-7 h-7 cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-100"
+            value={projectColor} // 선택된 색상 값
+            onChange={(e) => setProjectColor(e.target.value)} // 색상 선택 시 호출
+            disabled={isEdit} // 프로젝트명은 수정모드일 경우 변경 x
+          />
+        </div>
+
         {/* 일정 명 */}
-        <div className="mb-6 mt-6 flex items-center gap-4">
+        <label className="block text-darkgray mt-4 mb-1 font-medium">
+          일정명
+        </label>
+        <div className="mb-4 flex items-center gap-4">
           <input
             type="text"
             placeholder="일정명을 입력해주세요."
@@ -192,42 +233,11 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
           />
         </div>
 
-        {/* 프로젝트 선택 영역 */}
-        <div className="flex items-center space-x-2">
-          {/* 기존 프로젝트 선택 */}
-          <select
-            className="border border-gray-300 p-2 rounded-[10px] w-6 flex justify-center items-center"
-          >
-            <option value="">프로젝트 선택</option>
-            {/* {projects.map((project) => (  //서버로 부터 가져와서 목록 뿌리기
-              <option key={project.id} value={project.id}>
-                {project.title}
-              </option>
-            ))} */}
-          </select>
-
-          {/* 새로운 프로젝트 이름 입력 */}
-          <input
-            type="text"
-            className="border p-2 border-gray-300 rounded-[10px] flex-1 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
-            placeholder="프로젝트 이름을 입력하세요"
-            value={projectName}  // 입력된 프로젝트 이름
-            onChange={(e) => setProjectName(e.target.value)}  // 입력값 변경 시 호출
-            disabled={isEdit} // 프로젝트명은 수정모드일 경우 변경 x
-          />
-
-          {/* 프로젝트 색상 선택 */}
-          <input
-            type="color"
-            className="w-7 h-7 cursor-pointer disabled:cursor-not-allowed disabled:bg-gray-100"
-            value={projectColor}  // 선택된 색상 값
-            onChange={(e) => setProjectColor(e.target.value)}  // 색상 선택 시 호출
-            disabled={isEdit} // 프로젝트명은 수정모드일 경우 변경 x
-          />
-
-        </div>
         {/* 일정 상세 내용 */}
-        <div className="mb-6 mt-6 flex items-center gap-4">
+        <label className="block text-darkgray mt-4 mb-1 font-medium">
+          상세 내용
+        </label>
+        <div className="mb-4 flex items-center gap-4">
           <textarea
             placeholder="일정의 상세 내용을 입력해주세요."
             className="w-[530px] border border-gray-300 rounded-[10px] p-[60px] h-[150px] focus:outline-none text-center"
@@ -235,6 +245,9 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
             onChange={(e) => setScheduleContent(e.target.value)}
           />
         </div>
+
+        {/* 가로 선 추가 */}
+        <hr className="my-4 border-t border-gray-300" />
 
         <div className="flex items-center justify-between">
           {/* 일정 상태 선택 */}
@@ -261,7 +274,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
               우선순위
             </label>
             <label
-              className="flex items-center space-x-2 cursor-pointer"
+              className="flex items-center space-x-2 cursor-pointer mb-1"
               onClick={() => setPriority('높음')}
             >
               <div
@@ -277,7 +290,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
             </label>
 
             <label
-              className="flex items-center space-x-2 cursor-pointer"
+              className="flex items-center space-x-2 cursor-pointer mb-1"
               onClick={() => setPriority('중간')}
             >
               <div
@@ -293,7 +306,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
             </label>
 
             <label
-              className="flex items-center space-x-2 cursor-pointer"
+              className="flex items-center space-x-2 cursor-pointer mb-1"
               onClick={() => setPriority('낮음')}
             >
               <div
@@ -321,11 +334,11 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
             type="date"
             className="border border-gray-300 rounded-[10px] p-2 mr-3"
             value={startDate}
-            min={new Date().toISOString().split('T')[0]}  // 오늘 날짜 이전은 선택 불가
+            min={new Date().toISOString().split('T')[0]} // 오늘 날짜 이전은 선택 불가
             onChange={(e) => {
               setStartDate(e.target.value);
               if (e.target.value > endDate) {
-                setEndDate(e.target.value);  // 시작 날짜가 끝나는 날짜보다 뒤로 가면 끝나는 날짜를 시작 날짜로 맞춤
+                setEndDate(e.target.value); // 시작 날짜가 끝나는 날짜보다 뒤로 가면 끝나는 날짜를 시작 날짜로 맞춤
               }
             }}
           />
@@ -337,18 +350,25 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
             type="date"
             className="border border-gray-300 rounded-[10px] p-2 ml-3"
             value={endDate}
-            min={startDate || new Date().toISOString().split('T')[0]}  // 시작 날짜 이후로만 설정 가능
+            min={startDate || new Date().toISOString().split('T')[0]} // 시작 날짜 이후로만 설정 가능
             onChange={(e) => setEndDate(e.target.value)}
           />
         </div>
 
         {/* 팀원 추가 */}
-        <TeamMemberSelector onAddMember={handleAddMember} />
+        <div className="relative">
+          <label className="absolute w-[80px] text-darkgray font-medium mt-2 flex items-center">
+            팀원 추가
+          </label>
+          <div className="ml-20">
+            <TeamMemberSelector onAddMember={handleAddMember} />
+          </div>
+        </div>
 
         {/* 선택된 팀원 목록 */}
         <div className="selected-members mt-4">
-          <h4>선택된 팀원 목록:</h4>
-          <ul className="border rounded p-2">
+          <label className="font-medium">선택된 팀원 목록</label>
+          <ul className="mt-2 border rounded-lg p-2">
             {selectedMembers.length === 0 ? (
               <li className="text-gray-500">선택된 팀원이 없습니다.</li>
             ) : (

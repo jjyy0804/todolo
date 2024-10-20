@@ -40,9 +40,9 @@ const useLogin = () => {
           team: data.data.team?.team || '', // team이 없으면 빈 문자열 사용
           team_id: data.data.team?._id || '', // team_id가 없으면 빈 문자열 사용
         });
-         // 로그인 성공 메시지를 한 번만 출력
-         if (response.status === 200) {
-          showSuccessToast('로그인 성공');  //toast 메세지
+        // 로그인 성공 메시지를 한 번만 출력
+        if (response.status === 200) {
+          showSuccessToast('로그인 성공'); //toast 메세지
           navigate('/main');
         }
       }
