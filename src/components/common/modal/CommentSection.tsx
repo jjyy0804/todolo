@@ -166,7 +166,7 @@ function CommentSection({ taskId }: Props) {
 
   return (
     <div>
-      <h3 className="text-darkgray mb-2">댓글</h3>
+      <h3 className="text-darkgray mb-2 font-medium">댓글</h3>
       <div className="space-y-3">
         {comments.map((comment) => (
           <div key={comment._id} className="flex items-start space-x-3">
@@ -239,7 +239,7 @@ function CommentSection({ taskId }: Props) {
         />
         <button
           onClick={handleCommentSubmit}
-          className="bg-primary text-white font-bold text-[13px] p-1 rounded-lg h-[40px]"
+          className="bg-primary text-white font-bold text-[13px] p-1 rounded-lg h-[40px] hover:bg-hoverprimary"
           style={{ flexBasis: '10%' }}
         >
           등록

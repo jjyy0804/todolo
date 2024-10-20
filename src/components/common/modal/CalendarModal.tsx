@@ -112,7 +112,7 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
 
             {/* 프로젝트명, 팀 정보 */}
             <div className="mb-4">
-              <label className="block text-darkgray">프로젝트명</label>
+              <label className="block text-darkgray font-medium">프로젝트명</label>
               <input
                 type="text"
                 value={task?.projectTitle}
@@ -122,7 +122,7 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
             </div>
 
             <div className="mb-4">
-              <label className="block text-darkgray">참여한 팀원</label>
+              <label className="block text-darkgray font-medium">참여한 팀원</label>
               <div className="flex items-center space-x-2 mt-1 p-1 border border-gray-300 rounded-lg bg-white">
                 {task?.taskMembers.map((member: Member, index: number) => (
                   <div key={index} className="flex items-center">
@@ -141,7 +141,7 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
 
             {/* 상세 내용 */}
             <div className="mb-4">
-              <label className="block text-darkgray">상세 내용</label>
+              <label className="font-medium block text-darkgray">상세 내용</label>
               <textarea
                 value={task?.content}
                 readOnly
