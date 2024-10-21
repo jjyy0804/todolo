@@ -17,12 +17,12 @@ export default function UpdatePassword() {
 
   const [isCurrentPasswordCorrect, setIsCurrentPasswordCorrect] = useState<
     boolean | null
-  >(null); // null for no validation, true for correct, false for incorrect
-  const [isPasswordMatch, setIsPasswordMatch] = useState<boolean | null>(null); // null for no validation, true for match, false for no match
+  >(null);
+  const [isPasswordMatch, setIsPasswordMatch] = useState<boolean | null>(null);
   const [disabled, setDisabled] = useState(true);
 
   useEffect(() => {
-    // Enable the button only when both passwords are valid and matching
+    // Enable button only when passwords are valid and matching
     if (
       newPassword &&
       confirmPassword &&
@@ -45,11 +45,13 @@ export default function UpdatePassword() {
     }
   };
 
-  const checkPassword = () => {
+  const checkPasswordMatch = () => {
     if (newPassword !== confirmPassword) {
+      setIsPasswordMatch(false);
       setMessage('비밀번호가 일치하지 않습니다.');
-    } else if (!message) {
-      setDisabled(false); // Allow password reset if passwords match
+    } else {
+      setIsPasswordMatch(true);
+      setMessage('');
     }
   };
 
@@ -102,7 +104,7 @@ export default function UpdatePassword() {
         <p className="mb-6 text-primary text-[16px] font-bold">
           비밀번호를 재설정 해주세요
         </p>
-        <div className="mb-4 space-y-4 ">
+        <div className="mb-4 space-y-4">
           <div>
             <label className="block text-sm font-medium text-softgray">
               현재비밀번호
@@ -116,11 +118,13 @@ export default function UpdatePassword() {
               placeholder="비밀번호"
             />
             {isCurrentPasswordCorrect === false && (
-              <p style={{ color: 'red' }}>Current password is incorrect</p>
+              <p style={{ color: 'red' }}>
+                입력하신 현재 비밀번호가 일치하지 않습니다.
+              </p>
             )}
           </div>
 
-          <div className="relative">
+          <div>
             <label className="block text-sm font-medium text-softgray">
               새 비밀번호
             </label>
@@ -130,11 +134,12 @@ export default function UpdatePassword() {
               ref={newPasswordRef}
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
+              onBlur={checkValidPassword}
               placeholder="새 비밀번호"
             />
           </div>
 
-          <div className="relative">
+          <div>
             <label className="block text-sm font-medium text-softgray">
               비밀번호 확인
             </label>
@@ -143,11 +148,12 @@ export default function UpdatePassword() {
               className="mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              onBlur={checkPasswordMatch}
               placeholder="새 비밀번호 확인"
             />
             {isPasswordMatch === false && (
-              <p className="block text-sm font-medium text-softgray mb-10">
-                비밀번호가 일치하지 않습니다
+              <p className="block text-sm font-medium text-red-500">
+                비밀번호가 일치하지 않습니다.
               </p>
             )}
           </div>
@@ -161,9 +167,10 @@ export default function UpdatePassword() {
             취소
           </button>
           <button
-            className="py-2 px-4 bg-primary text-white rounded-lg shadow-sm text-sm hover:bg-secondary"
+            className={`py-2 px-4 text-white rounded-lg shadow-sm text-sm 
+            ${disabled ? 'bg-gray-400 cursor-not-allowed' : 'bg-primary hover:bg-secondary'}`}
+            onClick={handleChangePassword}
             disabled={disabled}
-            onBlur={checkPassword}
           >
             변경하기
           </button>
