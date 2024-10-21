@@ -14,6 +14,11 @@ interface ModalProps {
   schedule: any;
   isEdit: boolean; // 수정 모드 여부
 }
+interface Project {
+  _id?: string; // 기존 프로젝트는 ID를 가질 수 있지만, 새 프로젝트는 가질 필요 없음
+  title: string;
+  color: string;
+}
 
 const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
   const [scheduleName, setScheduleName] = useState('');
@@ -165,6 +170,50 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       prevMembers.filter((member) => member.id !== memberId),
     );
   };
+  const [projects, setProjects] = useState<Project[]>([]);  // 프로젝트 목롤만 가져오기
+  const [selectedProjectId, setSelectedProjectId] = useState(''); //선택된 프로젝트
+  const token = localStorage.getItem('accessToken'); // JWT 토큰 가져오기
+  // 서버에서 프로젝트 목록 가져오기
+  useEffect(() => {
+    const fetchProjects = async () => {
+      try {
+        const response = await apiClient.get(
+          `api//teams/${user?.team_id}`, // 서버에서 프로젝트 목록 가져오기
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const projectData = response.data.data[0].projects.map((project: any) => ({
+          id: project._id,  // 서버에서 받은 프로젝트 ID
+          title: project.title,
+          color: project.projectColor,
+        }));
+        setProjects(projectData); // 가공된 데이터를 상태로 저장
+      } catch (error) {
+        console.error('프로젝트 목록을 불러오는 중 오류가 발생했습니다.', error);
+      }
+    };
+
+    fetchProjects();
+  }, []);
+
+  // 프로젝트 선택 시 동작
+  const handleProjectSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    console.log("onChange 이벤트 발생"); // 이벤트 핸들러 호출 확인
+    const selectedId = e.target.value;
+    console.log("선택된 프로젝트의 id", selectedId)
+    setSelectedProjectId(selectedId); //선택된 값
+
+    // 선택된 프로젝트 정보 찾기
+    const selectedProject = projects.find((project) => project._id === selectedId);
+    console.log("찾은 값", selectedProject)
+
+    if (selectedProject) {
+      setProjectName(selectedProject.title); // 선택된 프로젝트 이름을 input에 설정
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -192,23 +241,27 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
           {/* 새로운 프로젝트 이름 입력 */}
           <input
             type="text"
-            className="border p-2 border-gray-300 rounded-[10px] flex-1 focus:outline-none disabled:bg-gray-100 disabled:text-gray-500"
-            placeholder="기존 프로젝트를 선택 or 새로운 프로젝트명을 입력하세요"
-            value={projectName} // 입력된 프로젝트 이름
-            onChange={(e) => setProjectName(e.target.value)} // 입력값 변경 시 호출
-            disabled={isEdit} // 프로젝트명은 수정모드일 경우 변경 x
+            className="border p-2 border-gray-300 rounded-[10px] flex-1 focus:outline-none"
+            placeholder="프로젝트 이름을 입력하세요"
+            value={projectName} // 선택된 프로젝트명 값
+            onChange={(e) => setProjectName(e.target.value)} // 이름 변경 시 호출
+            disabled={isEdit} // 수정 모드일 경우 이름 변경 불가
           />
 
           {/* 기존 프로젝트 선택 */}
-          <select className="border border-gray-300 p-2 rounded-[7px] w-5 h-6 flex justify-center items-center">
+          <select
+            className="border border-gray-300 p-2 rounded-[7px] w-5 h-6 flex justify-center items-center"
+            value={selectedProjectId} // 선택된 프로젝트의 ID를 value로 사용
+            onChange={handleProjectSelect}
+            disabled={isEdit}
+          >
             <option value="">프로젝트 선택</option>
-            {/* {projects.map((project) => (  //서버로 부터 가져와서 목록 뿌리기
-              <option key={project.id} value={project.id}>
+            {projects.map((project) => (
+              <option key={project._id} value={project._id}>
                 {project.title}
               </option>
-            ))} */}
+            ))}
           </select>
-
           {/* 프로젝트 색상 선택 */}
           <input
             type="color"
@@ -379,12 +432,14 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
                   onClick={() => handleRemoveMember(member.id)} // 클릭 시 팀원 제거
                 >
                   <img
-                    src={member.avatar}
+                    src={
+                      member?.avatar && member.avatar.includes('uploads/')
+                        ? `/uploads/${member.avatar.split('uploads/')[1]}`
+                        : basicProfile // 기본 이미지 경로
+                    }
                     alt={`${member.name}의 아바타`}
                     className="w-6 h-6 rounded-full mr-2 object-cover"
-                    onError={
-                      (e) => (e.currentTarget.src = basicProfile) // 이미지 로딩 실패 시 기본 이미지 표시
-                    }
+                    onError={(e) => (e.currentTarget.src = basicProfile)} // 이미지 로딩 실패 시 기본 이미지로 대체
                   />
                   {member.name}
                   <span className="ml-auto text-red-500">제거</span>{' '}
