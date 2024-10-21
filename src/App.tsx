@@ -5,8 +5,9 @@ import apiClient from './utils/apiClient'; // axios instance with interceptors
 import useUserStore from './store/useUserstore';
 
 // 이거랑
-
+// @ts-ignore
 import 'react-toastify/dist/ReactToastify.css'; // 스타일 임포트
+// @ts-ignore
 import { ToastContainer } from 'react-toastify';
 
 function App() {
