@@ -67,7 +67,7 @@ function App() {
       }
     };
 
-    // if (location.pathname.includes('')) return;
+    if (location.pathname === '/') return;
     if (location.pathname.includes('login')) return;
     if (location.pathname.includes('reset-pw')) return;
     if (location.pathname.includes('register')) return;
