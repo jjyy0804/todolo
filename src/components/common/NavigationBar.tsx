@@ -10,7 +10,6 @@ const NavigationBar = () => {
   const location = useLocation(); // 현재 경로를 가져옴
   const isAuthenticated = useUserStore((state) => state.isAuthenticated); // 로그인 상태 관리
   const logout = useUserStore((state) => state.logout);
-  const { clearSchedules } = useScheduleStore();
   /** 로고 이미지 클릭 시, 토큰이 있으면 메인 페이지로 이동, 없으면 홈 화면으로 이동 */
   const handleLogoClick = () => {
     const token = localStorage.getItem('accessToken'); // 토큰 가져오기
@@ -34,7 +33,7 @@ const NavigationBar = () => {
       navigate('/login');
     }
   };
-
+  /**캘린더 아이콘 클릭 시 페이지 이동 */
   const handleCalendarClick = () => {
     navigate('/calendar');
   };
@@ -45,7 +44,7 @@ const NavigationBar = () => {
         src={logo}
         alt="Logo"
         className="w-24 h-6 cursor-pointer"
-        onClick={handleLogoClick}
+        onClick={handleLogoClick} //logo 이미지 클릭
       />
       <div className="flex items-center gap-5">
         {isAuthenticated && (

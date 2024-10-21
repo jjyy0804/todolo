@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import apiClient from '../../utils/apiClient';
 
+/**서버에 업무 삭제 요청 */
 const useDeleteTask = () => {
   const [loading, setLoading] = useState(false); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 메시지

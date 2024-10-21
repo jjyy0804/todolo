@@ -4,7 +4,6 @@ import trashImg from '../../../assets/icons/trash.png';
 import useUserStore from '../../../store/useUserstore'; // Zustand 스토어 임포트
 import apiClient from '../../../utils/apiClient';
 import basicProfileImage from '../../../assets/images/basic_user_profile.png';
-import { co } from '@fullcalendar/core/internal-common';
 
 interface Comments {
   // 유저이름, 유저아바타, 현재시간, 댓글내용
@@ -177,7 +176,8 @@ function CommentSection({ taskId }: Props) {
             <div className="mt-1 w-8 h-8 rounded-full overflow-hidden">
               <img
                 src={
-                  comment.user.avatar && comment.user.avatar.includes('uploads/')
+                  comment.user.avatar &&
+                    comment.user.avatar.includes('uploads/')
                     ? `${window.location.origin}/uploads/${comment.user.avatar.split('uploads/')[1]}`
                     : basicProfileImage // 기본 프로필 이미지
                 }
@@ -207,7 +207,13 @@ function CommentSection({ taskId }: Props) {
                 <div>
                   <p className="text-darkgray text-sm">
                     {comment.user.name}{' '}
-                    <span className="text-softgray">({new Date(comment.createdAt).toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }).substring(0, 12)})</span>
+                    <span className="text-softgray">
+                      (
+                      {new Date(comment.createdAt)
+                        .toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
+                        .substring(0, 12)}
+                      )
+                    </span>
                   </p>
                   <p className="text-darkgray">{comment.commentContent}</p>
                 </div>

@@ -13,7 +13,7 @@ import { ToastContainer } from 'react-toastify';
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { user, isAuthenticated, setUser } = useUserStore();
+  const { setUser } = useUserStore();
 
   useEffect(() => {
     // check if user is authenticated

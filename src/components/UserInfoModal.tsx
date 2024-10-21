@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import defaultProfileImage from '../assets/images/basic_user_profile.png';
-import useUserStore, { User } from '../store/useUserstore'; // Zustand store import
+import useUserStore from '../store/useUserstore'; // Zustand store import
 import apiClient from '../utils/apiClient';
 import { useNavigate } from 'react-router-dom';
 

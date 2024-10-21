@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { AxiosError, AxiosResponse } from 'axios';
 import apiClient from '../utils/apiClient';
 
 import FullCalendar from '@fullcalendar/react';

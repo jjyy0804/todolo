@@ -68,7 +68,9 @@ const TeamMemberSelector = ({
   const handleSelectMember = (member: TeamMember) => {
     // 이미 선택된 팀원이 아니면 추가
     setSelectedMembers((prevSelectedMembers) => {
-      const isAlreadySelected = prevSelectedMembers.some((m) => m.id === member.id);
+      const isAlreadySelected = prevSelectedMembers.some(
+        (m) => m.id === member.id,
+      );
 
       // 선택된 팀원이 아닌 경우만 추가
       if (!isAlreadySelected) {

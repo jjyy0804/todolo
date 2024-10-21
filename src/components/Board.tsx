@@ -9,13 +9,10 @@ import glassImg from '../assets/icons/magnifyingglass.png';
 import ScheduleModal from './common/modal/ScheduleModal';
 import useUserStore from '../store/useUserstore';
 import useScheduleStore from '../store/useScheduleStore';
-//이거
-
 import DeleteConfirmModal from './common/modal/DeleteConFirmModal';
 import UserInfoModal from './UserInfoModal';
 import useDeleteTask from '../hooks/task/useDeleteTask';
 import { Schedule } from '../types/scheduleTypes';
-import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
 import MyProfile from './common/MyProfile';
 import { showErrorToast, showSuccessToast } from '../utils/toast';

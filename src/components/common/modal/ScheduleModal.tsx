@@ -170,7 +170,7 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
       prevMembers.filter((member) => member.id !== memberId),
     );
   };
-  const [projects, setProjects] = useState<Project[]>([]);  // 프로젝트 목롤만 가져오기
+  const [projects, setProjects] = useState<Project[]>([]); // 프로젝트 목롤만 가져오기
   const [selectedProjectId, setSelectedProjectId] = useState(''); //선택된 프로젝트
   const token = localStorage.getItem('accessToken'); // JWT 토큰 가져오기
   // 서버에서 프로젝트 목록 가져오기
@@ -183,16 +183,21 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
             headers: {
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
-        const projectData = response.data.data[0].projects.map((project: any) => ({
-          id: project._id,  // 서버에서 받은 프로젝트 ID
-          title: project.title,
-          color: project.projectColor,
-        }));
+        const projectData = response.data.data[0].projects.map(
+          (project: any) => ({
+            id: project._id, // 서버에서 받은 프로젝트 ID
+            title: project.title,
+            color: project.projectColor,
+          }),
+        );
         setProjects(projectData); // 가공된 데이터를 상태로 저장
       } catch (error) {
-        console.error('프로젝트 목록을 불러오는 중 오류가 발생했습니다.', error);
+        console.error(
+          '프로젝트 목록을 불러오는 중 오류가 발생했습니다.',
+          error,
+        );
       }
     };
 
@@ -201,14 +206,16 @@ const ScheduleModal = ({ isOpen, onClose, schedule, isEdit }: ModalProps) => {
 
   // 프로젝트 선택 시 동작
   const handleProjectSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log("onChange 이벤트 발생"); // 이벤트 핸들러 호출 확인
+    console.log('onChange 이벤트 발생'); // 이벤트 핸들러 호출 확인
     const selectedId = e.target.value;
-    console.log("선택된 프로젝트의 id", selectedId)
+    console.log('선택된 프로젝트의 id', selectedId);
     setSelectedProjectId(selectedId); //선택된 값
 
     // 선택된 프로젝트 정보 찾기
-    const selectedProject = projects.find((project) => project._id === selectedId);
-    console.log("찾은 값", selectedProject)
+    const selectedProject = projects.find(
+      (project) => project._id === selectedId,
+    );
+    console.log('찾은 값', selectedProject);
 
     if (selectedProject) {
       setProjectName(selectedProject.title); // 선택된 프로젝트 이름을 input에 설정
