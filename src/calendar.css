@@ -34,6 +34,7 @@
 .fc .fc-button:focus,
 .fc .fc-button-primary:focus {
   box-shadow: none;
+  color: #8f97a9;
 }
 .fc-view-harness {
   background-color: #fff;
@@ -70,19 +71,36 @@
 
 /* change from left arrow to up arrow */
 .fc-icon-chevron-left::before {
-  content: '\25B2';
+  /* content: '\25B2'; */
   display: inline-block;
   width: 24px;
   height: 24px;
-  font-size: 1.15em;
 }
 
 /* change from right arrow to down arrow button */
 .fc-icon-chevron-right::before {
-  content: '\25BC';
+  /* content: '\25BC'; */
   display: inline-block;
   width: 24px;
   height: 24px;
+}
+
+.fc-icon-chevron-left:hover,
+.fc-icon-chevron-right:hover,
+/* .fc-icon-chevron-left:active,
+.fc-icon-chevron-right:active, */
+/* .fc-icon-chevron-left:focus,
+.fc-icon-chevron-right:focus, */
+.fc .fc-button-primary:hover,
+/* .fc .fc-button-primary:active, */
+.fc .fc-button-primary:focus, 
+.fc .fc-button-primary:hover {
+  color: #9ac2f9;
+}
+
+.fc .fc-button-primary:not(:disabled).fc-button-active,
+.fc .fc-button-primary:not(:disabled):active {
+  color: #9ac2f9;
 }
 
 .fc-theme-standard .fc-scrollgrid {
