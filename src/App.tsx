@@ -7,7 +7,7 @@ import useUserStore from './store/useUserstore';
 // 이거랑
 
 import 'react-toastify/dist/ReactToastify.css'; // 스타일 임포트
-import { ToastContainer } from 'react-toastify';
+//import { ToastContainer } from 'react-toastify';
 
 function App() {
   const navigate = useNavigate();
@@ -78,7 +78,7 @@ function App() {
 
   return (
     <>
-      <ToastContainer />
+      {/* <ToastContainer /> */}
       <Outlet />
     </>
   );
