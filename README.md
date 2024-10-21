@@ -4,7 +4,7 @@
 
 
 <p align="center">
-  <img src="./src/assets/logos/todolo_logo_main.png" alt="todolo Logo" />
+  <img src="./src/assets/logos/todolo_logo_main.png" alt="todolo Logo" width="300"/>
 </p>
 
 
@@ -50,6 +50,9 @@
 - 각 일정에 대해 상태와 우선순위를 설정할 수 있습니다.
   - **상태**: 할 일, 진행 중, 완료로 설정
   - **우선순위**: 높음, 중간, 낮음으로 설정
+
+### 4. 소속 팀 설정
+- 가입한 사용자는 이메일을 통해 소속팀을 인증하고 설정할 수 있습니다.
 
 ### 5. 일정 서버 동기화
 - **서버와의 동기화**:
