@@ -27,10 +27,12 @@ export default function RequestResetPassword() {
 
       setTimeout(() => {
         navigate(ROUTE_LINK.LOGIN.link);
-      }, 2000);
+      }, 3000);
     } catch (error) {
       console.error('Error requesting reset password :', error);
-      setMessage('비밀번호 재설정 요청에 실패했습니다. 다시 시도해주세요.');
+      setMessage(
+        '비밀번호 재설정 요청에 실패했습니다. 입력하신 이메일 주소를 확인바랍니다.',
+      );
     }
   };
 
@@ -38,30 +40,30 @@ export default function RequestResetPassword() {
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
       {/** 요소 담는 흰색 컨테이너 박스 */}
       <div className="flex flex-col items-center justify-center w-[700px] h-[500px] p-6 bg-white shadow-lg rounded-[10px]">
-      <img src={logo} alt="logo" className="mb-8 w-[364px] h-[118px]" />
-      <div>
-        <p className="block text-sm font-medium text-softgray mb-3">
-          {message}
-        </p>
-        <input
-          type="email"
-          className="mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none"
-          placeholder="이메일"
-          value={email}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setEmail(e.target.value)
-          }
-        />
-      </div>
-      <div className="flex justify-center gap-4 mt-8">
-        <button
-          type="submit"
-          className="py-2 px-4 bg-primary text-white rounded-lg shadow-sm text-sm hover:bg-secondary"
-          onClick={handleRequestButtonClick}
-        >
-          다음
-        </button>
-      </div>
+        <img src={logo} alt="logo" className="mb-8 w-[364px] h-[118px]" />
+        <div>
+          <p className="block text-sm font-medium text-softgray mb-3">
+            {message}
+          </p>
+          <input
+            type="email"
+            className="mt-1 block w-full border border-softgray rounded-md shadow-sm p-2 focus:border-primary focus:outline-none"
+            placeholder="이메일"
+            value={email}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setEmail(e.target.value)
+            }
+          />
+        </div>
+        <div className="flex justify-center gap-4 mt-8">
+          <button
+            type="submit"
+            className="py-2 px-4 bg-primary text-white rounded-lg shadow-sm text-sm hover:bg-secondary"
+            onClick={handleRequestButtonClick}
+          >
+            다음
+          </button>
+        </div>
       </div>
     </div>
   );

@@ -157,7 +157,7 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
             onChange={handleImageChange}
             style={{ display: 'none' }}
           />
-          <p className="flex items-center justify-center mt-6 text-sm text-gray-600">
+          <p className="flex items-center justify-center mt-6 text-sm text-dartgray">
             {user?.email}
           </p>
           <div className="space-y-8 p-[3rem] mt-6">
@@ -181,7 +181,7 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
                 ) : (
                   <button
                     type="button"
-                    className="text-left mt-1 block w-full p-4 text-primary"
+                    className="text-left mt-1 block w-full p-4 text-primary hover:text-[#257ada]"
                     onClick={handleSetTeamClick}
                   >
                     소속팀설정
@@ -197,7 +197,7 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
               <span className="mt-1 block w-full p-4">
                 <button
                   type="button"
-                  className="mt-1 block w-full text-left text-primary underline"
+                  className="mt-1 block w-full text-left text-primary hover:text-[#257ada]"
                   onClick={changePasswordClick}
                 >
                   비밀번호 변경

@@ -57,8 +57,7 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
             projectTitle: fetchedTask.project?.title,
             taskMembers: fetchedTask.taskMembers.map((member: any) => ({
               ...member,
-              avatar:
-                member.avatar !== 'N/A' ? member.avatar : avatarUrl,
+              avatar: member.avatar !== 'N/A' ? member.avatar : avatarUrl,
             })),
           });
           setIsLoading(false); // 로딩 상태 종료
@@ -80,7 +79,7 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white w-[600px] max-h-[90vh] p-6 rounded-lg relative overflow-y-auto">
+      <div className="bg-white w-[600px] max-h-[80vh] p-6 rounded-lg relative overflow-y-auto">
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
@@ -119,7 +118,9 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
 
             {/* 프로젝트명, 팀 정보 */}
             <div className="mb-4">
-              <label className="block text-darkgray font-medium">프로젝트명</label>
+              <label className="block text-darkgray font-medium">
+                프로젝트명
+              </label>
               <input
                 type="text"
                 value={task?.projectTitle}
@@ -129,7 +130,9 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
             </div>
 
             <div className="mb-4">
-              <label className="block text-darkgray font-medium">참여한 팀원</label>
+              <label className="block text-darkgray font-medium">
+                참여한 팀원
+              </label>
               <div className="flex items-center space-x-2 mt-1 p-1 border border-gray-300 rounded-lg bg-white">
                 {task?.taskMembers.map((member: Member, index: number) => {
                   // avatar 경로를 절대 경로로 변환
@@ -144,7 +147,9 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
                         src={avatarUrl} // 절대 경로로 변환된 avatarUrl 사용
                         alt={member.name}
                         className="w-[30px] h-[30px] rounded-full bg-secondary"
-                        onError={(e) => (e.currentTarget.src = basicProfileImage)} // 이미지 로딩 실패 시 기본 이미지 표시
+                        onError={(e) =>
+                          (e.currentTarget.src = basicProfileImage)
+                        } // 이미지 로딩 실패 시 기본 이미지 표시
                       />
                     </div>
                   );
@@ -157,7 +162,9 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
 
             {/* 상세 내용 */}
             <div className="mb-4">
-              <label className="font-medium block text-darkgray">상세 내용</label>
+              <label className="font-medium block text-darkgray">
+                상세 내용
+              </label>
               <textarea
                 value={task?.content}
                 readOnly

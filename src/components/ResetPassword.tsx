@@ -12,6 +12,7 @@ export default function ResetPassword() {
   const [password, setPassword] = useState('');
   const [passwordConfirm, setPasswordConfirm] = useState('');
   const [message, setMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   const [disabled, setDisabled] = useState(false);
 
   useEffect(() => {
@@ -28,6 +29,20 @@ export default function ResetPassword() {
     e: React.ChangeEvent<HTMLInputElement>,
   ) => {
     setPasswordConfirm(e.target.value);
+    // 비밀번호 형식 검사
+
+    const passwordRegex =
+      /^(?=.*[!@#$%^&*()_\-+=])[a-zA-Z0-9!@#$%^&*()_\-+=]{1,10}$/;
+    if (!passwordRegex.test(password)) {
+      setErrorMessage('비밀번호는 특수문자를 포함하고 10자 이내여야 합니다.');
+      return;
+    }
+
+    // 비밀번호 확인
+    if (password !== passwordConfirm) {
+      setErrorMessage('비밀번호가 일치하지 않습니다.');
+      return;
+    }
   };
 
   const handleCancleButtonClick = () => {
@@ -46,15 +61,15 @@ export default function ResetPassword() {
       setMessage('비밀번호 재설정되었습니다.');
       // 재설정 후 로그인 페이지로 이동
       setTimeout(() => {
-        navigate(ROUTE_LINK.LOGIN.link);
+        window.close();
       }, 2000);
     } catch (error) {
       console.error('Error requesting reset password :', error);
       setMessage('비밀번호 재설정 요청에 실패했습니다. 다시 시도해주세요.');
       // 실패 후 메인 페이지로 이동
-      setTimeout(() => {
-        navigate(ROUTE_LINK.LANDING.link);
-      }, 2000);
+      // setTimeout(() => {
+      //   navigate(ROUTE_LINK.LANDING.link);
+      // }, 2000);
     }
   };
 
