@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import apiClient from '../utils/apiClient';
 import axios from 'axios';
@@ -10,8 +10,8 @@ export default function UpdatePassword() {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
 
+  const [message, setMessage] = useState('');
   const currentPasswordRef = useRef<HTMLInputElement | null>(null);
   const newPasswordRef = useRef<HTMLInputElement | null>(null);
 
@@ -19,17 +19,44 @@ export default function UpdatePassword() {
     boolean | null
   >(null); // null for no validation, true for correct, false for incorrect
   const [isPasswordMatch, setIsPasswordMatch] = useState<boolean | null>(null); // null for no validation, true for match, false for no match
+  const [disabled, setDisabled] = useState(true);
+
+  useEffect(() => {
+    // Enable the button only when both passwords are valid and matching
+    if (
+      newPassword &&
+      confirmPassword &&
+      newPassword === confirmPassword &&
+      !message
+    ) {
+      setDisabled(false);
+    } else {
+      setDisabled(true);
+    }
+  }, [newPassword, confirmPassword, message]);
+
+  const checkValidPassword = () => {
+    const passwordRegex =
+      /^(?=.*[!@#$%^&*()_\-+=])[a-zA-Z0-9!@#$%^&*()_\-+=]{1,10}$/;
+    if (!passwordRegex.test(newPassword)) {
+      setMessage('비밀번호는 특수문자를 포함하고 10자 이내여야 합니다.');
+    } else {
+      setMessage('');
+    }
+  };
+
+  const checkPassword = () => {
+    if (newPassword !== confirmPassword) {
+      setMessage('비밀번호가 일치하지 않습니다.');
+    } else if (!message) {
+      setDisabled(false); // Allow password reset if passwords match
+    }
+  };
 
   const handleChangePassword = async () => {
     setIsCurrentPasswordCorrect(null);
     setIsPasswordMatch(null);
     setMessage('');
-
-    if (newPassword !== confirmPassword) {
-      setIsPasswordMatch(false);
-      setMessage('입력하신 비밀번호가 일치하지 않습니다');
-      return;
-    }
 
     const accessToken = localStorage.getItem('accessToken');
     try {
@@ -135,19 +162,15 @@ export default function UpdatePassword() {
           </button>
           <button
             className="py-2 px-4 bg-primary text-white rounded-lg shadow-sm text-sm hover:bg-secondary"
-            disabled={
-              !currentPassword ||
-              !newPassword ||
-              !confirmPassword ||
-              isCurrentPasswordCorrect === false ||
-              isPasswordMatch === false
-            }
+            disabled={disabled}
+            onBlur={checkPassword}
           >
             변경하기
           </button>
         </div>
-
-        {message && <p>{message}</p>}
+        <p className="block text-sm font-medium text-softgray mt-3 mb-0">
+          {message}
+        </p>
       </div>
     </div>
   );

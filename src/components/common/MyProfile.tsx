@@ -25,7 +25,7 @@ const MyProfile: React.FC<MyProfileProps> = ({ openUserInfoModal }) => {
         />
         <div>
           <h4 className="text-[17px] font-regular mt-2">
-            {user?.name} ({user?.team || '소속팀을 설정하세요'})
+            {user?.name === 'N/A'} ({user?.team || '소속팀을 설정하세요'})
           </h4>
         </div>
       </div>
