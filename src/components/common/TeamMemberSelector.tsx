@@ -40,7 +40,6 @@ const TeamMemberSelector = ({
                 : basicProfile, // 기본 이미지 제공
           }),
         );
-
         setMembers(formattedMembers); // 인터페이스에 맞게 변환된 데이터로 상태 업데이트
       } catch (error) {
         console.error('팀원 목록을 불러오는 중 오류가 발생했습니다.', error);
@@ -67,12 +66,19 @@ const TeamMemberSelector = ({
 
   // 팀원 선택 핸들러
   const handleSelectMember = (member: TeamMember) => {
-    // 이미 선택된 팀원이 아닐 때만 추가
-    if (!selectedMembers.some((m) => m.id === member.id)) {
-      const newSelectedMembers = [...selectedMembers, member];
-      setSelectedMembers(newSelectedMembers); // 선택된 팀원 리스트 업데이트
-      onAddMember(member); // 부모 컴포넌트로 선택한 팀원 전달
-    }
+    // 이미 선택된 팀원이 아니면 추가
+    setSelectedMembers((prevSelectedMembers) => {
+      const isAlreadySelected = prevSelectedMembers.some((m) => m.id === member.id);
+
+      // 선택된 팀원이 아닌 경우만 추가
+      if (!isAlreadySelected) {
+        const newSelectedMembers = [...prevSelectedMembers, member];
+        onAddMember(member); // 부모 컴포넌트로 선택한 팀원 전달
+        return newSelectedMembers;
+      }
+
+      return prevSelectedMembers; // 이미 선택된 팀원일 경우 상태 변경 없음
+    });
   };
 
   return (
