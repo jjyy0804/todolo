@@ -151,6 +151,7 @@ export default function UserInfoModal({ isOpen, onClose }: UserInfoModalProps) {
             </button>
           </div>
           <input
+            disabled
             type="file"
             ref={fileInputRef}
             accept="image/*"

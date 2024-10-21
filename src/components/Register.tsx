@@ -76,6 +76,7 @@ export default function Register() {
           </div>
           <label className="mt-2 text-sm text-gray-600">프로필 사진</label>
           <input
+            disabled
             type="file"
             id="fileInput"
             accept="image/*"
