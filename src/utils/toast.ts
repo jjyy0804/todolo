@@ -1,5 +1,5 @@
 //여기
-
+// @ts-ignore
 import { toast } from 'react-toastify';
 
 export const showSuccessToast = (message: string) => {

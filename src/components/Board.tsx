@@ -19,6 +19,7 @@ import { Comment } from '../types/calendarModalTypes';
 import CalendarModal from '../components/common/modal/CalendarModal';
 import MyProfile from './common/MyProfile';
 import { showErrorToast, showSuccessToast } from '../utils/toast';
+// @ts-ignore
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 export default function Board() {
@@ -77,8 +78,8 @@ export default function Board() {
 
       const memberMatch = schedule.taskMember
         ? schedule.taskMember.some((member) =>
-            member?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
-          )
+          member?.name?.toLowerCase().includes(searchTerm.toLowerCase()),
+        )
         : false; // taskMember가 없는 경우 false 반환
 
       return projectMatch || memberMatch;
