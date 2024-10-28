@@ -18,7 +18,7 @@ import MyProfile from './common/MyProfile';
 import { showErrorToast, showSuccessToast } from '../utils/toast';
 // @ts-ignore
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
-
+import useUpdateTask from '../hooks/task/useUpdateTask';
 export default function Board() {
   const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false); //등록, 수정 모달 상태
   const [searchTerm, setSearchTerm] = useState(''); // 검색어 (프로젝트명, 사용자명)
@@ -44,6 +44,7 @@ export default function Board() {
   const openUserInfoModal = () => setIsUserInfoModalOpen(true);
   const closeUserInfoModal = () => setIsUserInfoModalOpen(false);
   const { deleteTask } = useDeleteTask(); //일정 삭제 커스텀 훅
+  const { updateTask } = useUpdateTask(); //일정 수정 커스텀 훅
   const token = localStorage.getItem('accessToken'); // 토큰 가져오기
 
   useEffect(() => {
@@ -111,37 +112,22 @@ export default function Board() {
     // 새로운 상태로 변경
     const newStatus = destination.droppableId as '할 일' | '진행 중' | '완료';
 
-    // **같은 상태로 이동 시 상태 업데이트 로직 실행 안함**
+    // 같은 상태로 이동 시 상태 업데이트 로직 실행 안함
     if (movedItem.status === newStatus) {
       return;
     }
 
     try {
-      const token = localStorage.getItem('accessToken');
-      if (!token) throw new Error('인증 토큰이 없습니다.');
-
-      // 서버에 상태 업데이트 요청 (먼저 서버 요청을 보냄)
-      await apiClient.put(
-        `api/tasks/${movedItem.id}`,
-        { ...movedItem, status: newStatus },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      // **서버 요청 성공 후 UI 업데이트**
+      // 서버에서 업데이트 요청
+      await updateTask(movedItem.id, { ...movedItem, status: newStatus })
+      // 서버 요청 성공 후 UI 업데이트
       const updatedSchedules = schedules.map((schedule) =>
         schedule.id === movedItem.id && schedule.status !== newStatus
           ? { ...schedule, status: newStatus }
           : schedule,
       );
-
       setFilteredSchedules(updatedSchedules);
       setSchedules(updatedSchedules);
-
       // 상태가 성공적으로 변경된 경우 스토어 업데이트
       updateSchedule(movedItem.id, { ...movedItem, status: newStatus });
     } catch (error) {
@@ -185,7 +171,7 @@ export default function Board() {
         } else {
           showErrorToast('일정 삭제에 실패했습니다. 다시 시도해주세요.');
         }
-      } catch (error: any) {
+      } catch (error) {
         console.error('일정 삭제 중 오류 발생:', error);
         showErrorToast('삭제 권한이 없습니다.');
       }
