@@ -37,7 +37,7 @@ export default function Login() {
           onBlur={() => setEmailFocused(false)}
           required
           className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${emailFocused ? 'text-black' : 'text-[#757575]'
-            }`}
+            } focus:border-primary focus:outline-none`}
         />
         {/* 비밀번호 인풋 박스 */}
         <input
@@ -52,12 +52,12 @@ export default function Login() {
           onBlur={() => setPasswordFocused(false)}
           required
           className={`p-[20px_16px] w-[464px] h-[62px] border border-[#8F97A9] rounded-[10px] mb-4 ${passwordFocused ? 'text-black' : 'text-[#757575]'
-            }`}
+            } focus:border-primary focus:outline-none`}
         />
         {/* 로그인 버튼 */}
         <button
           type="submit"
-          className="p-[18px-20px] w-[464px] h-[56px] bg-[#599BFF] border rounded-[10px] text-white font-bold"
+          className="p-[18px-20px] w-[464px] h-[56px] bg-primary border rounded-[10px] text-white font-bold hover:bg-hoverprimary transition"
           disabled={isLoading}
         >
           {isLoading ? '로그인 중...' : '로그인'}
@@ -72,8 +72,8 @@ export default function Login() {
 
         {/* 로그인 밑에 회원가입, 아이디, 비밀번호 찾기 */}
         <div className="w-[267px] h-[20px] mt-4 text-[#757575] text-center flex justify-between">
-          <a href="/register">회원가입</a>/
-          <a href="/req-reset-pw">비밀번호찾기</a>
+          <a href="/register" className='hover:text-primary'>회원가입</a>/
+          <a href="/req-reset-pw" className='hover:text-primary'>비밀번호찾기</a>
         </div>
       </form>
     </div>

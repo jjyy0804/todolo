@@ -246,12 +246,12 @@ function CommentSection({ taskId }: Props) {
           placeholder="댓글을 입력하세요."
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          className="flex-grow p-2 border border-gray-300 rounded-lg mr-2 h-[40px]"
+          className="flex-grow p-2 border border-gray-300 rounded-lg mr-2 h-[40px] focus:outline-none"
           style={{ flexBasis: '90%' }}
         />
         <button
           onClick={handleCommentSubmit}
-          className="bg-primary text-white font-bold text-[13px] p-1 rounded-lg h-[40px] hover:bg-hoverprimary"
+          className="bg-primary text-white font-bold text-[13px] p-1 rounded-lg h-[40px] hover:bg-hoverprimary transition"
           style={{ flexBasis: '10%' }}
         >
           등록

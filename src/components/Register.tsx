@@ -151,17 +151,17 @@ export default function Register() {
           <div className="flex justify-center gap-4 mt-8">
             <button
               type="button"
-              className="py-2 px-4 border-2 border-primary rounded-lg shadow-sm text-sm text-primary hover:bg-gray-50"
+              className="py-2 px-4  bg-third rounded-lg shadow-sm text-sm text-primary hover:bg-slate-100 transition"
               onClick={handleCancleButtonClick}
             >
               취소
             </button>
             <button
               type="submit"
-              className="py-2 px-4 bg-primary text-white rounded-lg shadow-sm text-sm hover:bg-secondary"
+              className="py-2 px-4 rounded-lg bg-primary shadow-sm text-sm text-white hover:bg-hoverprimary transition"
               onClick={handleRegisterButtonClick}
             >
-              가입하기
+              가입
             </button>
           </div>
         </form>

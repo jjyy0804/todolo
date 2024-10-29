@@ -125,7 +125,7 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
                 type="text"
                 value={task?.projectTitle}
                 readOnly
-                className="w-full p-2 mt-1 border border-gray-300 rounded-lg text-darkgray"
+                className="w-full p-2 mt-1 border border-gray-300 rounded-lg text-darkgray focus:outline-none cursor-default"
               />
             </div>
 
@@ -168,7 +168,7 @@ function CalendarModal({ isOpen, onClose, taskId }: CalendarModalProps) {
               <textarea
                 value={task?.content}
                 readOnly
-                className="w-full h-[200px] p-2 mt-1 border border-gray-300 rounded-lg text-darkgray"
+                className="w-full h-[200px] p-2 mt-1 border border-gray-300 rounded-lg text-darkgray focus:outline-none cursor-default"
               />
             </div>
 
