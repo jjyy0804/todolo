@@ -7,15 +7,22 @@
   <img src="./src/assets/logos/todolo_logo_main.png" alt="todolo Logo" width="300"/>
 </p>
 
+<br/>
 
 #####   배포 주소 : [http://kdt-react-node-1-team02.elicecoding.com/](http://kdt-react-node-1-team02.elicecoding.com/)   
+<br/>
+<br/>
 
-## 👥팀원
-[👩‍💻 이주영(FE)](https://github.com/jjyy0804)   
-[👩‍💻 조아라(FE)](https://kdt-gitlab.elice.io/aj02468)   
-[👩‍💻 이서빈(FE)](https://kdt-gitlab.elice.io/rylie916)   
-[👩‍💻 김영현(BE)](https://github.com/zerohyun00)   
-[👩‍💻 손석경(BE)](https://github.com/SonSETO)   
+## 👥팀원 및 팀 소개
+
+|                               이주영                               |                            조아라                            |                              이서빈                              |                               김영현                                |                               손석경                                |
+| :----------------------------------------------------------------: | :----------------------------------------------------------: | :--------------------------------------------------------------: | :-----------------------------------------------------------------: | :-----------------------------------------------------------------: |
+| <img src="src/assets/README_asset/lee_jooyoung.png" alt="이주영" width="150"> | <img src="src/assets/README_asset/jo_ara.png" alt="조아라" width="150"> | <img src="src/assets/README_asset/lee_seobin.png" alt="이서빈" width="150"> | <img src="src/assets/README_asset/kim_younghyun.png" alt="김영현" width="150"> | <img src="src/assets/README_asset/son_seokgyeong.png" alt="손석경" width="150"> |
+|                                 FE                                 |                              FE                              |                                FE                                |                                 BE                                  |                                 BE                                  |
+|               [GitHub](https://github.com/jjyy0804)                |        [GitHub](https://kdt-gitlab.elice.io/aj02468)         |          [GitHub](https://kdt-gitlab.elice.io/rylie916)          |               [GitHub](https://github.com/zerohyun00)               |                [GitHub](https://github.com/SonSETO)                 |
+
+<br/>
+<br/>
 
 ## 🔎프로젝트 소개
 
@@ -24,7 +31,8 @@
 
 
 
-
+<br/>
+<br/>
   
 ## 💡주요 기능
 ### 1. 일정 관리 기능
@@ -63,6 +71,35 @@
 - **Zustand**를 사용하여 클라이언트 측에서 상태를 관리합니다.
   - 일정 및 프로젝트 데이터를 로컬 상태에 저장하고 이를 기반으로 추가, 수정, 삭제 작업을 처리합니다.
   - 상태가 자동으로 업데이트되어 사용자의 변경 사항이 실시간으로 반영됩니다.
+<br/>
+<br/>
+
+## 화면 구성 📺
+
+|                         로그인 페이지                         |                      회원가입 페이지                      |                           메인 페이지                            |
+| :-----------------------------------------------------------: | :-------------------------------------------------------: | :--------------------------------------------------------------: |
+|       <img width="200px" src="src/assets/README_asset/login.png">        |     <img width="100px" src="src/assets/README_asset/signup.png">     |         <img width="300px" src="src/assets/README_asset/main.png">          |
+|                        팀 설정 페이지                         |                       캘린더 페이지                       |                         캘린더 상세 모달                         |
+|    <img width="200px" src="src/assets/README_asset/team_setting.png">    |    <img width="300px" src="src/assets/README_asset/calendar.png">    | <img width="200px" src="src/assets/README_asset/calendar_detail_modal.png"> |
+|                        일정 추가 모달                         |                      비밀번호 재설정                      |                           내 정보 모달                           |
+| <img width="300px" src="src/assets/README_asset/add_schedule_modal.png"> | <img width="200px" src="src/assets/README_asset/password_reset.png"> |     <img width="200px" src="src/assets/README_asset/profile_modal.png">     |
+
+---
+<br/>
+<br/>
+
+## 📋작업 및 역할 분담
+
+|        |                                                                     |                                                                                                                      |
+| ------ | ------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 이주영 | <img src="src/assets/README_asset/lee_jooyoung.png" alt="이주영" width="100">  | <ul><li>일정 등록, 수정, 삭제</li><li>팀 리딩 및 커뮤니케이션</li><li>일정/유저 상태관리</li></ul>                   |
+| 조아라 | <img src="src/assets/README_asset/jo_ara.png" alt="조아라" width="100">        | <ul><li>로그인상태유지(프록시설정)</li><li>캘린더/ 랜딩 / 유저정보수정</li><li>비밀번호 재설정요청/ 재설정</li></ul> |
+| 이서빈 | <img src="src/assets/README_asset/lee_seobin.png" alt="이서빈" width="100">    | <ul><li>캘린더 모달, 댓글</li><li>유저정보 모달(소속 팀)</li><li>팀 정하기</li></ul>                                 |
+| 김영현 | <img src="src/assets/README_asset/kim_younghyun.png" alt="김영현" width="100"> | <ul><li>팀</li><li>프로젝트</li><li>업무</li></ul>                                                                   |
+| 손석경 | <img src="src/assets/README_asset/son_seokgyeong.png" alt="손석경" width="100"> | <ul><li>유저</li><li>인증</li><li>업무</li></ul>                                                                     |
+
+<br/>
+<br/>
 
 ## 🛠기술 스택
 
@@ -99,7 +136,9 @@
   <img src="https://img.shields.io/badge/Swagger-85EA2D?style=for-the-badge&logo=swagger&logoColor=black" alt="Swagger" />
 </p>
 
+<br/>
+<br/>
 
-## 🛠 시연 영상
+## 🎬 시연 영상
 
 [시연 영상 ](https://youtu.be/KedHE3VGAEc)   
