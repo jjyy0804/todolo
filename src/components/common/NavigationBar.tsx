@@ -26,6 +26,8 @@ const NavigationBar = () => {
       logout();
       localStorage.removeItem('accessToken');
       useScheduleStore.getState().clearSchedules(); // 상태 초기화
+      // 로컬 스토리지에서 스케줄 데이터 삭제
+      localStorage.removeItem('schedule-storage'); // 로컬 스토리지에서 상태 삭제
       showSuccessToast('로그아웃 되었습니다.');
       navigate('/');
     } else {
@@ -50,11 +52,10 @@ const NavigationBar = () => {
         {isAuthenticated && (
           <>
             <button
-              className={`text-sm hover:text-primary ${
-                location.pathname === '/calendar'
+              className={`text-sm hover:text-primary ${location.pathname === '/calendar'
                   ? 'text-primary'
                   : 'text-darkgray'
-              }`}
+                }`}
               onClick={handleCalendarClick}
             >
               Calendar

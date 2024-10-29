@@ -48,24 +48,27 @@ export default function Board() {
   const token = localStorage.getItem('accessToken'); // 토큰 가져오기
 
   useEffect(() => {
-    if (!token) {
-      showErrorToast('로그인이 필요합니다.');
-      return;
-    }
-    // 새로운 사용자가 로그인했을 때, 팀이 없으면 일정 초기화
-    if (!isAuthenticated || !user?.team_id) {
-      useScheduleStore.getState().clearSchedules(); // 상태 초기화
-    } else {
-      // 현재 사용자의 팀 일정을 서버에서 가져와서 tasks에 저장
-      const tasks = fetchSchedulesFromServer(user.team_id, token);
-    }
-  }, [
-    fetchSchedulesFromServer,
-    user?.team_id,
-    token,
-    isAuthenticated,
-    isScheduleModalOpen,
-  ]);
+    const fetchData = async () => {
+      if (!token) {
+        console.error('로그인이 필요합니다.');
+        return;
+      }
+
+      if (!user?.team_id) {
+        useScheduleStore.getState().clearSchedules(); // 팀이 없으면 상태 초기화
+        return;
+      }
+
+      try {
+        // 서버에서 일정 데이터를 가져옴
+        await fetchSchedulesFromServer(user.team_id, token);
+      } catch (error) {
+        console.error('일정 데이터를 가져오는 중 오류 발생:', error);
+      }
+    };
+
+    fetchData();
+  }, [fetchSchedulesFromServer, user?.team_id, token]);
 
   // 일정 필터링
   useEffect(() => {
