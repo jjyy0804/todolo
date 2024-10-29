@@ -55,7 +55,7 @@ export default function Board() {
       }
 
       if (!user?.team_id) {
-        useScheduleStore.getState().clearSchedules(); // 팀이 없으면 상태 초기화
+        // useScheduleStore.getState().clearSchedules(); // 팀이 없으면 상태 초기화 (새로고침 시 일정 초기화 에러때문 주석처리)
         return;
       }
 
