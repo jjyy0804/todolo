@@ -74,7 +74,7 @@
 <br/>
 <br/>
 
-## 화면 구성 📺
+## 📺 화면 구성
 
 |                         로그인 페이지                         |                      회원가입 페이지                      |                           메인 페이지                            |
 | :-----------------------------------------------------------: | :-------------------------------------------------------: | :--------------------------------------------------------------: |
@@ -84,7 +84,56 @@
 |                        일정 추가 모달                         |                      비밀번호 재설정                      |                           내 정보 모달                           |
 | <img width="300px" src="src/assets/README_asset/add_schedule_modal.png"> | <img width="200px" src="src/assets/README_asset/password_reset.png"> |     <img width="200px" src="src/assets/README_asset/profile_modal.png">     |
 
----
+
+### 🔑사용자 인증
+- 회원가입
+<p align="center">
+<img src="https://github.com/user-attachments/assets/be9d2457-c332-4708-9e49-45ac474fd98f"/>
+</p>
+
+- 팀 소속 설정
+<p align="center">
+<img src="https://github.com/user-attachments/assets/5ef9ce2c-465c-4a28-b246-ea34a89ac14d"/>
+</p>
+
+- 비밀번호 재설정
+<p align="center">
+<img src="https://github.com/user-attachments/assets/bb9a9c69-ce27-4ca6-9857-9f22ab452033"/>
+</p>
+
+- 정보 변경 (비밀번호)
+<p align="center">
+<img src="https://github.com/user-attachments/assets/f6134fa4-3f46-4045-b990-c59837465b02"/>
+</p>
+
+### 🗓 일정
+
+- 일정 등록
+<p align="center">
+<img src="https://github.com/user-attachments/assets/18d80ae5-7b05-4211-bfb9-56005d05de47"/>
+</p>
+
+- Drag & Drop 일정 상태 변경 및 수정 삭제
+<p align="center">
+<img src="https://github.com/user-attachments/assets/8f8bd76d-5359-4085-82d4-ce2ceeabe84b"/>
+</p>
+
+- 댓글 등록, 수정, 삭제
+<p align="center">
+<img src="https://github.com/user-attachments/assets/fa02d535-cdb3-4e97-a1ff-e893f29e395c"/>
+</p>
+
+
+- 일정 검색
+<p align="center">
+<img src="https://github.com/user-attachments/assets/31f66722-a07b-4c9c-8843-12ebfe5dd171"/>
+</p>
+
+- 캘린더뷰
+<p align="center">
+<img src="https://github.com/user-attachments/assets/b96a0ac2-42d4-47a8-854a-23dd3990cf2a"/>
+</p>
+
 <br/>
 <br/>
 
@@ -96,38 +145,45 @@
 | 조아라 | <img src="src/assets/README_asset/jo_ara.png" alt="조아라" width="100">        | <ul><li>로그인상태유지(프록시설정)</li><li>캘린더/ 랜딩 / 유저정보수정</li><li>비밀번호 재설정요청/ 재설정</li></ul> |
 | 이서빈 | <img src="src/assets/README_asset/lee_seobin.png" alt="이서빈" width="100">    | <ul><li>캘린더 모달, 댓글</li><li>유저정보 모달(소속 팀)</li><li>팀 정하기</li></ul>                                 |
 | 김영현 | <img src="src/assets/README_asset/kim_younghyun.png" alt="김영현" width="100"> | <ul><li>팀</li><li>프로젝트</li><li>업무</li></ul>                                                                   |
-| 손석경 | <img src="src/assets/README_assett/son_seokkyung.png" alt="손석경" width="100"> | <ul><li>유저</li><li>인증</li><li>업무</li></ul>                                                                     |
+| 손석경 | <img src="src/assets/README_asset/son_seokgyeong.png" alt="손석경" width="100"> | <ul><li>유저</li><li>인증</li><li>업무</li></ul>                                                                     |
 
 <br/>
 <br/>
 
 ## 🛠기술 스택
 
-### 프론트엔드
+### Frotend
 
-<p align="center">
-  <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
-  <img src="https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="TailwindCSS" />
-  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Zustand-000000?style=for-the-badge&logo=zustand&logoColor=white" alt="Zustand" />
-</p>
+| 기술 스택       | 설명                                                                 | 로고                                                                                                                        |
+| --------------- | -------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **React**       | 사용자 인터페이스 구축을 위한 JavaScript 라이브러리입니다.           | ![React Badge](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)                   |
+| **TailwindCSS** | 빠르고 유연한 스타일링을 위한 유틸리티 중심의 CSS 프레임워크입니다.  | ![TailwindCSS Badge](https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white) |
+| **TypeScript**  | JavaScript에 정적 타입을 추가하여 코드의 안정성을 높이는 언어입니다. | ![TypeScript Badge](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)     |
+| **Zustand**     | 전역 상태 관리를 위한 간단하고 빠른 상태 관리 라이브러리입니다.      | ![Zustand Badge](https://img.shields.io/badge/Zustand-000000?style=for-the-badge&logo=zustand&logoColor=white)              |
 
-### 백엔드
+<br/>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
-  <img src="https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express" />
-  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
-  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
-</p>
+### Backend
 
-### 협업 도구
+| 기술 스택      | 설명                                                                    | 로고                                                                                                                    |
+| -------------- | ----------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **Node.js**    | 서버 측 애플리케이션 개발을 위한 JavaScript 런타임입니다.               | ![Node.js Badge](https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white)        |
+| **Express**    | Node.js 위에서 작동하는 빠르고 유연한 웹 애플리케이션 프레임워크입니다. | ![Express Badge](https://img.shields.io/badge/Express-000000?style=for-the-badge&logo=express&logoColor=white)          |
+| **MongoDB**    | 확장성 있고 유연한 데이터 저장을 위한 NoSQL 데이터베이스입니다.         | ![MongoDB Badge](https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white)          |
+| **TypeScript** | JavaScript에 정적 타입을 추가하여 코드의 안정성을 높이는 언어입니다.    | ![TypeScript Badge](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) |
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white" alt="Figma" />
-  <img src="https://img.shields.io/badge/GitLab-FC6D26?style=for-the-badge&logo=gitlab&logoColor=white" alt="GitLab" />
-  <img src="https://img.shields.io/badge/Postman-FF6C37?style=for-the-badge&logo=postman&logoColor=white" alt="Postman" />
-</p>
+<br/>
+
+### Cooperation
+
+| 도구    | 로고                                                                                                         |
+| ------- | ------------------------------------------------------------------------------------------------------------ |
+| Git     | <img src="https://git-scm.com/images/logos/downloads/Git-Icon-1788C.png" alt="Git" width="100">              |
+| GitLab  | <img src="https://upload.wikimedia.org/wikipedia/commons/e/e1/GitLab_logo.svg" alt="GitLab" width="100">     |
+| Notion  | <img src="https://upload.wikimedia.org/wikipedia/commons/4/45/Notion_app_logo.png" alt="Notion" width="100"> |
+| Discord | <img src="https://upload.wikimedia.org/wikipedia/en/9/98/Discord_logo.svg" alt="Discord" width="100">        |
+
+<br/>
 
 ### 인증 및 API 문서화
 
