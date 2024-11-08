@@ -4,7 +4,7 @@
 
 
 <p align="center">
-  <img src="./src/assets/logos/todolo_logo_main.png" alt="todolo Logo" width="300"/>
+  <img src="https://github.com/user-attachments/assets/7701ad0f-00f3-40e9-97b0-901f3a419b8f"/>
 </p>
 
 <br/>
